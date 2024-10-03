@@ -2,23 +2,22 @@
     $('#btnSave').on('click', function (e) {
         e.preventDefault();
 
-        var Id = $('#Id').val();
+        var cateId = $('#CateId').val();
         var name = $('#Name').val();
-        var Country = $('#Country').val();
-        var Email = $('#Email').val();
-        var Phone = $('#Phone').val();
-        var Address = $('#Address').val();
-        console.log("Country", Country)
-        var url = Id && Id !== "0" ? '/Admin/Brand/Edit' : '/Admin/Brand/Add';
+        var seoTitle = $('#SeoTitle').val();
+        var sort = $('#Sort').val();
+        var status = $('#Status').val();
+
+        var url = cateId && cateId !== "0" ? '/Branch/Edit' : '/Branch/Add';
 
         var data = {
-            Id: Id,
+            CateId: cateId,
             Name: name,
-            Country: Country,
-            Email: Email,
-            Phone: Phone,
-            Address: Address,
+            SeoTitle: seoTitle,
+            Sort: sort,
+            Status: status
         };
+
         $.ajax({
             url: url,
             type: 'POST',
@@ -30,7 +29,7 @@
                         text: response.message,
                         icon: 'success'
                     }).then(() => {
-                        window.location.href = "/Admin/Brand";
+                        window.location.href = "/Branch";
                     });
                 } else {
                     Swal.fire({

@@ -3,5 +3,45 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+@model IEnumerable<Finance_HD.Models.SysBranch>
 
+@{
+    ViewData["Title"] = "Chi nhánh";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-products-center justify-content-between">
+        <h2 class="m-0 font-weight-bold text-primary">@ViewData["Title"]</h2>
+        <div class="arrow">
+            <a class="btn btn-link btn-sm" href="/Admin/Supplier/Add">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="Table" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th hidden>Id</th>
+                    <th>STT</th>
+                    <th>Tên Nhà Cung Cấp</th>
+                    <th>Email</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Địa Chỉ</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/quanlysanpham/nhacungcap/index.js"></script>
+}

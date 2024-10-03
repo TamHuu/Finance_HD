@@ -4,10 +4,9 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", "targets": 0 },
-            { width: '100px', className: 'text-center', targets: [1, 11] },
-            { width: '250px', className: 'text-center', targets: [2] },
-            { width: '200px', className: 'text-center', targets: [2,3,4,5,6,7,8,9,10] },
-         
+            { width: '50px', className: 'text-center', targets: [1] },
+            { width: '200px', "orderable": false, "targets": [2, 3], className: 'text-left' },
+            { "orderable": false, "targets": [4, 5, 6, 7], className: 'text-center' }
         ],
         language: {
             "decimal": "",
@@ -34,7 +33,7 @@ $(document).ready(function () {
 });
 function loadDanhSach() {
     $.ajax({
-        url: "/Admin/ProductComment/GetListProductComment",
+        url: "/Branch/getListBranch",
         method: "GET",
         success: function (response) {
             if (response && response.data) {
@@ -81,7 +80,7 @@ function drawDanhSach(data) {
 function Edit(row) {
     var rowData = table.row($(row).parents('tr')).data();
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
-    window.open('/Admin/ProductComment/Edit?ma=' + firstCellValue, '_blank');
+    window.open('/Branch/Edit?ma=' + firstCellValue, '_blank');
 
 }
 
@@ -114,7 +113,7 @@ function handleDelete(cateId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Admin/ProductComment/Delete',  
+                url: '/Branch/Delete',
                 type: 'DELETE',
                 data: { id: cateId },
                 success: function (response) {
@@ -124,7 +123,7 @@ function handleDelete(cateId) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadDanhSach(); 
+                            loadDanhSach();
                         });
                     } else {
                         Swal.fire({

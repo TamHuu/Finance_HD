@@ -1,0 +1,79 @@
+﻿@model Finance_HD.Models.SysBranch
+
+@{
+    bool isEdit = Model.Ma == Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Thêm mới danh mục" : "Chỉnh sửa danh mục";
+    string formAction = isEdit ? "Add" : "Edit";
+}
+
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">@ViewData["Title"]</h5>
+    </div>
+    <div class="card-body">
+        <form id="productCategoryForm">
+            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" /> 
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Tên chi nhánh</label>
+                        <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Ten" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Code</label>
+                        <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Mã số thuế</label>
+                        <input type="text" class="form-control form-control-sm" id="MaSoThue" name="MaSoThue" required value="@Model.MaSoThue" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Pháp nhân</label>
+                        <input type="text" class="form-control form-control-sm" id="PhapNhan" name="PhapNhan" required value="@Model.PhapNhan" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Địa chỉ</label>
+                        <input type="text" class="form-control form-control-sm" id="DiaChi" name="DiaChi" required value="@Model.DiaChi" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Logo</label>
+                        <input type="file" class="form-control form-control-sm" id="Logo" name="Logo" required value="@Model.Logo" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Có sổ quỹ</label>
+                        <input type="text" class="form-control form-control-sm" id="CoSoQuy" name="CoSoQuy" required value="@Model.CoSoQuy" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Status">Trạng thái</label>
+                        <select class="form-control form-control-sm" id="Status" name="Status">
+                            <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                            <!option value="false" @(Model.Status == false ? "selected" : "")>Không hoạt động</!option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script defer src="/extendFE/quanlyhethong/chinhanh/form.js"></script>

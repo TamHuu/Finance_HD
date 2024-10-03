@@ -68,11 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\extendFE\hethongvaphanhoi\" />
-    <Folder Include="wwwroot\extendFE\quanlybaiviet\" />
-    <Folder Include="wwwroot\extendFE\quanlydonhang\" />
-    <Folder Include="wwwroot\extendFE\quanlygiaodien\" />
-    <Folder Include="wwwroot\extendFE\taikhoan\" />
+    <Folder Include="wwwroot\extendFE\quanlysanpham\" />
   </ItemGroup>
 
 </Project>
