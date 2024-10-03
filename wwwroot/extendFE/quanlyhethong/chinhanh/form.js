@@ -2,20 +2,26 @@
     $('#btnSave').on('click', function (e) {
         e.preventDefault();
 
-        var cateId = $('#CateId').val();
-        var name = $('#Name').val();
-        var seoTitle = $('#SeoTitle').val();
-        var sort = $('#Sort').val();
-        var status = $('#Status').val();
-
-        var url = cateId && cateId !== "0" ? '/Branch/Edit' : '/Branch/Add';
+        var ma = $('#Ma').val();  
+        var ten = $('#Name').val();         
+        var code = $('#Code').val();        
+        var maSoThue = $('#MaSoThue').val();
+        var phapNhan = $('#PhapNhan').val(); 
+        var diaChi = $('#DiaChi').val();   
+     /*   var logo = $('#Logo')[0].files[0]; */  
+        var coSoQuy = $('#CoSoQuy').val();
+        var status = $('#Status').val();   
+        var url = ma !== defaultUID ? '/Branch/Edit' : '/Branch/Add';
 
         var data = {
-            CateId: cateId,
-            Name: name,
-            SeoTitle: seoTitle,
-            Sort: sort,
-            Status: status
+            Ma: ma,
+            Ten: ten,
+            Code: code,
+            MaSoThue: maSoThue,
+            PhapNhan: phapNhan,
+            Status: status,
+            DiaChi: diaChi,
+            CoSoQuy: coSoQuy
         };
 
         $.ajax({

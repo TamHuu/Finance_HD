@@ -5,7 +5,7 @@ $(document).ready(function () {
         columnDefs: [
             { className: "d-none", "targets": 0 },
             { width: '50px', className: 'text-center', targets: [1] },
-            { width: '200px', "orderable": false, "targets": [2, 3], className: 'text-left' },
+            { width: '200px', "orderable": false, "targets": [2, 3], className: 'text-center' },
             { "orderable": false, "targets": [4, 5, 6, 7], className: 'text-center' }
         ],
         language: {
@@ -49,25 +49,30 @@ function loadDanhSach() {
 }
 function drawDanhSach(data) {
     table.clear().draw();
-    data.forEach(function (product, index) {
-        let tentrangthai = product.trangThai == true ? "Hoạt động" : "Hết hoạt động";
-        let ngay = formatDate(product.ngayTao);
-        console.log("ngày", product.ngayTao)
+    console.table(data)
+    data.forEach(function (branch, index) {
+        let ma = branch.ma;
+        let code = branch.code;
+        let tenchinhanh = branch.ten;
+        let cosoquy = branch.coSoQuy == true ? "Có" : "Không";
+        let diachi = branch.diaChi;
+        let masothue = branch.maSoThue;
+        let tentrangthai = branch.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
-            `<td>${product.ma}</td>`,
-            `<td>${index + 1}</td>`,
-            `<td>${product.tenDanhMuc}</td>`,
-            `<td>${product.tieuDeSeo}</td>`,
+            `<td>${ma}</td>`,
+            `<td>${code}</td>`,
+            `<td>${tenchinhanh}</td>`,
+            `<td>${cosoquy}</td>`,
+            `<td>${diachi}</td>`,
+            `<td>${masothue}</td>`,
             `<td>${tentrangthai}</td>`,
-            `<td>${product.sapXep}</td>`,
-            `<td>${ngay}</td>`
         ];
         let tdChucNang = `
     <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
         <i class="fas fa-edit"></i>
     </button>
     <span>|</span>
-    <button class="btn btn-danger btn-sm btnDelete" data-id="${product.ma}" title="Xóa">
+    <button class="btn btn-danger btn-sm btnDelete" data-id="${branch.ma}" title="Xóa">
                 <i class="fas fa-trash"></i>
     </button>
 

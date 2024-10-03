@@ -1,20 +1,21 @@
 ﻿@model Finance_HD.Models.SysBranch
 
 @{
-    bool isEdit = Model.Ma == Finance_HD.Helpers.CommonGuids.defaultUID;
-    ViewData["Title"] = isEdit ? "Thêm mới danh mục" : "Chỉnh sửa danh mục";
-    string formAction = isEdit ? "Add" : "Edit";
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa danh mục" : "Thêm mới danh mục";
+    string formAction = isEdit ? "Edit" : "Add";
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
 }
-
 
 <div class="card">
     <div class="card-header">
         <h5 class="mb-0">@ViewData["Title"]</h5>
     </div>
     <div class="card-body">
-        <form id="productCategoryForm">
-            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" /> 
-            
+        <form id="Form">
+            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+            <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" /> <!-- Thêm trường ẩn để truyền defaultUID -->
+
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
@@ -24,46 +25,49 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Name">Code</label>
+                        <label for="Code">Code</label>
                         <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Name">Mã số thuế</label>
-                        <input type="text" class="form-control form-control-sm" id="MaSoThue" name="MaSoThue" required value="@Model.MaSoThue" />
+                        <label for="MaSoThue">Mã số thuế</label>
+                        <input type="number" class="form-control form-control-sm" id="MaSoThue" name="MaSoThue" required value="@Model.MaSoThue" />
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Name">Pháp nhân</label>
+                        <label for="PhapNhan">Pháp nhân</label>
                         <input type="text" class="form-control form-control-sm" id="PhapNhan" name="PhapNhan" required value="@Model.PhapNhan" />
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Name">Địa chỉ</label>
+                        <label for="DiaChi">Địa chỉ</label>
                         <input type="text" class="form-control form-control-sm" id="DiaChi" name="DiaChi" required value="@Model.DiaChi" />
                     </div>
                 </div>
-                <div class="col-md-3">
+              @*   <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Name">Logo</label>
-                        <input type="file" class="form-control form-control-sm" id="Logo" name="Logo" required value="@Model.Logo" />
+                        <label for="Logo">Logo</label>
+                        <input type="file" class="form-control form-control-sm" id="Logo" name="Logo" />
                     </div>
-                </div>
+                </div> *@
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Name">Có sổ quỹ</label>
-                        <input type="text" class="form-control form-control-sm" id="CoSoQuy" name="CoSoQuy" required value="@Model.CoSoQuy" />
+                        <label for="CoSoQuy">Có sổ quỹ</label>
+                        <select class="form-control form-control-sm" id="CoSoQuy" name="CoSoQuy">
+                            <!option value="true" @(Model.CoSoQuy == true ? "selected" : "")>Có</!option>
+                            <!option value="false" @(!Model.CoSoQuy == true ? "selected" : "")>Không</!option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="Status">Trạng thái</label>
                         <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(Model.Status == false ? "selected" : "")>Không hoạt động</!option>
+                            <!option value="true" @(Model.Status==true ? "selected" : "")>Hoạt động</!option>
+                            <!option value="false" @(!Model.Status==true ? "selected" : "")>Không hoạt động</!option>
                         </select>
                     </div>
                 </div>
@@ -74,6 +78,15 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script defer src="/extendFE/quanlyhethong/chinhanh/form.js"></script>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/quanlyhethong/chinhanh/form.js"></script>
+    <script>
+        // Pass the isEdit variable to JavaScript
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var defaultUID = '@defaultUID'; // Truyền defaultUID vào JavaScript
+        console.log("Is Edit:", isEdit);
+        console.log("Default UID:", defaultUID);
+    </script>
+}
