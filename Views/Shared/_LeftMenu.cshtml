@@ -1,18 +1,28 @@
 ﻿<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-area="Admin" asp-controller="Home" asp-action="Index">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-area="Home" asp-controller="Home" asp-action="Index">
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Admin</div>
+        <div class="sidebar-brand-text mx-3">Home</div>
     </a>
 
     <hr class="sidebar-divider my-0">
 
-    <li class="nav-product active">
-        <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
+    <li class="nav-product">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
+        <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-product" asp-controller="Users" asp-action="Index">
+                    <i class="fas fa-money-bill-wave"></i> Tiền mặt
+                </a>
+                <a class="collapse-product" asp-controller="Users" asp-action="DetailCashFlow">
+                    <i class="fas fa-money-check-alt"></i> Chi tiết thu chi tiền mặt
+                </a>
+            </div>
+        </div>
     </li>
 
     <hr class="sidebar-divider">
@@ -20,24 +30,30 @@
     <li class="nav-product">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="true" aria-controls="collapseProducts">
             <i class="fas fa-box"></i>
-            <span>Quản Lý Sản Phẩm</span>
+            <span>Danh mục</span>
         </a>
         <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-product" asp-area="Admin" asp-controller="ProductCategory" asp-action="Index">
-                    <i class="fas fa-th-list"></i> Danh mục sản phẩm
+                <a class="collapse-product" asp-controller="ProductCategory" asp-action="Index">
+                    <i class="fas fa-th-list"></i> Loại tiền
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Product" asp-action="Index">
-                    <i class="fas fa-box"></i> Sản phẩm
+                <a class="collapse-product" asp-controller="Currency" asp-action="Index">
+                    <i class="fas fa-dollar-sign"></i> Tiền tệ
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="ProductComment" asp-action="Index">
-                    <i class="fas fa-comments"></i> Bình luận sản phẩm
+                <a class="collapse-product" asp-controller="IncomeExpenseType" asp-action="Index">
+                    <i class="fas fa-file-invoice-dollar"></i> Loại thu chi
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Supplier" asp-action="Index">
-                    <i class="fas fa-truck"></i> Nhà cung cấp
+                <a class="collapse-product" asp-controller="IncomeContent" asp-action="Index">
+                    <i class="fas fa-clipboard-list"></i> Nội dung thu chi
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Brand" asp-action="Index">
-                    <i class="fas fa-tag"></i> Thương hiệu
+                <a class="collapse-product" asp-controller="DocumentType" asp-action="Index">
+                    <i class="fas fa-file-alt"></i> Loại chứng từ
+                </a>
+                <a class="collapse-product" asp-controller="Department" asp-action="Index">
+                    <i class="fas fa-building"></i> Phòng ban
+                </a>
+                <a class="collapse-product" asp-controller="ExchangeRate" asp-action="Index">
+                    <i class="fas fa-chart-line"></i> Tỷ giá
                 </a>
             </div>
         </div>
@@ -48,21 +64,24 @@
     <li class="nav-product">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePosts" aria-expanded="true" aria-controls="collapsePosts">
             <i class="fas fa-pencil-alt"></i>
-            <span>Quản Lý Bài Viết</span>
+            <span>Sổ quỹ</span>
         </a>
         <div id="collapsePosts" class="collapse" aria-labelledby="headingPosts" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-product" asp-area="Admin" asp-controller="PostCategory" asp-action="Index">
-                    <i class="fas fa-th-list"></i> Danh mục bài viết
+                <a class="collapse-product" asp-controller="CashBookReport" asp-action="Index">
+                    <i class="fas fa-th-list"></i> Báo cáo sổ quỹ
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Post" asp-action="Index">
-                    <i class="fas fa-file-alt"></i> Bài viết
+                <a class="collapse-product" asp-controller="ExpenseRequest" asp-action="Index">
+                    <i class="fas fa-paper-plane"></i> Đề nghị chi
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="PostTag" asp-action="Index">
-                    <i class="fas fa-tags"></i> Thẻ bài viết
+                <a class="collapse-product" asp-controller="CashDeposit" asp-action="Index">
+                    <i class="fas fa-file-alt"></i> Bảng kê nộp tiền
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Tag" asp-action="Index">
-                    <i class="fas fa-tag"></i> Thẻ Tag
+                <a class="collapse-product" asp-controller="Receipt" asp-action="Index">
+                    <i class="fas fa-receipt"></i> Phiếu thu
+                </a>
+                <a class="collapse-product" asp-controller="PaymentVoucher" asp-action="Index">
+                    <i class="fas fa-file-invoice-dollar"></i> Phiếu chi
                 </a>
             </div>
         </div>
@@ -73,37 +92,21 @@
     <li class="nav-product">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrders" aria-expanded="true" aria-controls="collapseOrders">
             <i class="fas fa-shopping-cart"></i>
-            <span>Quản Lý Đơn Hàng</span>
+            <span>Phân phối</span>
         </a>
         <div id="collapseOrders" class="collapse" aria-labelledby="headingOrders" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-product" asp-area="Admin" asp-controller="Order" asp-action="Index">
-                    <i class="fas fa-shopping-cart"></i> Đơn hàng
+                <a class="collapse-product" asp-controller="Customer" asp-action="Index">
+                    <i class="fas fa-user"></i> Khách hàng
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="OrderDetail" asp-action="Index">
-                    <i class="fas fa-receipt"></i> Chi tiết đơn hàng
+                <a class="collapse-product" asp-controller="IncomeReport" asp-action="Index">
+                    <i class="fas fa-chart-bar"></i> Báo cáo thu tiền hàng
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Invoice" asp-action="Index">
-                    <i class="fas fa-file-invoice"></i> Hoá đơn
+                <a class="collapse-product" asp-controller="Revenue" asp-action="Index">
+                    <i class="fas fa-file-invoice-dollar"></i> Thu tiền hàng
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="InvoiceDetail" asp-action="Index">
-                    <i class="fas fa-file-invoice-dollar"></i> Chi tiết hoá đơn
-                </a>
-            </div>
-        </div>
-    </li>
-
-    <hr class="sidebar-divider">
-
-    <li class="nav-product">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
-            <i class="fas fa-users"></i>
-            <span>Quản Lý Người Dùng</span>
-        </a>
-        <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-product" asp-area="Admin" asp-controller="Users" asp-action="Index">
-                    <i class="fas fa-users"></i> Người dùng
+                <a class="collapse-product" asp-controller="WarningLimit" asp-action="Index">
+                    <i class="fas fa-exclamation-triangle"></i> Hạn mức cảnh báo
                 </a>
             </div>
         </div>
@@ -112,48 +115,38 @@
     <hr class="sidebar-divider">
 
     <li class="nav-product">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInterface" aria-expanded="true" aria-controls="collapseInterface">
-            <i class="fas fa-desktop"></i>
-            <span>Quản Lý Giao Diện</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBank" aria-expanded="true" aria-controls="collapseBank">
+            <i class="fas fa-university"></i>
+            <span>Ngân hàng</span>
         </a>
-        <div id="collapseInterface" class="collapse" aria-labelledby="headingInterface" data-parent="#accordionSidebar">
+        <div id="collapseBank" class="collapse" aria-labelledby="headingBank" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-product" asp-area="Admin" asp-controller="Slider" asp-action="Index">
-                    <i class="fas fa-images"></i> Slider
+                <a class="collapse-product" asp-controller="Bank" asp-action="Index">
+                    <i class="fas fa-university"></i> Ngân hàng
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Footer" asp-action="Index">
-                    <i class="fas fa-cogs"></i> Footer
+                <a class="collapse-product" asp-controller="BankAccount" asp-action="Index">
+                    <i class="fas fa-wallet"></i> Tài khoản ngân hàng
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Menu" asp-action="Index">
-                    <i class="fas fa-bars"></i> Menu
+                <a class="collapse-product" asp-controller="BankAccountType" asp-action="Index">
+                    <i class="fas fa-id-card"></i> Loại tài khoản
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Brand" asp-action="Index">
-                    <i class="fas fa-tag"></i> Brand
+                <a class="collapse-product" asp-controller="IdentifiedAccount" asp-action="Index">
+                    <i class="fas fa-user-tag"></i> Tài khoản định danh
                 </a>
-            </div>
-        </div>
-    </li>
-
-    <hr class="sidebar-divider">
-
-    <li class="nav-product">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSystem" aria-expanded="true" aria-controls="collapseSystem">
-            <i class="fas fa-cog"></i>
-            <span>Hệ Thống Và Phản Hồi</span>
-        </a>
-        <div id="collapseSystem" class="collapse" aria-labelledby="headingSystem" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-product" asp-area="Admin" asp-controller="About" asp-action="Index">
-                    <i class="fas fa-info-circle"></i> Thông tin giới thiệu
+                <a class="collapse-product" asp-controller="MBBank" asp-action="Index">
+                    <i class="fas fa-credit-card"></i> MBBANK
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Contact" asp-action="Index">
-                    <i class="fas fa-envelope"></i> Liên hệ
+                <a class="collapse-product" asp-controller="Vietcombank" asp-action="Index">
+                    <i class="fas fa-credit-card"></i> Vietcombank
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Config" asp-action="Index">
-                    <i class="fas fa-cog"></i> Cấu hình hệ thống
+                <a class="collapse-product" asp-controller="Vietinbank" asp-action="Index">
+                    <i class="fas fa-credit-card"></i> Vietinbank
                 </a>
-                <a class="collapse-product" asp-area="Admin" asp-controller="Feedback" asp-action="Index">
-                    <i class="fas fa-comments"></i> Phản hồi từ khách hàng
+                <a class="collapse-product" asp-controller="Sacombank" asp-action="Index">
+                    <i class="fas fa-credit-card"></i> Sacombank
+                </a>
+                <a class="collapse-product" asp-controller="BIDVBank" asp-action="Index">
+                    <i class="fas fa-credit-card"></i> BIDVBank
                 </a>
             </div>
         </div>
@@ -163,17 +156,36 @@
 
     <li class="nav-product">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccount" aria-expanded="true" aria-controls="collapseAccount">
-            <i class="fas fa-user"></i>
-            <span>Tài khoản</span>
+            <i class="fas fa-cogs"></i>
+            <span>Hệ thống</span>
         </a>
         <div id="collapseAccount" class="collapse" aria-labelledby="headingAccount" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-product" asp-area="Admin" asp-controller="Account" asp-action="Index">
-                    <i class="fas fa-user-circle"></i> Thông tin cá nhân
+                <a class="collapse-product" asp-controller="Menu" asp-action="Index">
+                    <i class="fas fa-th-list"></i> Menu
+                </a>
+                <a class="collapse-product" asp-controller="Permissions" asp-action="Index">
+                    <i class="fas fa-user-lock"></i> Quyền
+                </a>
+                <a class="collapse-product" asp-controller="Role" asp-action="Index">
+                    <i class="fas fa-key"></i> Role
+                </a>
+                <a class="collapse-product" asp-controller="Branch" asp-action="Index">
+                    <i class="fas fa-building"></i> Chi nhánh
+                </a>
+                <a class="collapse-product" asp-controller="Report" asp-action="Index">
+                    <i class="fas fa-file-alt"></i> Danh sách báo cáo
+                </a>
+                <a class="collapse-product" asp-controller="Users" asp-action="Index">
+                    <i class="fas fa-users"></i> Người dùng
+                </a>
+                <a class="collapse-product" asp-controller="LoginHistory" asp-action="Index">
+                    <i class="fas fa-history"></i> Lịch sử đăng nhập
                 </a>
             </div>
         </div>
     </li>
+
 
     <hr class="sidebar-divider d-none d-md-block">
 
