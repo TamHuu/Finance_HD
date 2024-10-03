@@ -2,7 +2,7 @@
 
 namespace Finance_HD.Controllers.ChungTu
 {
-    public class CashTransactionDetail_Controller : Controller
+    public class CashTransactionDetailController : Controller
     {
         public IActionResult Index()
         {
