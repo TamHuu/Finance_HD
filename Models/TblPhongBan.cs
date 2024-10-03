@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Finance_HD.Models.HDEntity;
+namespace Finance_HD.Models;
 
 public partial class TblPhongBan
 {
