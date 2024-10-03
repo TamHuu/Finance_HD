@@ -4,9 +4,10 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", "targets": 0 },
-            { width: '50px', className: 'text-center', targets: [1] },
-            { width: '200px', "orderable": false, "targets": [2, 3], className: 'text-center' },
-            { "orderable": false, "targets": [4, 5, 6, 7], className: 'text-center' }
+            { width: '100px', className: 'text-center', targets: [1,3,6,7] },
+            { width: '150px', className: 'text-center', targets: [5] },
+            { width: '300px', "orderable": false, "targets": [2,4], className: 'text-left' },
+   
         ],
         language: {
             "decimal": "",
@@ -72,7 +73,7 @@ function drawDanhSach(data) {
         <i class="fas fa-edit"></i>
     </button>
     <span>|</span>
-    <button class="btn btn-danger btn-sm btnDelete" data-id="${branch.ma}" title="Xóa">
+    <button class="btn btn-danger btn-sm btnDelete" data-id="${ma}" title="Xóa">
                 <i class="fas fa-trash"></i>
     </button>
 
@@ -92,14 +93,15 @@ function Edit(row) {
 
 $('#Table').on('click', '.btnDelete', function (e) {
     e.preventDefault();
-    var cateId = $(this).data('id');
-    console.log("id", cateId);
-    handleDelete(cateId);
+    var Id = $(this).data('id');
+  
+    handleDelete(Id);
 });
 
 
-function handleDelete(cateId) {
-    if (!cateId || cateId === "0") {
+function handleDelete(Id) {
+    console.log("id", Id);
+    if (!Id || Id === "0") {
         Swal.fire({
             title: 'Lỗi!',
             text: 'Không có danh mục để xoá.',
@@ -120,7 +122,7 @@ function handleDelete(cateId) {
             $.ajax({
                 url: '/Branch/Delete',
                 type: 'DELETE',
-                data: { id: cateId },
+                data: { Id: Id },
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({

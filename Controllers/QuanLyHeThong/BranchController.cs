@@ -1,4 +1,5 @@
-﻿using Finance_HD.Models;
+﻿using Finance_HD.Helpers;
+using Finance_HD.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance_HD.Controllers.QuanLyHeThong
@@ -72,5 +73,54 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             return Json(new { success = true, message = "Chi nhánh đã được thêm thành công!" });
         }
 
+        [HttpGet]
+        public IActionResult Edit(string Ma)
+        {
+            var branch = _dbContext.SysBranch.FirstOrDefault(c => c.Ma == Ma.GetGuid());
+            if (branch == null)
+            {
+                return NotFound();
+            }
+            return View("Form", branch);
+        }
+        [HttpPost]
+        public JsonResult Edit(SysBranch model)
+        {
+            var branch = _dbContext.SysBranch.FirstOrDefault(x => x.Ma == model.Ma);
+            if (branch == null)
+            {
+                return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
+            }
+
+            // Cập nhật các thuộc tính
+            branch.Ten = model.Ten;
+            branch.Code = model.Code;
+            branch.MaSoThue = model.MaSoThue;
+            branch.PhapNhan = model.PhapNhan;
+            branch.DiaChi = model.DiaChi;
+            branch.CoSoQuy = model.CoSoQuy;
+            branch.Status = model.Status;
+            branch.UserModified = model.UserModified;
+            branch.ModifiedDate = DateTime.Now;
+
+            _dbContext.SysBranch.Update(branch);
+            _dbContext.SaveChanges();
+
+            return Json(new { success = true, message = "Cập nhật chi nhánh thành công!" });
+        }
+        [HttpDelete]
+        public IActionResult Delete(string Id)
+        {
+            var branch = _dbContext.SysBranch.FirstOrDefault(x => x.Ma == Id.GetGuid());
+            if (branch == null)
+            {
+                return Json(new { success = false, message = "Sản phẩm không tồn tại!" });
+            }
+
+            _dbContext.SysBranch.Remove(branch);
+            _dbContext.SaveChanges();
+
+            return Json(new { success = true, message = "Xoá sản phẩm thành công!" });
+        }
     }
 }
