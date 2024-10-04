@@ -100,6 +100,8 @@ namespace Finance_HD.Models
 
         public virtual DbSet<VPermission> VPermission { get; set; }
 
+        public virtual DbSet<TblBan> TblBan { get; set; }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -829,7 +831,21 @@ namespace Finance_HD.Models
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
                 entity.Property(e => e.Ten).HasMaxLength(500);
             });
+            modelBuilder.Entity<TblBan>(entity =>
+            {
+                entity.HasKey(e => e.Ma);
 
+                entity.ToTable("tbl_Ban");
+
+                entity.Property(e => e.Ma).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+                entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+                entity.Property(e => e.Ten).HasMaxLength(500);
+            });
             modelBuilder.Entity<TblTyGia>(entity =>
             {
                 entity.HasKey(e => e.Ma);

@@ -1,0 +1,99 @@
+﻿@model Finance_HD.Models.TblPhongBan
+
+@{
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa phòng ban" : "Thêm mới phòng ban";
+    string formAction = isEdit ? "Edit" : "Add";
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+    var chinhanhs = ViewData["listCN"] as List<Finance_HD.Models.SysBranch>;
+    var bans = ViewData["listBan"] as List<Finance_HD.Models.TblBan>;
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">@ViewData["Title"]</h5>
+    </div>
+    <div class="card-body">
+    <form id="Form">
+    <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+    <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" /> 
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="Code">Code</label>
+                <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="Branch">Tên chi nhánh:</label>
+                <select class="form-control" id="Branch" name="Branch">
+                    @foreach (var cn in chinhanhs)
+                    {
+                        <option value="@cn.Ma">@cn.Ten</option>
+                    }
+                </select>
+            </div>
+        </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Branch">Tên ban:</label>
+                        <select class="form-control" id="Branch" name="Branch">
+                            @foreach (var ban in bans)
+                            {
+                                <option value="@ban.Ma">@ban.Ten</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="Ten">Tên phòng</label>
+                <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="Ban">Ban</label>
+                <div>
+                    <input type="checkbox" id="Ban" name="Ban" value="true" @(Model.Ban == true ? "checked" : "") />
+                    <label for="Ban">Có</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="CoSoQuy">Có sổ quỹ</label>
+                <div>
+                    <input type="checkbox" id="CoSoQuy" name="CoSoQuy" value="true" @(Model.CoSoQuy == true ? "checked" : "") />
+                    <label for="CoSoQuy">Có</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="Status">Trạng thái</label>
+                <select class="form-control form-control-sm" id="Status" name="Status">
+                    <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                    <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+</form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/danhmuc/phongban/form.js"></script>
+    <script>
+        var defaultUID = '@defaultUID'; 
+        console.log("Default UID:", defaultUID);
+    </script>
+}
