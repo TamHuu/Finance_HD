@@ -5,8 +5,8 @@
     ViewData["Title"] = isEdit ? "Chỉnh sửa phòng ban" : "Thêm mới phòng ban";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
-    var chinhanhs = ViewData["listCN"] as List<Finance_HD.Models.SysBranch>;
-    var bans = ViewData["listBan"] as List<Finance_HD.Models.TblBan>;
+
+
 }
 
 <div class="card">
@@ -28,28 +28,21 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="Branch">Tên chi nhánh:</label>
-                <select class="form-control" id="Branch" name="Branch">
-                    @foreach (var cn in chinhanhs)
-                    {
-                        <option value="@cn.Ma">@cn.Ten</option>
-                    }
+                <select class="form-control" id="Branch" name="Branch" >
                 </select>
             </div>
         </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Branch">Tên ban:</label>
-                        <select class="form-control" id="Branch" name="Branch">
-                            @foreach (var ban in bans)
-                            {
-                                <option value="@ban.Ma">@ban.Ten</option>
-                            }
+                        <label for="Division">Tên ban:</label>
+                        <select class="form-control" id="Division" name="Division">
+                          
                         </select>
                     </div>
                 </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="Ten">Tên phòng</label>
+                <label for="Ten">Tên phòng ban</label>
                 <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" />
             </div>
         </div>

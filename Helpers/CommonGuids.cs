@@ -4,29 +4,47 @@ namespace Finance_HD.Helpers
 {
     public class CommonGuids
     {
-        public static readonly Guid defaultUID = Guid.Empty; // Có thể thay đổi giá trị nếu cần
+        // Thay đổi giá trị của defaultUID
+        public static Guid defaultUID = new Guid(); // Hoặc Guid.Parse("00000000-0000-0000-0000-000000000000");
     }
 
-    public static class GuidExtensions // Đổi tên lớp để phản ánh rằng đây là lớp mở rộng
+    public static class GuidExtensions
     {
+        public static bool IsEmpty(this string? str)
+        {
+            return string.IsNullOrEmpty(str); // Sử dụng hàm có sẵn để kiểm tra chuỗi rỗng
+        }
+
         public static Guid GetGuid(this string? str)
         {
-            if (string.IsNullOrEmpty(str)) // Kiểm tra xem chuỗi có null hoặc rỗng không
+            if (str.IsEmpty()) // Nếu chuỗi rỗng hoặc null
             {
-                return CommonGuids.defaultUID; // Trả về defaultUID nếu chuỗi rỗng
+                return CommonGuids.defaultUID; // Trả về GUID mặc định
             }
 
             try
             {
-                return Guid.Parse(str); // Chuyển đổi chuỗi thành Guid
+                return Guid.Parse(str); // Cố gắng chuyển đổi chuỗi thành GUID
             }
-            catch (FormatException) // Bắt lỗi cụ thể cho định dạng không hợp lệ
+            catch (FormatException) // Xử lý lỗi định dạng không hợp lệ
             {
-                return CommonGuids.defaultUID; // Trả về defaultUID nếu chuỗi không thể chuyển đổi
+                return CommonGuids.defaultUID; // Trả về GUID mặc định khi lỗi xảy ra
             }
-            catch (Exception) // Bắt tất cả các loại lỗi khác
+            catch (Exception) // Xử lý các lỗi khác
             {
-                return CommonGuids.defaultUID; // Trả về defaultUID cho mọi lỗi khác
+                return CommonGuids.defaultUID; // Trả về GUID mặc định cho bất kỳ lỗi nào
+            }
+        }
+
+        public static Guid? GetGuidNull(this string? str)
+        {
+            try
+            {
+                return str.IsEmpty() ? null : Guid.Parse(str); // Nếu chuỗi rỗng trả về null
+            }
+            catch
+            {
+                return null; // Trả về null khi xảy ra lỗi
             }
         }
     }

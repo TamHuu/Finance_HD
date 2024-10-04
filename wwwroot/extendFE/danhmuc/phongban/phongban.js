@@ -4,8 +4,9 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", "targets": 0 },
-            { width: '40px', className: 'text-left', targets: [1,2,3,4] },
-            { width: '150px', className: 'text-center', targets: [6,7,8,9] },
+            { width: '100px', className: 'text-left', targets: [1] },
+            { width: '200px', className: 'text-left', targets: [2,3,4] },
+            { width: '150px', className: 'text-center', targets: [5,6,7,8] },
         ],
         language: {
             "decimal": "",
@@ -48,21 +49,22 @@ function loadDanhSach() {
 }
 function drawDanhSach(data) {
     table.clear().draw();
-    console.table(data)
-    data.forEach(function (department, index) {
-        let ma = department.ma;
+    console.log("data",data)
+    data.forEach(function (department, index) {   
+        let ma = department.maPhongBan;
         let code = department.code;
-        let tenphongban = department.name;
-        let tenchinhanh = department.name;
-        let chopheptruycapform = department.formAccess == true ? "Có" : "Không";
-        let mota = department.description;
+        let tenphongban = department.tenPhongBan;
+        let tenchinhanh = department.tenChiNhanh;
+        let tenban = department.tenBan ?? "";
         let tentrangthai = department.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
             `<td>${code}</td>`,
-            `<td>${ten}</td>`,
-            `<td>${mota}</td>`,
-            `<td>${chopheptruycapform}</td>`,
+            `<td>${tenchinhanh}</td>`,
+            `<td>${tenban}</td>`,
+            `<td>${tenphongban}</td>`,
+            `<td>${department.isBan==true ? '<span class="checkmark">✔️</span>' : '<span class="crossmark">❌</span>'}</td>`,
+            `<td>${department.isCoSoQuy==true ? '<span class="checkmark">✔️</span>' : '<span class="crossmark">❌</span>'}</td>`,
             `<td>${tentrangthai}</td>`,
         ];
         let tdChucNang = `
@@ -86,16 +88,12 @@ function Edit(row) {
     window.open('/Department/Edit?ma=' + firstCellValue, '_blank');
 
 }
-
-
 $('#Table').on('click', '.btnDelete', function (e) {
     e.preventDefault();
     var Id = $(this).data('id');
 
     handleDelete(Id);
 });
-
-
 function handleDelete(Id) {
     console.log("id", Id);
     if (!Id || Id === "0") {
@@ -149,9 +147,7 @@ function handleDelete(Id) {
         }
     });
 }
-
 function formatDate(date) {
-
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');

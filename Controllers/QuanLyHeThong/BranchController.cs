@@ -125,5 +125,24 @@ namespace Finance_HD.Controllers.QuanLyHeThong
 
             return Json(new { success = true, message = "Xoá sản phẩm thành công!" });
         }
+
+        [HttpGet]
+        public JsonResult LoadDanhSachBanTheoChiNhanh()
+        {
+            var listCN = (from chinhanh in _dbContext.SysBranch
+                         join ban in _dbContext.TblBan
+                         on chinhanh.Ma equals ban.MaChiNhanh into banGroup
+                         from ban in banGroup.DefaultIfEmpty() 
+                         select new
+                         {
+                             MaChiNhanh = chinhanh.Ma,
+                             TenChiNhanh = chinhanh.Ten,
+                             MaBan = ban != null ? ban.Ma : (Guid?)null, 
+                             TenBan = ban != null ? ban.Ten : "" ,
+                         }).ToList();
+
+            return Json(new { Data = listCN });
+        }
+
     }
 }
