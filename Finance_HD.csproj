@@ -68,7 +68,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\extendFE\quanlysanpham\" />
+    <Content Update="Views\Permissions\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Permissions\Form.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Permissions\Form.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -117,7 +117,10 @@ namespace Finance_HD.Controllers.QuanLyHeThong
                 return Json(new { success = false, message = "Sản phẩm không tồn tại!" });
             }
 
-            _dbContext.SysBranch.Remove(branch);
+            branch.Deleted = true;  // Đánh dấu đã bị xoá
+            branch.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
+
+            _dbContext.SysBranch.Update(branch);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Xoá sản phẩm thành công!" });
