@@ -3,11 +3,12 @@ let table;
 $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
-            { className: "d-none", "targets": 0 },
-            { width: '40px', className: 'text-left', targets: [1] },
-            { width: '300px', className: 'text-left', targets: [2,3] },
-            { width: '150px', className: 'text-center', targets: [4,5] },
+            { className: "d-none", targets: 0, orderable: false },
+            { width: '40px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
+            { width: '300px', className: 'dt-left dt-head-center', targets: [2, 3], orderable: false },
+            { width: '150px', className: 'text-center', targets: [4, 5], orderable: false },
         ],
+
         language: {
             "decimal": "",
             "emptyTable": "Không có dữ liệu trong bảng",

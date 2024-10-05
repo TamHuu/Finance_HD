@@ -1,0 +1,72 @@
+﻿@model Finance_HD.Models.SysMenu
+
+@{
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa báo cáo" : "Thêm mới báo cáo";
+    string formAction = isEdit ? "Edit" : "Add";
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+    // var menus = ViewData["listMenu"] as List<Finance_HD.Models.SysMenu>;
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">@ViewData["Title"]</h5>
+    </div>
+    <div class="card-body">
+        <form id="Form">
+            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Name">Tên </label>
+                        <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Name" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Code">Code</label>
+                        <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+                    </div>
+                </div>
+              @*   <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Menu">Tên menu:</label>
+                        <select class="form-control" id="Menu" name="Menu">
+                            @foreach (var menu in menus)
+                            {
+                                <option value="@menu.Ma">@menu.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div> *@
+               
+               
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="Status">Trạng thái</label>
+                        <select class="form-control form-control-sm" id="Status" name="Status">
+                            <!option value="true" @(Model.Status==true ? "selected" : "")>Hoạt động</!option>
+                            <!option value="false" @(!Model.Status==true ? "selected" : "")>Không hoạt động</!option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/quanlyhethong/menu/form.js"></script>
+    <script>
+        // Pass the isEdit variable to JavaScript
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var defaultUID = '@defaultUID'; // Truyền defaultUID vào JavaScript
+        console.log("Is Edit:", isEdit);
+        console.log("Default UID:", defaultUID);
+    </script>
+}

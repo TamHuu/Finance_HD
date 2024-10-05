@@ -4,10 +4,8 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '100px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
-            { width: '400px', className: 'dt-left dt-head-center', targets: [2, 3], orderable: false },
-            { width: '230px', className: 'text-center', targets: [4], orderable: false },
-            { width: '150px', className: 'text-center', targets: [5, 6], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], orderable: false },
+            { width: '150px', className: 'text-center', targets: [12], orderable: false },
         ],
 
         language: {
@@ -35,7 +33,7 @@ $(document).ready(function () {
 });
 function loadDanhSach() {
     $.ajax({
-        url: "/permissions/getListPermission",
+        url: "/Menu/getListMenu",
         method: "GET",
         success: function (response) {
             if (response && response.data) {
@@ -52,19 +50,25 @@ function loadDanhSach() {
 function drawDanhSach(data) {
     table.clear().draw();
     console.table(data)
-    data.forEach(function (permission, index) {
-        let ma = permission.ma;
-        let code = permission.code;
-        let ten = permission.name;
-        let chopheptruycapform = permission.formAccess == true ? "Có" : "Không";
-        let mota = permission.description;
-        let tentrangthai = permission.status == true ? "Hoạt động" : "Hết hoạt động";
+    data.forEach(function (branch, index) {
+        let ma = branch.ma;
+        let code = branch.code;
+        let tenchinhanh = branch.ten;
+        let cosoquy = branch.coSoQuy == true ? "Có" : "Không";
+        let diachi = branch.diaChi;
+        let masothue = branch.maSoThue;
+        let tentrangthai = branch.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
             `<td>${code}</td>`,
-            `<td>${ten}</td>`,
-            `<td>${mota}</td>`,
-            `<td>${chopheptruycapform}</td>`,
+            `<td>${tenchinhanh}</td>`,
+            `<td>${cosoquy}</td>`,
+            `<td>${diachi}</td>`,
+            `<td>${masothue}</td>`,
+            `<td>${masothue}</td>`,
+            `<td>${masothue}</td>`,
+            `<td>${masothue}</td>`,
+            `<td>${masothue}</td>`,
             `<td>${tentrangthai}</td>`,
         ];
         let tdChucNang = `
@@ -85,7 +89,7 @@ function drawDanhSach(data) {
 function Edit(row) {
     var rowData = table.row($(row).parents('tr')).data();
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
-    window.open('/Permissions/Edit?ma=' + firstCellValue, '_blank');
+    window.open('/Menu/Edit?ma=' + firstCellValue, '_blank');
 
 }
 
@@ -119,7 +123,7 @@ function handleDelete(Id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Permissions/Delete',
+                url: '/Menu/Delete',
                 type: 'DELETE',
                 data: { Id: Id },
                 success: function (response) {
