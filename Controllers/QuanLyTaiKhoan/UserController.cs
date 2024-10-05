@@ -47,7 +47,7 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                                CreatedDate= DateTime.Now,
                            })
                            
-                      .OrderByDescending(role => role.CreatedDate)
+                             .OrderByDescending(role => role.CreatedDate)
                              .ToList();
 
             return Json(new { success = true, Data = listUser });
@@ -68,9 +68,29 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
 
             if (string.IsNullOrWhiteSpace(model.Username))
             {
-                return Json(new { success = false, message = "Tên người dùng không được để trống!" });
+                return Json(new { success = false, message = "Tên đăng nhập không được để trống!" });
             }
-
+            if (string.IsNullOrWhiteSpace(model.Password))
+            {
+                return Json(new { success = false, message = "Mật khẩu không được để trống!" });
+            }
+            if (string.IsNullOrWhiteSpace(model.FullName))
+            {
+                return Json(new { success = false, message = "Họ tên không được để trống!" });
+            }
+            if (model.BranchId == Guid.Empty)
+            {
+                return Json(new { success = false, message = "Chi nhánh không được để trống!" });
+            }
+            if (model.MaPhongBan == Guid.Empty)
+            {
+                return Json(new { success = false, message = "Phòng ban không được để trống!" });
+            }
+            if (!model.NgaySinh.HasValue)
+            {
+                return Json(new { success = false, message = "Ngày sinh không được để trống!" });
+            }
+          
             var existingUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == model.Username);
             if (existingUser != null)
             {

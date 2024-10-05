@@ -86,35 +86,60 @@ function loadChiNhanh() {
 function getListChiNhanh(data) {
     var branchSelect = $('#Branch');
     branchSelect.empty();
-
     data.forEach(function (branch) {
-        branchSelect.append($('<option>', {
+        let select = $('<option>', {
             value: branch.ma,
-            text: branch.ten
-        }));
+            text: branch.ten,
+        });
+
+        if (branch.ma == maCN) {
+            select.attr('selected', true);
+        }
+        branchSelect.append(select);
     });
 
+    var selectedBranch = branchSelect.val();
+    loadBan(selectedBranch);
+    changeSelectBranch(branchSelect);
+}
+
+function changeSelectBranch(branchSelect) {
     branchSelect.on('change', function () {
         var selectedBranch = $(this).val();
+        console.log("Chi nhánh đã chọn:", selectedBranch);
         loadBan(selectedBranch);
     });
 }
 
 function loadBan(selectedBranch) {
     $.ajax({
-        url: "/Division/getListDivision", 
+        url: "/Division/getListDivision",
         type: 'GET',
         success: function (response) {
             var DivisionData = response.data;
             var DivisionSelect = $('#Division');
             DivisionSelect.empty();
             let listBan = DivisionData.filter(item => item.maChiNhanh == selectedBranch);
+
             listBan.forEach(function (item) {
-                DivisionSelect.append($('<option>', {
+                let option = $('<option>', {
                     value: item.ma,
-                    text: item.ten
-                }));
+                    text: item.ten,
+                });
+
+                if (item.ma === MaBan) {
+                    option.attr('selected', true);
+                }
+
+                DivisionSelect.append(option);
             });
+
+            if (DivisionSelect.children().length === 0) {
+                DivisionSelect.append($('<option>', {
+                    value: '',
+                    text: 'Không có ban nào.',
+                }));
+            }
         },
         error: function (error) {
             Swal.fire({

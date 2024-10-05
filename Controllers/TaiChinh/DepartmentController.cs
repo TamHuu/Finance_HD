@@ -106,6 +106,7 @@ namespace Finance_HD.Controllers.TaiChinh
 
             department.Ma = model.Ma;
             department.Code = model.Code;
+            department.MaBan = model.MaBan;
             department.Ten = model.Ten;
             department.Ban = model.Ban;
             department.CoSoQuy = model.CoSoQuy;
