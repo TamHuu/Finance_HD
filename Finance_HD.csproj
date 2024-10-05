@@ -88,6 +88,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="Views\Report\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Views\Role\Form.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -108,11 +112,16 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\Permissions\Form.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Report\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Users\Form.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\Users\Form.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Report\Form.cshtml" />
   </ItemGroup>
 
 </Project>
