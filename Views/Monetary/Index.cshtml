@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Finance_HD.Models.FaLoaiTien>
+﻿@model IEnumerable<Finance_HD.Models.FiaTienTe>
 
 @{
-    ViewData["Title"] = "Loại tiền";
+    ViewData["Title"] = "Tiền tệ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,7 +9,7 @@
     <div class="card-header py-3 d-flex flex-row align-products-center justify-content-between">
         <h2 class="m-0 font-weight-bold text-primary">@ViewData["Title"]</h2>
         <div class="arrow">
-            <a class="btn btn-link btn-sm" href="/Currency/Add">
+            <a class="btn btn-link btn-sm" href="/Monetary/Add">
                 <i class="fas fa-plus"></i>
             </a>
         </div>
@@ -21,7 +21,6 @@
                     <th hidden>Mã</th>
                     <th>CODE</th>
                     <th>TÊN </th>
-                    <th>TIỀN TỆ</th>
                     <th>TRẠNG THÁI</th>
                     <th>CHỨC NĂNG</th>
                 </tr>
@@ -56,7 +55,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script defer src="/extendFE/danhmuc/loaitien/loaitien.js"></script>
+    <script defer src="/extendFE/danhmuc/tiente/tiente.js"></script>
     <style>
         #Table {
             font-size: 12px;

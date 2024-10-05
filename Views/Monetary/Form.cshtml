@@ -1,11 +1,10 @@
-﻿@model Finance_HD.Models.FaLoaiTien
+﻿@model Finance_HD.Models.FiaTienTe
 
 @{
     bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
-    ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
+    ViewData["Title"] = isEdit ? "Chỉnh sửa " : "Thêm mới ";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
-    var lisTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
 }
 
 <div class="card">
@@ -19,19 +18,8 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="Monetary">Tên tiền tệ:</label>
-                        <select class="form-control" id="Monetary" name="Monetary">
-                            @foreach (var item in lisTienTe)
-                            {
-                                <option value="@item.Ma">@item.Ten</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="GiaTri">Nhập giá trị </label>
-                        <input type="text" class="form-control form-control-sm" id="GiaTri" name="GiaTri" required value="@Model.GiaTri" />
+                        <label for="Ten">Tên </label>
+                        <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" />
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -40,8 +28,7 @@
                         <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
                     </div>
                 </div>
-              
-               
+                
                
                 <div class="col-md-3">
                     <div class="form-group">
@@ -62,11 +49,12 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script defer src="/extendFE/danhmuc/loaitien/form.js"></script>
+    <script defer src="/extendFE/danhmuc/tiente/form.js"></script>
     <script>
-      
+        // Pass the isEdit variable to JavaScript
         var isEdit = @Html.Raw(Json.Serialize(isEdit));
-        var defaultUID = '@defaultUID'; 
-      
+        var defaultUID = '@defaultUID'; // Truyền defaultUID vào JavaScript
+        console.log("Is Edit:", isEdit);
+        console.log("Default UID:", defaultUID);
     </script>
 }
