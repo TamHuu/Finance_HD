@@ -68,6 +68,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Currency\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Views\Department\Form.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -123,6 +127,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Currency\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Permissions\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Report\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\User\Form.cshtml" />
@@ -134,6 +139,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\Report\Form.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Currency\Form.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
 namespace Finance_HD.Controllers.TaiChinh
 {
-    public class ProductCategoryController : Controller
+    public class MonetaryController : Controller
     {
         public IActionResult Index()
         {
