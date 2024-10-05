@@ -87,6 +87,7 @@ namespace Finance_HD.Models
         public virtual DbSet<SysVariable> SysVariable { get; set; }
 
         public virtual DbSet<TblChucVu> TblChucVu { get; set; }
+        public virtual DbSet<TblChucDanh> TblChucDanh { get; set; }
 
         public virtual DbSet<TblDanhSachBaoCao> TblDanhSachBaoCao { get; set; }
 
@@ -771,7 +772,21 @@ namespace Finance_HD.Models
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
                 entity.Property(e => e.Ten).HasMaxLength(500);
             });
+            modelBuilder.Entity<TblChucDanh>(entity =>
+            {
+                entity.HasKey(e => e.Ma);
 
+                entity.ToTable("tbl_ChucDanh");
+
+                entity.Property(e => e.Ma).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+                entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+                entity.Property(e => e.Ten).HasMaxLength(500);
+            });
             modelBuilder.Entity<TblDanhSachBaoCao>(entity =>
             {
                 entity.HasKey(e => e.Ma).HasName("PK_tbl_DanhSachBaoCao_1");

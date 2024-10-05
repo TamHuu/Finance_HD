@@ -84,6 +84,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="Views\LoginHistory\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Views\Menu\Form.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -108,7 +112,7 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="Views\Users\Index.cshtml">
+    <Content Update="Views\User\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -121,11 +125,11 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\Permissions\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Report\Form.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Users\Form.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\User\Form.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Users\Form.cshtml" />
+    <UpToDateCheckInput Remove="Views\User\Form.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
