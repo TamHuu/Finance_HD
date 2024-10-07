@@ -1,0 +1,93 @@
+﻿@model Finance_HD.Models.CatNoiDungThuChi
+
+@{
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
+    string formAction = isEdit ? "Edit" : "Add";
+    var lisLoaiThuChi = ViewData["listLoaiThuChi"] as List<Finance_HD.Models.CatLoaiThuChi>;
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">@ViewData["Title"]</h5>
+    </div>
+    <div class="card-body">
+<form id="Form">
+    <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+
+    <div class="row">
+        <!-- Code Field -->
+        <div class="col-md-6 col-lg-4">
+            <div class="form-group">
+                <label for="Code">Mã Code</label>
+                <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+            </div>
+        </div>
+
+        <!-- Ten Field -->
+        <div class="col-md-6 col-lg-4">
+            <div class="form-group">
+                <label for="Ten">Tên</label>
+                <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" />
+            </div>
+        </div>
+
+        <!-- Loai Thu Chi Field -->
+        <div class="col-md-6 col-lg-4">
+            <div class="form-group">
+                <label for="LoaiThuChi">Loại thu chi</label>
+                <select class="form-control form-control-sm" id="LoaiThuChi" name="LoaiThuChi">
+                    @foreach (var item in lisLoaiThuChi)
+                    {
+                        <!option value="@item.Ma" @(Model.MaLoaiThuChi == item.Ma ? "selected" : "")>@item.Ten</!option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Noi Bo Checkbox -->
+   <div class="col-md-6 col-lg-4">
+    <div class="form-group">
+        <label for="NoiBo">Nội bộ</label>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="NoiBo" name="NoiBo" value="@((Model.NoiBo ?? false) ? "1" : "0")" @((Model.NoiBo ?? false) ? "checked" : "") />
+            <label class="form-check-label" for="NoiBo">Nội bộ</label>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Status Dropdown -->
+        <div class="col-md-6 col-lg-4">
+            <div class="form-group">
+                <label for="Status">Trạng thái</label>
+                <select class="form-control form-control-sm" id="Status" name="Status">
+                    <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                    <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12 text-center">
+            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+        </div>
+    </div>
+</form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/danhmuc/cacnoidungthuchi/form.js"></script>
+    <script>
+
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var defaultUID = '@defaultUID';
+
+    </script>
+}

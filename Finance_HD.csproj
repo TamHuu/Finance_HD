@@ -96,6 +96,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="Views\IncomeContent\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Views\IncomeExpenseType\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -146,6 +150,7 @@
     <_ContentIncludedByDefault Remove="Views\Currency\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\DocumentType\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\ExchangeRate\Form.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\IncomeContent\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\IncomeExpenseType\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Monetary\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Permissions\Form.cshtml" />
@@ -179,6 +184,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\DocumentType\Form.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\IncomeContent\Form.cshtml" />
   </ItemGroup>
 
 </Project>
