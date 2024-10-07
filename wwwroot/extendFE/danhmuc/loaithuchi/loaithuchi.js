@@ -4,11 +4,10 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
-            { width: '600px', className: 'dt-left dt-head-center', targets: [2, 3, 4], orderable: false },
-            { width: '100px', className: 'text-center', targets: [5, 6, 7, 8], orderable: false },
+            { width: '600px', className: 'dt-left dt-head-center', targets: [1, 2], orderable: false },
+            { width: '100px', className: 'text-center', targets: [3,4], orderable: false },
         ],
-
+        sorting: true, 
         language: {
             "decimal": "",
             "emptyTable": "Không có dữ liệu trong bảng",
@@ -34,7 +33,7 @@ $(document).ready(function () {
 });
 function loadDanhSach() {
     $.ajax({
-        url: "/Department/getListDepartment",
+        url: "/IncomeExpenseType/getListIncomeExpenseType",
         method: "GET",
         success: function (response) {
             if (response && response.data) {
@@ -51,21 +50,15 @@ function loadDanhSach() {
 function drawDanhSach(data) {
     table.clear().draw();
     console.log("data",data)
-    data.forEach(function (department, index) {   
-        let ma = department.maPhongBan;
-        let code = department.code;
-        let tenphongban = department.tenPhongBan;
-        let tenchinhanh = department.tenChiNhanh;
-        let tenban = department.tenBan ?? "";
-        let tentrangthai = department.status == true ? "Hoạt động" : "Hết hoạt động";
+    data.forEach(function (item, index) {   
+        let ma = item.ma;
+        let code = item.code;
+        let ten = item.ten;
+        let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
             `<td>${code}</td>`,
-            `<td>${tenchinhanh}</td>`,
-            `<td>${tenban}</td>`,
-            `<td>${tenphongban}</td>`,
-            `<td>${department.isBan==true ? '<span class="checkmark">✔️</span>' : '<span class="crossmark">❌</span>'}</td>`,
-            `<td>${department.isCoSoQuy==true ? '<span class="checkmark">✔️</span>' : '<span class="crossmark">❌</span>'}</td>`,
+            `<td>${ten}</td>`,
             `<td>${tentrangthai}</td>`,
         ];
         let tdChucNang = `
@@ -86,7 +79,7 @@ function drawDanhSach(data) {
 function Edit(row) {
     var rowData = table.row($(row).parents('tr')).data();
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
-    window.open('/Department/Edit?ma=' + firstCellValue, '_blank');
+    window.open('/IncomeExpenseType/Edit?ma=' + firstCellValue, '_blank');
 
 }
 $('#Table').on('click', '.btnDelete', function (e) {
@@ -116,7 +109,7 @@ function handleDelete(Id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Department/Delete',
+                url: '/IncomeExpenseType/Delete',
                 type: 'DELETE',
                 data: { Id: Id },
                 success: function (response) {

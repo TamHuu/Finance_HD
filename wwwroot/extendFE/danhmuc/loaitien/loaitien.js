@@ -5,7 +5,7 @@ $(document).ready(function () {
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
             { width: '600px', className: 'dt-left dt-head-center', targets: [1, 2, 3], orderable: false },
-            { width: '100px', className: 'text-center', targets: [4,5], orderable: false },
+            { width: '150px', className: 'text-center', targets: [4,5], orderable: false },
         ],
         sorting: true, 
         language: {

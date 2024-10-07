@@ -63,9 +63,9 @@ function drawDanhSach(data) {
             `<td>${ma}</td>`,
             `<td>${code}</td>`,
             `<td>${tenchinhanh}</td>`,
-            `<td>${cosoquy}</td>`,
             `<td>${diachi}</td>`,
             `<td>${masothue}</td>`,
+            `<td>${cosoquy}</td>`,
             `<td>${tentrangthai}</td>`,
         ];
         let tdChucNang = `
