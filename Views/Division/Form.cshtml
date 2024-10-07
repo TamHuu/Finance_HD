@@ -30,7 +30,7 @@
                         <select class="form-control" id="Branch" name="Branch">
                             @foreach (var cn in chinhanhs)
                             {
-                                <option value="@cn.Ma">@cn.Ten</option>
+                                <!option value="@cn.Ma" @(Model.MaChiNhanh == cn.Ma ? "selected" : "")>@cn.Ten</!option>
                             }
                         </select>
                     </div>

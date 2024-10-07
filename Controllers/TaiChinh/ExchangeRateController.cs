@@ -82,6 +82,7 @@ namespace Finance_HD.Controllers.TaiChinh
         [HttpGet]
         public IActionResult Edit(string Ma)
         {
+            ViewData["listTienTe"] = _dbContext.FiaTienTe.ToList();
             var TblTyGia = _dbContext.TblTyGia.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (TblTyGia == null)
             {

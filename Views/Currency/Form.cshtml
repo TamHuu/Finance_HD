@@ -23,7 +23,7 @@
                         <select class="form-control" id="Monetary" name="Monetary">
                             @foreach (var item in lisTienTe)
                             {
-                                <option value="@item.Ma">@item.Ten</option>
+                                <!option value="@item.Ma" @(Model.MaTienTe == item.Ma ? "selected" : "")>@item.Ten</!option>
                             }
                         </select>
                     </div>

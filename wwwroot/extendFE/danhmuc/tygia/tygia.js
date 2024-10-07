@@ -51,7 +51,7 @@ function drawDanhSach(data) {
     table.clear().draw();
     console.log("data",data)
     data.forEach(function (item, index) {   
-        let ma = item.ma;
+        let ma = item.maTyGia;
         let ngayapdung = item.ngayApDung;
         let tentiente = item.tenTienTe;
         let tygia = item.tenTyGia;

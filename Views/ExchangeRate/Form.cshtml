@@ -4,8 +4,8 @@
     bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
     ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
-    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
     var lisTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
 }
 
 <div class="card">
@@ -20,7 +20,8 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="NgayApDung">Ngày áp dụng</label>
-                        <input type="datetime-local" class="form-control form-control-sm" id="NgayApDung" name="NgayApDung" required value="@Model.NgayApDung" />
+                        <input type="datetime-local" class="form-control form-control-sm" id="NgayApDung" name="NgayApDung" required value="@(Model.NgayApDung != null ? Model.NgayApDung.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -29,7 +30,7 @@
                         <select class="form-control" id="Monetary" name="Monetary">
                             @foreach (var item in lisTienTe)
                             {
-                                <option value="@item.Ma">@item.Ten</option>
+                                <!option value="@item.Ma" @(Model.MaTienTe == item.Ma ? "selected" : "")>@item.Ten</!option>
                             }
                         </select>
                     </div>
@@ -44,8 +45,8 @@
                     <div class="form-group">
                         <label for="Status">Trạng thái</label>
                         <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status==true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(!Model.Status==true ? "selected" : "")>Không hoạt động</!option>
+                            <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                            <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
                         </select>
                     </div>
                 </div>
@@ -61,9 +62,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/danhmuc/tygia/form.js"></script>
     <script>
-      
+
         var isEdit = @Html.Raw(Json.Serialize(isEdit));
-        var defaultUID = '@defaultUID'; 
-      
+        var defaultUID = '@defaultUID';
+
     </script>
 }
