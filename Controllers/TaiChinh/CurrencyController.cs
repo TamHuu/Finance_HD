@@ -30,7 +30,7 @@ namespace Finance_HD.Controllers.TaiChinh
                                     Code = loaitien.Code,
                                     GiaTri = loaitien.GiaTri,
                                     Status = loaitien.Status,
-                                }).ToList();
+                                }).OrderByDescending(x=>x.GiaTri).ToList();
 
             return Json(new { Data = listCurrency });
         }
@@ -80,6 +80,7 @@ namespace Finance_HD.Controllers.TaiChinh
         [HttpGet]
         public IActionResult Edit(string Ma)
         {
+            ViewData["listTienTe"] = _dbContext.FiaTienTe.ToList();
             ViewData["listCN"] = _dbContext.SysBranch.ToList();
             var listCurrency = _dbContext.FaLoaiTien.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (listCurrency == null)

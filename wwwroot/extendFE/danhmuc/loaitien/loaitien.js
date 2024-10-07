@@ -4,10 +4,10 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '400px', className: 'dt-left dt-head-center', targets: [1,2,3], orderable: false },
-            { width: '100px', className: 'dt-left dt-head-center', targets: [4], orderable: false },
+            { width: '600px', className: 'dt-left dt-head-center', targets: [1, 2, 3], orderable: false },
+            { width: '100px', className: 'text-center', targets: [4,5], orderable: false },
         ],
-
+        sorting: true, 
         language: {
             "decimal": "",
             "emptyTable": "Không có dữ liệu trong bảng",
@@ -54,11 +54,12 @@ function drawDanhSach(data) {
         let ma = item.ma;
         let code = item.code;
         let tentiente = item.tenTienTe;
+        let giatri = item.giaTri;
         let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
             `<td>${code}</td>`,
-            `<td>${code}</td>`,
+            `<td>${giatri}</td>`,
             `<td>${tentiente}</td>`,
             `<td>${tentrangthai}</td>`,
         ];
