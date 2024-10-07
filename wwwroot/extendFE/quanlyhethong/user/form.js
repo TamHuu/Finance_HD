@@ -15,7 +15,6 @@ function loadDanhSach() {
         var maDinhDanh = $('#MaDinhDanh').val();
         var branch = $('#Branch').val();
         var cccd = $('#CCCD').val();
-        var status = $('#Status').val();
         var fullName = $('#FullName').val();
         var diaChi = $('#DiaChi').val();
         var department = $('#Department').val();
@@ -26,6 +25,8 @@ function loadDanhSach() {
         var ngayKetThuc = $('#NgayKetThuc').val();
         var MaPhongBan = $('#Department').val();
         var Password = $('#Password').val();
+        var Status = $('#Status').val();
+        
         var url = ma !== defaultUID ? '/User/Edit' : '/User/Add';
         var formdata = {
             Ma: ma,
@@ -36,7 +37,6 @@ function loadDanhSach() {
             MaPhongBan: MaPhongBan,
             Password: Password,
             CCCD: cccd,
-            Status: status,
             FullName: fullName,
             DiaChi: diaChi,
             Department: department,
@@ -44,7 +44,8 @@ function loadDanhSach() {
             NgaySinh: ngaySinh,
             NgayVaoLam: ngayVaoLam,
             SoDienThoai: soDienThoai,
-            NgayKetThuc: ngayKetThuc
+            NgayKetThuc: ngayKetThuc,
+            Status: Status,
         };
 
         console.table(formdata)
@@ -107,14 +108,26 @@ function getListChiNhanh(data) {
     var branchSelect = $('#Branch');
     branchSelect.empty();
     data.forEach(function (branch) {
-        branchSelect.append($('<option>', {
+        let select = $('<option>', {
             value: branch.ma,
-            text: branch.ten
-        }));
+            text: branch.ten,
+        });
+
+        if (branch.ma == maCN) {
+            select.attr('selected', true);
+        }
+        branchSelect.append(select);
     });
 
+    var selectedBranch = branchSelect.val();
+    loadBan(selectedBranch);
+    changeSelectBranch(branchSelect);
+}
+
+function changeSelectBranch(branchSelect) {
     branchSelect.on('change', function () {
         var selectedBranch = $(this).val();
+        console.log("Chi nhánh đã chọn:", selectedBranch);
         loadBan(selectedBranch);
     });
 }
@@ -125,17 +138,30 @@ function loadBan(selectedBranch) {
         type: 'GET',
         success: function (response) {
             var DepartmentData = response.data;
-
-            console.log("dataa DepartmentData", DepartmentData)
+            console.log("list ban", DepartmentData)
             var DepartmentSelect = $('#Department');
             DepartmentSelect.empty();
             let listBan = DepartmentData.filter(item => item.maChiNhanh == selectedBranch);
+
             listBan.forEach(function (item) {
-               DepartmentSelect.append($('<option>', {
-                   value: item.maPhongBan,
-                   text: item.tenPhongBan
-                }));
+                let option = $('<option>', {
+                    value: item.maPhongBan,
+                    text: item.tenPhongBan,
+                });
+
+                if (item.maPhongBan === MaPhongBan) {
+                    option.attr('selected', true);
+                }
+
+                DepartmentSelect.append(option);
             });
+
+            if (DepartmentSelect.children().length === 0) {
+                DepartmentSelect.append($('<option>', {
+                    value: '',
+                    text: 'Không có ban nào.',
+                }));
+            }
         },
         error: function (error) {
             Swal.fire({
