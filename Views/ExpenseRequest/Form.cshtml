@@ -1,0 +1,149 @@
+﻿@model Finance_HD.Models.FiaDeNghiChi
+
+@{
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa " : "Thêm mới ";
+    string formAction = isEdit ? "Edit" : "Add";
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+    var listTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
+    var listNoiDung = ViewData["listNoiDung"] as List<Finance_HD.Models.CatNoiDungThuChi>;
+}
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">@ViewData["Title"]</h5>
+    </div>
+    <div class="card-body">
+      <form id="Form">
+    <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+    
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="NgayLap">Ngày Lập</label>
+                <input type="datetime-local" class="form-control form-control-sm" id="NgayLap" name="NgayLap" 
+                       value="@(Model.NgayLap != null ? Model.NgayLap.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="NgayYeuCauNhanTien">Ngày Nhận Tiền</label>
+                <input type="datetime-local" class="form-control form-control-sm" id="NgayYeuCauNhanTien" name="NgayYeuCauNhanTien" 
+                       required value="@(Model.NgayYeuCauNhanTien != null ? Model.NgayYeuCauNhanTien.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+            </div>
+        </div>
+       
+    </div>
+
+    <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="MaChiNhanhDeNghi">Mã Chi Nhánh Đề Nghị</label>
+                        <input type="text" class="form-control form-control-sm" id="MaChiNhanhDeNghi" name="MaChiNhanhDeNghi"
+                               value="@Model.MaChiNhanhDeNghi" />
+                    </div>
+                </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="MaChiNhanhChi">Mã Chi Nhánh Chi</label>
+                <input type="text" class="form-control form-control-sm" id="MaChiNhanhChi" name="MaChiNhanhChi" 
+                       value="@Model.MaChiNhanhChi" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="MaPhongBanDeNghi">Mã Phòng Ban Đề Nghị</label>
+                <input type="text" class="form-control form-control-sm" id="MaPhongBanDeNghi" name="MaPhongBanDeNghi" 
+                       value="@Model.MaPhongBanDeNghi" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="MaPhongBanChi">Mã Phòng Ban Chi</label>
+                <input type="text" class="form-control form-control-sm" id="MaPhongBanChi" name="MaPhongBanChi" 
+                       value="@Model.MaPhongBanChi" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="NoiDung">Tên nội dung:</label>
+                <select class="form-control" id="NoiDung" name="NoiDung">
+                    @foreach (var nd in listNoiDung)
+                    {
+                        <!option value="@nd.Ma" @(Model.MaNoiDung == nd.Ma ? "selected" : "")>@nd.Ten</!option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="TienTe">Tiền tệ:</label>
+                <select class="form-control" id="TienTe" name="TienTe">
+                    @foreach (var tt in listTienTe)
+                    {
+                        <!option value="@tt.Ma" @(Model.MaTienTe == tt.Ma ? "selected" : "")>@tt.Ten</!option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="TyGia">Tỷ Giá</label>
+                <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" 
+                       required value="@Model.TyGia" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="SoTien">Số Tiền</label>
+                <input type="number" class="form-control form-control-sm" id="SoTien" name="SoTien" 
+                       required value="@Model.SoTien" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="HinhThuc">Hình thức chi</label>
+                <select class="form-control" id="HinhThuc" name="HinhThuc">
+                    <!option value="@((int)Finance_HD.Common.Enum.HinhThucThuChi.TienMat)" 
+                        @(Model.HinhThucChi == (int)Finance_HD.Common.Enum.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
+                    <!option value="@((int)Finance_HD.Common.Enum.HinhThucThuChi.TaiKhoanCaNhan)" 
+                        @(Model.HinhThucChi == (int)Finance_HD.Common.Enum.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
+                    <!option value="@((int)Finance_HD.Common.Enum.HinhThucThuChi.NganHang)" 
+                        @(Model.HinhThucChi == (int)Finance_HD.Common.Enum.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="GhiChu">Ghi Chú</label>
+                        <textarea rows="5" class="form-control form-control-sm" id="GhiChu" name="GhiChu">@Model.GhiChu</textarea>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+</form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/soquy/denghichi/form.js"></script>
+    <script>
+        // Pass the isEdit variable to JavaScript
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var defaultUID = '@defaultUID'; // Truyền defaultUID vào JavaScript
+        console.log("Is Edit:", isEdit);
+        console.log("Default UID:", defaultUID);
+    </script>
+}

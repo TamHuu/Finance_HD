@@ -100,6 +100,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="Views\ExpenseRequest\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Views\IncomeContent\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -163,6 +167,7 @@
     <_ContentIncludedByDefault Remove="Views\Customer\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\DocumentType\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\ExchangeRate\Form.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\ExpenseRequest\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\IncomeContent\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\IncomeExpenseType\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Monetary\Form.cshtml" />
@@ -205,6 +210,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\Customer\Form.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\ExpenseRequest\Form.cshtml" />
   </ItemGroup>
 
 </Project>

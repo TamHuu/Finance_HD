@@ -1,7 +1,75 @@
-﻿
+﻿@model IEnumerable<Finance_HD.Models.FiaDeNghiChi>
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Đề nghị chi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-products-center justify-content-between">
+        <h2 class="m-0 font-weight-bold text-primary">@ViewData["Title"]</h2>
+        <div class="arrow">
+            <a class="btn btn-link btn-sm" href="/ExpenseRequest/Add">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="Table" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th hidden>Mã</th>
+                    <th>Ngày</th>
+                    <th>SỐ PHIẾU </th>
+                    <th>ĐƠN VỊ ĐỀ NGHỊ </th>
+                    <th>BỘ PHẬN ĐỀ NGHỊ </th>
+                    <th>NGƯỜI LẬP </th>
+                    <th>ĐƠN VỊ CHI </th>
+                    <th>BỘ PHẬN CHI </th>
+                    <th>SỐ TIỀN ĐỀ NGHỊ </th>
+                    <th>TIỀN  </th>
+                    <th>TỶ GIÁ </th>
+                    <th>NGÀY YÊU CẦU NHẬN </th>
+                    <th>NỘI DUNG </th>
+                    <th>HÌNH THỨC </th>
+                    <th>GHI CHÚ </th>
+                    <th>TRẠNG THÁI</th>
+                    <th>NGƯỜI CHI</th>
+                    <th>NGÀY CHI</th>
+                    <th>SỐ TIỀN CHI</th>
+                    <th>CHỨC NĂNG</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
+    <!-- Modal Xác Nhận -->
+    <div class="modal fade" id="modelDelete" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">Xóa Danh Mục</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Bạn có chắc chắn muốn xóa danh mục này?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" id="btnDelete" class="btn btn-danger">Xoá danh mục</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/soquy/denghichi/denghichi.js"></script>
+
+}

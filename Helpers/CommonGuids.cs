@@ -19,7 +19,7 @@ namespace Finance_HD.Helpers
         {
             if (str.IsEmpty()) // Nếu chuỗi rỗng hoặc null
             {
-                return CommonGuids.defaultUID; // Trả về GUID mặc định
+                return Guid.Empty; // Trả về Guid.Empty nếu phòng ban không có
             }
 
             try
@@ -28,11 +28,11 @@ namespace Finance_HD.Helpers
             }
             catch (FormatException) // Xử lý lỗi định dạng không hợp lệ
             {
-                return CommonGuids.defaultUID; // Trả về GUID mặc định khi lỗi xảy ra
+                return Guid.Empty; // Trả về Guid.Empty khi lỗi xảy ra
             }
             catch (Exception) // Xử lý các lỗi khác
             {
-                return CommonGuids.defaultUID; // Trả về GUID mặc định cho bất kỳ lỗi nào
+                return Guid.Empty; // Trả về Guid.Empty cho bất kỳ lỗi nào
             }
         }
 
