@@ -1,12 +1,19 @@
-﻿
-let table;
+﻿let table;
+
 $(document).ready(function () {
+    ConfigTable();  
+    DefaultDate()
+    loadDanhSach(); 
+    loadChiNhanhDeNghi();
+});
+
+
+
+function ConfigTable() {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-     /*       { width: '200px', className: 'dt-left dt-head-center', targets: [1], orderable: false },*/
-            { width: '200px', className: 'dt-left dt-head-center', targets: [2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], orderable: false },
-         /*   { width: '100px', className: 'text-center', targets: [5, 6, 7, 8], orderable: false },*/
+            { width: '200px', className: 'dt-left dt-head-center', targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], orderable: false }
         ],
         scrollX: true,
         language: {
@@ -29,9 +36,7 @@ $(document).ready(function () {
             }
         }
     });
-
-    loadDanhSach();
-});
+}
 function loadDanhSach() {
     $.ajax({
         url: "/ExpenseRequest/getListExpenseRequest",
@@ -49,77 +54,59 @@ function loadDanhSach() {
     });
 }
 function drawDanhSach(data) {
-    table.clear().draw();
-    console.log("data",data)
-    data.forEach(function (item, index) {   
-        let ma = item.ma;
-        let ngay = item.ngay;
-        let sophieu = item.soPhieu;
-        let donvidenghi = item.donViDeNghi;
-        let bophandenghi = item.boPhanDeNghi;
-        let nguoilap = item.nguoiLap;
-        let donvichi = item.donViChi;
-        let bophanchi = item.boPhanChi;
-        let sotiendenghi = item.soTienDeNghi;
-        let tien = item.tien;
-        let tygia = item.tyGia;
-        let ngayyeucaunhan = item.ngayYeuCauNhan;
-        let noidung = item.noiDung;
-        let hinhthuc = item.hinhThuc;
-        let ghichu = item.ghiChu ?? "";
-        let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
-        let nguoichi = item.nguoiChi;
-        let ngaychi = item.ngayChi;
-        let sotienchi = item.soTienChi;
+    table.clear().draw(); 
+    console.log("data", data);
+    
+    data.forEach(function (item) {
         let rowContent = [
-            `<td>${ma}</td>`,
-            `<td>${ngay}</td>`,
-            `<td>${sophieu}</td>`,
-            `<td>${donvidenghi}</td>`,
-            `<td>${bophandenghi}</td>`,
-            `<td>${nguoilap}</td>`,
-            `<td>${donvichi}</td>`,
-            `<td>${bophanchi}</td>`,
-            `<td>${sotiendenghi}</td>`,
-            `<td>${tien}</td>`,
-            `<td>${tygia}</td>`,
-            `<td>${ngayyeucaunhan}</td>`,
-            `<td>${noidung}</td>`,
-            `<td>${hinhthuc}</td>`,
-            `<td>${ghichu}</td>`,
-            `<td>${tentrangthai}</td>`,
-            `<td>${nguoichi}</td>`,
-            `<td>${ngaychi}</td>`,
-            `<td>${sotienchi}</td>`
+            `<td>${item.ma}</td>`,
+            `<td>${formatDate(item.ngay)}</td>`,
+            `<td>${item.soPhieu}</td>`,
+            `<td>${item.donViDeNghi}</td>`,
+            `<td>${item.boPhanDeNghi}</td>`,
+            `<td>${item.nguoiLap}</td>`,
+            `<td>${item.donViChi}</td>`,
+            `<td>${item.boPhanChi}</td>`,
+            `<td>${item.soTienDeNghi}</td>`,
+            `<td>${item.tien}</td>`,
+            `<td>${item.tyGia}</td>`,
+            `<td>${formatDate(item.ngayYeuCauNhan)}</td>`,
+            `<td>${item.noiDung}</td>`,
+            `<td>${item.hinhThuc}</td>`,
+            `<td>${item.ghiChu || ""}</td>`,
+            `<td>${item.status ? "Hoạt động" : "Hết hoạt động"}</td>`,
+            `<td>${item.nguoiChi}</td>`,
+            `<td>${formatDate(item.ngayChi)}</td>`,
+            `<td>${item.soTienChi}</td>`,
+            `
+                <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <span>|</span>
+                <button class="btn btn-danger btn-sm btnDelete" data-id="${item.ma}" title="Xóa">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `
         ];
 
-        let tdChucNang = `
-    <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
-        <i class="fas fa-edit"></i>
-    </button>
-    <span>|</span>
-    <button class="btn btn-danger btn-sm btnDelete" data-id="${ma}" title="Xóa">
-                <i class="fas fa-trash"></i>
-    </button>
-
-    `;
-        rowContent.push(tdChucNang);
-        table.row.add(rowContent).draw();
+        table.row.add(rowContent).draw(); 
     });
 }
 
+
 function Edit(row) {
-    var rowData = table.row($(row).parents('tr')).data();
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
     window.open('/ExpenseRequest/Edit?ma=' + firstCellValue, '_blank');
-
 }
+
+
 $('#Table').on('click', '.btnDelete', function (e) {
     e.preventDefault();
     var Id = $(this).data('id');
-
     handleDelete(Id);
 });
+
+
 function handleDelete(Id) {
     console.log("id", Id);
     if (!Id || Id === "0") {
@@ -151,7 +138,7 @@ function handleDelete(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadDanhSach();
+                            loadDanhSach(); // Tải lại danh sách sau khi xóa thành công
                         });
                     } else {
                         Swal.fire({
@@ -161,18 +148,19 @@ function handleDelete(Id) {
                         });
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function () {
                     Swal.fire({
                         title: 'Đã xảy ra lỗi!',
                         text: 'Vui lòng thử lại.',
                         icon: 'error'
                     });
-                    console.error(error);
                 }
             });
         }
     });
 }
+
+// Hàm định dạng ngày tháng
 function formatDate(date) {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -180,5 +168,57 @@ function formatDate(date) {
     const year = d.getFullYear();
 
     return `${day}/${month}/${year}`;
+}
+
+function DefaultDate() {
+    var today = new Date();
+    var sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+
+    // Lấy giá trị của "Từ ngày" và "Đến ngày"
+    let TuNgay = $("#TuNgay").val();
+    let DenNgay = $("#DenNgay").val();
+
+    // Nếu "Từ ngày" và "Đến ngày" chưa được nhập, đặt giá trị mặc định
+    if (!TuNgay) {
+        $("#TuNgay").val(sevenDaysAgo.toISOString().slice(0, 16)); // 7 ngày trước
+        TuNgay = sevenDaysAgo.toISOString().slice(0, 16); // Cập nhật giá trị mới
+    }
+    if (!DenNgay) {
+        $("#DenNgay").val(today.toISOString().slice(0, 16)); // Ngày hôm nay
+        DenNgay = today.toISOString().slice(0, 16); // Cập nhật giá trị mới
+    }
+
+    // Chuyển "Từ ngày" và "Đến ngày" thành đối tượng Date để so sánh
+    let TuNgayDate = new Date(TuNgay);
+    let DenNgayDate = new Date(DenNgay);
+
+    // Kiểm tra nếu "Từ ngày" lớn hơn "Đến ngày"
+    if (TuNgayDate > DenNgayDate) {
+        alert("Số ngày 'Từ ngày' không được lớn hơn 'Đến ngày'");
+        return; // Kết thúc hàm nếu điều kiện không hợp lệ
+    }
+}
+
+function loadChiNhanhDeNghi() {
+    $.ajax({
+        url: "/Branch/getListBranch",
+        method: "GET",
+        success: function (response) {
+            var data = response.data;
+            var branchSelect = $('#Branch');
+            branchSelect.empty();
+            data.forEach(function (branch) {
+                let select = $('<option>', {
+                    value: branch.ma,
+                    text: branch.ten,
+                });
+                branchSelect.append(select); 
+            });
+        },
+        error: function () {
+            console.error("Có lỗi xảy ra khi tải danh sách.");
+        }
+    });
 }
 

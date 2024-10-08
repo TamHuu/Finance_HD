@@ -21,14 +21,13 @@
             <div class="form-row mb-3">
                 <div class="form-group col-md-4">
                     <label for="NgayLap">Ngày Lập</label>
-                    <input type="datetime-local" class="form-control form-control-sm" id="NgayLap" name="NgayLap"
-                           value="@(Model.NgayLap != null ? Model.NgayLap.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                    <input type="date" id="dtpTuNgay" class="form-control form-control-sm" value="@(string.Format("{0:yyyy-MM-dd}", DateTime.Today))" />
                 </div>
                 <div class="form-group col-md-4">
                     <label for="NgayYeuCauNhanTien">Ngày Nhận Tiền</label>
-                    <input type="datetime-local" class="form-control form-control-sm" id="NgayYeuCauNhanTien" name="NgayYeuCauNhanTien"
-                           required value="@(Model.NgayYeuCauNhanTien != null ? Model.NgayYeuCauNhanTien.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                    <input type="date" id="dtpTuNgay" class="form-control form-control-sm" value="@(string.Format("{0:yyyy-MM-dd}", DateTime.Today))" />
                 </div>
+
             </div>
 
             <div class="form-row mb-3">
@@ -103,7 +102,7 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script defer src="/extendFE/soquy/denghichi/form.js"></script>
+    <script defer src="/extendFE/denghichi/denghichi/form.js"></script>
     <script>
         // Pass the isEdit variable to JavaScript
         var isEdit = @Html.Raw(Json.Serialize(isEdit));

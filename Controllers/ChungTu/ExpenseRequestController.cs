@@ -14,8 +14,15 @@ namespace Finance_HD.Controllers.ChungTu
         }
         public IActionResult Index()
         {
-            return View();
+            var branches = _dbContext.SysBranch.ToList();
+            var deNghiChis = _dbContext.FiaDeNghiChi.ToList(); 
+
+
+            ViewData["listChiNhanh"] = branches;
+
+            return View(deNghiChis); 
         }
+
         public JsonResult getListExpenseRequest()
         {
             var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
