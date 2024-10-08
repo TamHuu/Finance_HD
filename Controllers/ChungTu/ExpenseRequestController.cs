@@ -25,22 +25,32 @@ namespace Finance_HD.Controllers.ChungTu
         [HttpPost]
         public IActionResult getListExpenseRequest(string TuNgay, string DenNgay, string ChiNhanhDeNghi)
         {
+            DateTime fromDate, toDate;
+
+            // Parse the date strings to DateTime
+            bool isValidFromDate = DateTime.TryParse(TuNgay, out fromDate);
+            bool isValidToDate = DateTime.TryParse(DenNgay, out toDate);
+
             var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
                                       join chinhanhdenghi in _dbContext.SysBranch
                                       on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma
                                       join bophandenghi in _dbContext.TblPhongBan
                                       on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
-                                      from bophandenghi in bophandenghiGroup.DefaultIfEmpty() 
+                                      from bophandenghi in bophandenghiGroup.DefaultIfEmpty()
                                       join chinhanhchi in _dbContext.SysBranch
                                       on denghichi.MaChiNhanhChi equals chinhanhchi.Ma
                                       join bophanchi in _dbContext.TblBan
                                       on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
-                                      from bophanchi in bophanchiGroup.DefaultIfEmpty() 
+                                      from bophanchi in bophanchiGroup.DefaultIfEmpty()
                                       join noidungthuchi in _dbContext.CatNoiDungThuChi
                                       on denghichi.MaNoiDung equals noidungthuchi.Ma
                                       join tien in _dbContext.FaLoaiTien
                                       on denghichi.MaTienTe equals tien.Ma
-                                      where !(denghichi.Deleted ?? false)
+                                      where !(denghichi.Deleted ?? false) &&
+                                            (isValidFromDate ? denghichi.NgayLap >= fromDate : true) &&
+                                            (isValidToDate ? denghichi.NgayLap <= toDate : true) &&
+                                            (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
+                                             denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid())
                                       orderby denghichi.CreatedDate descending
                                       select new
                                       {
@@ -59,8 +69,8 @@ namespace Finance_HD.Controllers.ChungTu
                                           NoiDungThuChi = noidungthuchi.Ten,
                                           TenChiNhanhDeNghi = chinhanhdenghi.Ten,
                                           TenChiNhanhChi = chinhanhchi.Ten,
-                                          TenPhongBanDeNghi = bophandenghi.Ten ?? "Không có", 
-                                          TenPhongBanChi = bophanchi.Ten ?? "Không có", 
+                                          TenPhongBanDeNghi = bophandenghi.Ten ?? "Không có",
+                                          TenPhongBanChi = bophanchi.Ten ?? "Không có",
                                           HinhThucChi = denghichi.HinhThucChi,
                                           GhiChu = denghichi.GhiChu,
                                           TrangThai = denghichi.TrangThai,
