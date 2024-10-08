@@ -3,8 +3,8 @@
 $(document).ready(function () {
     ConfigTable();  
     DefaultDate()
-    loadDanhSach(); 
     loadChiNhanhDeNghi();
+    XemDanhSach();
 });
 
 
@@ -37,61 +37,7 @@ function ConfigTable() {
         }
     });
 }
-function loadDanhSach() {
-    $.ajax({
-        url: "/ExpenseRequest/getListExpenseRequest",
-        method: "GET",
-        success: function (response) {
-            if (response && response.data) {
-                drawDanhSach(response.data);
-            } else {
-                console.error("Dữ liệu không hợp lệ.");
-            }
-        },
-        error: function () {
-            console.error("Có lỗi xảy ra khi tải danh sách.");
-        }
-    });
-}
-function drawDanhSach(data) {
-    table.clear().draw(); 
-    console.log("data", data);
-    
-    data.forEach(function (item) {
-        let rowContent = [
-            `<td>${item.ma}</td>`,
-            `<td>${formatDate(item.ngay)}</td>`,
-            `<td>${item.soPhieu}</td>`,
-            `<td>${item.donViDeNghi}</td>`,
-            `<td>${item.boPhanDeNghi}</td>`,
-            `<td>${item.nguoiLap}</td>`,
-            `<td>${item.donViChi}</td>`,
-            `<td>${item.boPhanChi}</td>`,
-            `<td>${item.soTienDeNghi}</td>`,
-            `<td>${item.tien}</td>`,
-            `<td>${item.tyGia}</td>`,
-            `<td>${formatDate(item.ngayYeuCauNhan)}</td>`,
-            `<td>${item.noiDung}</td>`,
-            `<td>${item.hinhThuc}</td>`,
-            `<td>${item.ghiChu || ""}</td>`,
-            `<td>${item.status ? "Hoạt động" : "Hết hoạt động"}</td>`,
-            `<td>${item.nguoiChi}</td>`,
-            `<td>${formatDate(item.ngayChi)}</td>`,
-            `<td>${item.soTienChi}</td>`,
-            `
-                <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <span>|</span>
-                <button class="btn btn-danger btn-sm btnDelete" data-id="${item.ma}" title="Xóa">
-                    <i class="fas fa-trash"></i>
-                </button>
-            `
-        ];
 
-        table.row.add(rowContent).draw(); 
-    });
-}
 
 
 function Edit(row) {
@@ -222,3 +168,77 @@ function loadChiNhanhDeNghi() {
     });
 }
 
+function XemDanhSach() {
+    $('#btnXem').on('click', function (e) {
+        e.preventDefault();
+
+        let TuNgay = $("#TuNgay").val();
+        let DenNgay = $("#DenNgay").val();
+        var branch = $('#Branch').val();
+        var formdata = {
+            TuNgay: TuNgay,
+            DenNgay: DenNgay,
+            ChiNhanhDeNghi: branch,
+        };
+        console.table(formdata)
+
+        $.ajax({
+            url: "ExpenseRequest/getListExpenseRequest",
+            type: 'POST',
+            data: formdata,
+            success: function (response) {
+                var result = response.data;
+                drawDanhSach(result)
+               
+            },
+            error: function (xhr, status, error) {
+                swal.fire({
+                    title: 'đã xảy ra lỗi!',
+                    text: 'vui lòng thử lại.',
+                    icon: 'error'
+                });
+                console.error(error);
+            }
+        });
+    });
+
+}
+function drawDanhSach(data) {
+    table.clear().draw();
+    console.log("data", data);
+
+    data.forEach(function (item) {
+        let rowContent = [
+            `<td>${item.ma}</td>`,
+            `<td>${formatDate(item.ngay)}</td>`,
+            `<td>${item.soPhieu}</td>`,
+            `<td>${item.donViDeNghi}</td>`,
+            `<td>${item.boPhanDeNghi}</td>`,
+            `<td>${item.nguoiLap}</td>`,
+            `<td>${item.donViChi}</td>`,
+            `<td>${item.boPhanChi}</td>`,
+            `<td>${item.soTienDeNghi}</td>`,
+            `<td>${item.tien}</td>`,
+            `<td>${item.tyGia}</td>`,
+            `<td>${formatDate(item.ngayYeuCauNhan)}</td>`,
+            `<td>${item.noiDung}</td>`,
+            `<td>${item.hinhThuc}</td>`,
+            `<td>${item.ghiChu || ""}</td>`,
+            `<td>${item.status ? "Hoạt động" : "Hết hoạt động"}</td>`,
+            `<td>${item.nguoiChi}</td>`,
+            `<td>${formatDate(item.ngayChi)}</td>`,
+            `<td>${item.soTienChi}</td>`,
+            `
+                <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <span>|</span>
+                <button class="btn btn-danger btn-sm btnDelete" data-id="${item.ma}" title="Xóa">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `
+        ];
+
+        table.row.add(rowContent).draw();
+    });
+}

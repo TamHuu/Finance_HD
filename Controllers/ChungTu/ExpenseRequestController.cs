@@ -22,8 +22,8 @@ namespace Finance_HD.Controllers.ChungTu
 
             return View(deNghiChis); 
         }
-
-        public JsonResult getListExpenseRequest()
+        [HttpPost]
+        public IActionResult getListExpenseRequest(string TuNgay, string DenNgay, string ChiNhanhDeNghi)
         {
             var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
                                       join chinhanhdenghi in _dbContext.SysBranch
