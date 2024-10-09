@@ -1,6 +1,9 @@
-﻿using Finance_HD.Helpers;
+﻿using Finance_HD.Common;
+using Finance_HD.Helpers;
 using Finance_HD.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Enum = System.Enum;
 
 namespace Finance_HD.Controllers.ChungTu
 {
@@ -15,42 +18,50 @@ namespace Finance_HD.Controllers.ChungTu
         public IActionResult Index()
         {
             var branches = _dbContext.SysBranch.ToList();
-            var deNghiChis = _dbContext.FiaDeNghiChi.ToList(); 
+            var deNghiChis = _dbContext.FiaDeNghiChi.ToList();
 
 
             ViewData["listChiNhanh"] = branches;
 
-            return View(deNghiChis); 
+            return View(deNghiChis);
         }
         [HttpPost]
-        public IActionResult getListExpenseRequest(string TuNgay, string DenNgay, string ChiNhanhDeNghi)
+        public IActionResult GetListExpenseRequest(string TuNgay, string DenNgay, string ChiNhanhDeNghi)
         {
-            DateTime fromDate, toDate;
+            // Chuyển đổi ngày từ chuỗi sang DateTime
+            DateTime dtpTuNgay = TuNgay.ToDateTime2(DateTime.Now)!.Value;
+            DateTime dtpDenNgay = DenNgay.ToDateTime2(DateTime.Now)!.Value;
 
-            // Parse the date strings to DateTime
-            bool isValidFromDate = DateTime.TryParse(TuNgay, out fromDate);
-            bool isValidToDate = DateTime.TryParse(DenNgay, out toDate);
-
+            // Lấy danh sách yêu cầu chi tiêu
             var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
                                       join chinhanhdenghi in _dbContext.SysBranch
-                                      on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma
+                                      on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
+                                      from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty() // Left join
+
                                       join bophandenghi in _dbContext.TblPhongBan
                                       on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
-                                      from bophandenghi in bophandenghiGroup.DefaultIfEmpty()
+                                      from bophandenghi in bophandenghiGroup.DefaultIfEmpty() // Left join
+
                                       join chinhanhchi in _dbContext.SysBranch
-                                      on denghichi.MaChiNhanhChi equals chinhanhchi.Ma
+                                      on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
+                                      from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty() // Left join
+
                                       join bophanchi in _dbContext.TblBan
                                       on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
-                                      from bophanchi in bophanchiGroup.DefaultIfEmpty()
+                                      from bophanchi in bophanchiGroup.DefaultIfEmpty() // Left join
+
                                       join noidungthuchi in _dbContext.CatNoiDungThuChi
-                                      on denghichi.MaNoiDung equals noidungthuchi.Ma
+                                      on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
+                                      from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty() // Left join
+
                                       join tien in _dbContext.FaLoaiTien
-                                      on denghichi.MaTienTe equals tien.Ma
+                                      on denghichi.MaTienTe equals tien.Ma into tienGroup
+                                      from tien in tienGroup.DefaultIfEmpty() // Left join
                                       where !(denghichi.Deleted ?? false) &&
-                                            (isValidFromDate ? denghichi.NgayLap >= fromDate : true) &&
-                                            (isValidToDate ? denghichi.NgayLap <= toDate : true) &&
                                             (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
-                                             denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid())
+                                             denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||
+                                             ChiNhanhDeNghi.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID) &&
+                                            (denghichi.NgayLap >= dtpTuNgay && denghichi.NgayLap <= dtpDenNgay) // Thêm điều kiện ngày
                                       orderby denghichi.CreatedDate descending
                                       select new
                                       {
@@ -78,6 +89,7 @@ namespace Finance_HD.Controllers.ChungTu
                                           NgayDuyet = denghichi.NgayDuyet
                                       }).ToList();
 
+            // Trả về kết quả dưới dạng JSON
             return Json(new { success = true, Data = listExpenseRequest });
         }
 
@@ -91,50 +103,51 @@ namespace Finance_HD.Controllers.ChungTu
             return View("Form", new FiaDeNghiChi());
         }
         [HttpPost]
-        public JsonResult Add(FiaDeNghiChi model)
+        public JsonResult Add(string ngayLap, string ngayNhanTien, string chiNhanhDeNghi, string phongBanDeNghi, string chiNhanhChi, string phongBanChi, string noiDung, string tienTe, decimal tyGia, decimal soTien, string hinhThuc, string ghiChu)
         {
-            if (!ModelState.IsValid)
+            if (soTien <= 0 || tyGia <= 0)
             {
                 return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
             }
 
-            var existingExpenseRequest = _dbContext.FiaDeNghiChi.FirstOrDefault(x => x.TyGia == model.TyGia);
-            if (existingExpenseRequest != null)
-            {
-                return Json(new { success = false, message = "Đề nghị chi này đã tồn tại!" });
-            }
-
-            SysBranch? cn = _dbContext.SysBranch.FirstOrDefault(t => t.Ma == model.MaChiNhanhDeNghi); // Lấy thông tin chi nhánh
+            SysBranch? cn = _dbContext.SysBranch.FirstOrDefault(t => t.Ma == chiNhanhDeNghi.GetGuid());
             if (cn == null)
             {
                 return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
             }
 
-            // Tạo số thứ tự (có thể cần phải kiểm tra để đảm bảo không trùng lặp)
             int nextSequentialNumber = GetNextSequentialNumber(cn.Code);
+
+            DateTime ngayLapDate, ngayNhanTienDate;
+            if (!DateTime.TryParse(ngayLap, out ngayLapDate) || !DateTime.TryParse(ngayNhanTien, out ngayNhanTienDate))
+            {
+                return Json(new { success = false, message = "Ngày lập hoặc ngày nhận tiền không hợp lệ!" });
+            }
+            Finance_HD.Common.Enum.HinhThucThuChi hinhThucChiEnum;
+            if (!Enum.TryParse(hinhThuc, out hinhThucChiEnum))
+            {
+                return Json(new { success = false, message = "Hình thức chi không hợp lệ!" });
+            }
 
             var ExpenseRequest = new FiaDeNghiChi
             {
-                Ma = model.Ma,
-                MaChiNhanhDeNghi = model.MaChiNhanhDeNghi,
-                MaChiNhanhChi = model.MaChiNhanhChi,
-                MaPhongBanDeNghi = model.MaPhongBanDeNghi,
-                MaPhongBanChi = model.MaPhongBanChi,
+                MaChiNhanhDeNghi = chiNhanhDeNghi.GetGuid(),
+                MaChiNhanhChi = chiNhanhChi.GetGuid(),
+                MaPhongBanDeNghi = phongBanDeNghi.GetGuid(),
+                MaPhongBanChi = phongBanChi.GetGuid(),
                 SoPhieu = string.Format("DNC/{0}/{1:yyyyMMdd}/{2:000}", cn.Code, DateTime.Today, nextSequentialNumber),
-                NgayLap = model.NgayLap,
-                NgayYeuCauNhanTien = model.NgayYeuCauNhanTien,
-                MaNoiDung = model.MaNoiDung,
-                MaTienTe = model.MaTienTe,
-                TyGia = model.TyGia,
-                SoTien = model.SoTien,
-                HinhThucChi = model.HinhThucChi,
-                GhiChu = model.GhiChu,
-                TrangThai = model.TrangThai,
-                NguoiDuyet = model.NguoiDuyet,
-                NgayDuyet = model.NgayDuyet,
+                NgayLap = ngayLapDate,
+                NgayYeuCauNhanTien = ngayNhanTienDate,
+                MaNoiDung = noiDung.GetGuid(),
+                MaTienTe = tienTe.GetGuid(),
+                TyGia = tyGia,
+                SoTien = soTien,
+                HinhThucChi = Convert.ToInt32(hinhThucChiEnum),
+                GhiChu = ghiChu,
                 CreatedDate = DateTime.Now,
             };
 
+            // Lưu vào cơ sở dữ liệu
             _dbContext.FiaDeNghiChi.Add(ExpenseRequest);
             _dbContext.SaveChanges();
 

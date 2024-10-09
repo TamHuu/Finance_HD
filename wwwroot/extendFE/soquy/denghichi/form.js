@@ -1,5 +1,4 @@
-﻿let data
-$(document).ready(function () {
+﻿$(document).ready(function () {
     loadChiNhanh();
     loadDanhSach();
 });
@@ -7,27 +6,37 @@ $(document).ready(function () {
 function loadDanhSach() {
     $('#btnSave').on('click', function (e) {
         e.preventDefault();
-       
-        var ma = $('#Ma').val();
-        var code = $('#Code').val();
-        var branch = $('#Branch').val();
-        var MaBan = $('#Division').val();
-        var ten = $('#Ten').val();
-        var ban = $('#Ban').is(':checked'); 
-        var coSoQuy = $('#CoSoQuy').is(':checked'); 
-        var status = $('#Status').val();
-        var url = ma !== defaultUID ? '/Department/Edit' : '/Department/Add';
-        var formdata = {
-            Ma: ma,
-            MaChiNhanh: branch,
-            Code: code,
-            Ten: ten,
-            CoSoQuy: coSoQuy,
-            MaBan: MaBan,
-            Ban: ban,
-            Status: status
+
+        var ma = $("#Ma").val();
+        var ngayLap = $("#dtpNgayLap").val();
+        var ngayNhanTien = $("#dtpNgayNhanTien").val();
+        var chiNhanhDeNghi = $("#ChiNhanhDeNghi").val();
+        var phongBanDeNghi = $("#PhongBanDeNghi").val();
+        var chiNhanhChi = $("#ChiNhanhChi").val();
+        var phongBanChi = $("#PhongBanChi").val();
+        var noiDung = $("#NoiDung").val();
+        var tienTe = $("#TienTe").val();
+        var tyGia = $("#TyGia").val();
+        var soTien = $("#SoTien").val();
+        var hinhThuc = $("#HinhThuc").val();
+        var ghiChu = $("#GhiChu").val();
+        var url = ma !== defaultUID ? '/ExpenseRequest/Edit' : '/ExpenseRequest/Add';
+        let formdata ={
+            ma: ma,
+            ngayLap: ngayLap,
+            ngayNhanTien: ngayNhanTien,
+            chiNhanhDeNghi: chiNhanhDeNghi,
+            phongBanDeNghi: phongBanDeNghi,
+            chiNhanhChi: chiNhanhChi,
+            phongBanChi: phongBanChi,
+            noiDung: noiDung,
+            tienTe: tienTe,
+            tyGia: tyGia,
+            soTien: soTien,
+            hinhThuc: hinhThuc,
+            ghiChu: ghiChu
         };
-        console.table(formdata)
+        console.table(formdata);
 
         $.ajax({
             url: url,
@@ -36,15 +45,15 @@ function loadDanhSach() {
             success: function (response) {
                 if (response.success) {
                     swal.fire({
-                        title: 'thành công!',
+                        title: 'Thành công!',
                         text: response.message,
                         icon: 'success'
                     }).then(() => {
-                        window.location.href = "/Department";
+                        window.location.href = "/ExpenseRequest";
                     });
                 } else {
                     swal.fire({
-                        title: 'thất bại!',
+                        title: 'Thất bại!',
                         text: response.message,
                         icon: 'error'
                     });
@@ -52,16 +61,14 @@ function loadDanhSach() {
             },
             error: function (xhr, status, error) {
                 swal.fire({
-                    title: 'đã xảy ra lỗi!',
-                    text: 'vui lòng thử lại.',
+                    title: 'Đã xảy ra lỗi!',
+                    text: 'Vui lòng thử lại.',
                     icon: 'error'
                 });
                 console.error(error);
             }
         });
     });
-
-
 }
 
 function loadChiNhanh() {
@@ -70,7 +77,8 @@ function loadChiNhanh() {
         type: 'GET',
         success: function (response) {
             var branchData = response.data;
-            getListChiNhanh(branchData);
+            ChiNhanhDeNghi(branchData);
+            ChiNhanhChi(branchData);
         },
         error: function (error) {
             Swal.fire({
@@ -83,8 +91,8 @@ function loadChiNhanh() {
     });
 }
 
-function getListChiNhanh(data) {
-    var branchSelect = $('#Branch');
+function ChiNhanhDeNghi(data) {
+    var branchSelect = $('#ChiNhanhDeNghi');
     branchSelect.empty();
     data.forEach(function (branch) {
         let select = $('<option>', {
@@ -92,32 +100,52 @@ function getListChiNhanh(data) {
             text: branch.ten,
         });
 
-        if (branch.ma == maCN) {
+        if (branch.ma == maChiNhanhDeNghi) {
             select.attr('selected', true);
         }
         branchSelect.append(select);
     });
 
     var selectedBranch = branchSelect.val();
-    loadBan(selectedBranch);
-    changeSelectBranch(branchSelect);
+    loadBan(selectedBranch, '#PhongBanDeNghi', MaPhongBanDeNghi);
+    changeSelectBranch(branchSelect, '#PhongBanDeNghi');
 }
 
-function changeSelectBranch(branchSelect) {
+function ChiNhanhChi(data) {
+    var branchSelect = $('#ChiNhanhChi');
+    branchSelect.empty();
+    data.forEach(function (branch) {
+        let select = $('<option>', {
+            value: branch.ma,
+            text: branch.ten,
+        });
+
+        if (branch.ma == maChiNhanhChi) {
+            select.attr('selected', true);
+        }
+        branchSelect.append(select);
+    });
+
+    var selectedBranch = branchSelect.val();
+    loadBan(selectedBranch, '#PhongBanChi', maPhongBanChi);
+    changeSelectBranch(branchSelect, '#PhongBanChi');
+}
+
+function changeSelectBranch(branchSelect, divisionSelectId) {
     branchSelect.on('change', function () {
         var selectedBranch = $(this).val();
         console.log("Chi nhánh đã chọn:", selectedBranch);
-        loadBan(selectedBranch);
+        loadBan(selectedBranch, divisionSelectId);
     });
 }
 
-function loadBan(selectedBranch) {
+function loadBan(selectedBranch, divisionSelectId, selectedDivision = '') {
     $.ajax({
         url: "/Division/getListDivision",
         type: 'GET',
         success: function (response) {
             var DivisionData = response.data;
-            var DivisionSelect = $('#Division');
+            var DivisionSelect = $(divisionSelectId);
             DivisionSelect.empty();
             let listBan = DivisionData.filter(item => item.maChiNhanh == selectedBranch);
 
@@ -127,7 +155,7 @@ function loadBan(selectedBranch) {
                     text: item.ten,
                 });
 
-                if (item.ma === MaBan) {
+                if (item.ma === selectedDivision) {
                     option.attr('selected', true);
                 }
 
