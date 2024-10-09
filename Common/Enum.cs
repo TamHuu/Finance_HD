@@ -14,5 +14,12 @@
             TaiKhoanCaNhan = 2,
             NganHang = 3
         }
+        public enum TrangThaiChungTu
+        {
+            LapPhieu = 1,
+            DaDuyet = 2,
+            DaThu = 3,
+            DaChi = 4
+        }
     }
 }

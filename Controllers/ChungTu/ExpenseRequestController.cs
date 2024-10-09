@@ -36,27 +36,26 @@ namespace Finance_HD.Controllers.ChungTu
             var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
                                       join chinhanhdenghi in _dbContext.SysBranch
                                       on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
-                                      from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty() // Left join
+                                      from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty() 
 
                                       join bophandenghi in _dbContext.TblPhongBan
                                       on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
-                                      from bophandenghi in bophandenghiGroup.DefaultIfEmpty() // Left join
-
+                                      from bophandenghi in bophandenghiGroup.DefaultIfEmpty() 
                                       join chinhanhchi in _dbContext.SysBranch
                                       on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
-                                      from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty() // Left join
+                                      from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty() 
 
                                       join bophanchi in _dbContext.TblBan
                                       on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
-                                      from bophanchi in bophanchiGroup.DefaultIfEmpty() // Left join
+                                      from bophanchi in bophanchiGroup.DefaultIfEmpty() 
 
                                       join noidungthuchi in _dbContext.CatNoiDungThuChi
                                       on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
-                                      from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty() // Left join
+                                      from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty() 
 
                                       join tien in _dbContext.FaLoaiTien
                                       on denghichi.MaTienTe equals tien.Ma into tienGroup
-                                      from tien in tienGroup.DefaultIfEmpty() // Left join
+                                      from tien in tienGroup.DefaultIfEmpty()
                                       where !(denghichi.Deleted ?? false) &&
                                             (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
                                              denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||

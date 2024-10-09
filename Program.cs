@@ -40,6 +40,6 @@ app.UseAuthorization();
 // Route chính
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}"); // Chuyển hướng đến trang đăng nhập
+    pattern: "{controller=Home}/{action=Index}/{id?}"); // Chuyển hướng đến trang đăng nhập
 
 app.Run();
