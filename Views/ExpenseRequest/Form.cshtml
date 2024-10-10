@@ -87,9 +87,9 @@
             <div class="form-group col-md-2">
                 <label for="HinhThuc">Hình thức chi</label>
                 <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
-                    <!option value="@((int)Finance_HD.Common.Enum.HinhThucThuChi.TienMat)" @(Model.HinhThucChi == (int)Finance_HD.Common.Enum.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
-                    <!option value="@((int)Finance_HD.Common.Enum.HinhThucThuChi.TaiKhoanCaNhan)" @(Model.HinhThucChi == (int)Finance_HD.Common.Enum.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
-                    <!option value="@((int)Finance_HD.Common.Enum.HinhThucThuChi.NganHang)" @(Model.HinhThucChi == (int)Finance_HD.Common.Enum.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
+                    <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)" @(Model.HinhThucChi == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
+                        <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan)" @(Model.HinhThucChi == (int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
+                        <!option value="@((int)Finance_HD.Common.HinhThucThuChi.NganHang)" @(Model.HinhThucChi == (int)Finance_HD.Common.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
                 </select>
             </div>
         </div>

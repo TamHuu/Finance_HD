@@ -122,7 +122,7 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Ngày lập hoặc ngày nhận tiền không hợp lệ!" });
             }
-            Finance_HD.Common.Enum.HinhThucThuChi hinhThucChiEnum;
+            Finance_HD.Common.HinhThucThuChi hinhThucChiEnum;
             if (!Enum.TryParse(hinhThuc, out hinhThucChiEnum))
             {
                 return Json(new { success = false, message = "Hình thức chi không hợp lệ!" });

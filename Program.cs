@@ -1,5 +1,7 @@
 ﻿using Finance_HD.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +13,48 @@ var connectionString = builder.Configuration.GetConnectionString("HDFA");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Cấu hình dịch vụ xác thực
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
+// Cấu hình xác thực bằng Cookie
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Cookies";
+    options.DefaultChallengeScheme = "Cookies";
+})
+.AddCookie("Cookies", options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
+// Cấu hình thêm cho Bearer Token (JWT)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Bearer"; // Sử dụng Bearer token làm mặc định
+    options.DefaultChallengeScheme = "Bearer"; // Sử dụng Bearer token làm mặc định
+})
+.AddJwtBearer("Bearer", options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.LoginPath = "/Account/Login"; // Trang đăng nhập
-        options.LogoutPath = "/Account/Logout"; // Trang đăng xuất
-        options.AccessDeniedPath = "/Account/AccessDenied"; // Trang truy cập bị từ chối
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"], // Đọc từ cấu hình
+        ValidAudience = builder.Configuration["Jwt:Audience"], // Đọc từ cấu hình
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])) // Đọc từ cấu hình
+    };
+});
+
+// Thêm chính sách xác thực
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("BearerPolicy", policy =>
+    {
+        policy.AuthenticationSchemes.Add("Bearer");
+        policy.RequireAuthenticatedUser();
     });
+});
 
 var app = builder.Build();
 
@@ -34,12 +70,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Thêm middleware xác thực
+// Thêm middleware xác thực
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Route chính
+app.MapControllers(); // Đảm bảo ánh xạ đến các controller
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"); // Chuyển hướng đến trang đăng nhập
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
