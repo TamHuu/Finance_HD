@@ -14,13 +14,19 @@ namespace Finance_HD.Controllers
         [CustomAuthorize] // Áp dụng Action Filter
         public IActionResult Index()
         {
+            // Kiểm tra nếu cookie có tồn tại
+            if (Request.Cookies["FullName"] != null)
+            {
+                // Lấy giá trị từ cookie và gán vào ViewData
+                ViewData["FullName"] = Request.Cookies["FullName"];
+            }
+            else
+            {
+                ViewData["FullName"] = "Cookie không tồn tại";
+            }
             return View();
         }
 
-        public IActionResult Login()
-        {
-            return View();
-        }
     }
 
 

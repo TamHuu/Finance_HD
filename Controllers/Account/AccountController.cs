@@ -25,6 +25,7 @@ namespace Finance_HD.Controllers.Account
 
         public IActionResult Login()
         {
+
             return View();
         }
         [HttpPost]
@@ -58,9 +59,11 @@ namespace Finance_HD.Controllers.Account
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
-                {
+        {
             new Claim(ClaimTypes.Name, user.Username),
-                }),
+            new Claim("FullName", user.FullName), // Thêm FullName vào Claims
+            new Claim("SDT", user.SoDienThoai) // Thêm SDT vào Claims
+        }),
                 Expires = DateTime.UtcNow.AddHours(1), 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature)
                 
@@ -77,7 +80,8 @@ namespace Finance_HD.Controllers.Account
             };
 
             Response.Cookies.Append("UserName", user.Username, cookieOptions);
-
+            Response.Cookies.Append("FullName", user.FullName, cookieOptions);
+            Response.Cookies.Append("SDT", user.SoDienThoai, cookieOptions);
             return Json(new { success = true, message = "Đăng nhập thành công" });
         }
 
