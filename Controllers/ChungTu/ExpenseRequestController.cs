@@ -20,7 +20,14 @@ namespace Finance_HD.Controllers.ChungTu
             var branches = _dbContext.SysBranch.ToList();
             var deNghiChis = _dbContext.FiaDeNghiChi.ToList();
 
-
+            if (Request.Cookies["FullName"] != null)
+            {
+                ViewData["FullName"] = Request.Cookies["FullName"];
+            }
+            else
+            {
+                ViewData["FullName"] = "Cookie không tồn tại";
+            }
             ViewData["listChiNhanh"] = branches;
 
             return View(deNghiChis);

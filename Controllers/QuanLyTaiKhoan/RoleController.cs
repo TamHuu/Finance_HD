@@ -14,6 +14,14 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
         }
         public IActionResult Index()
         {
+            if (Request.Cookies["FullName"] != null)
+            {
+                ViewData["FullName"] = Request.Cookies["FullName"];
+            }
+            else
+            {
+                ViewData["FullName"] = "Cookie không tồn tại";
+            }
             var result = _dbContext.SysRole.ToList();
             return View(result);
         }
