@@ -42,7 +42,7 @@ namespace Finance_HD.Controllers.Account
             }
             var user = _dbContext.SysUser.FirstOrDefault(x => x.Username == model.Username);
 
-            if (user == null || user.Password != model.Password) 
+            if (user == null || user.Password != model.Password)
             {
                 return Json(new { success = false, message = "Tên đăng nhập hoặc mật khẩu không đúng." });
             }
@@ -64,9 +64,9 @@ namespace Finance_HD.Controllers.Account
             new Claim("FullName", user.FullName), // Thêm FullName vào Claims
             new Claim("SDT", user.SoDienThoai) // Thêm SDT vào Claims
         }),
-                Expires = DateTime.UtcNow.AddHours(1), 
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature)
-                
+
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -75,8 +75,8 @@ namespace Finance_HD.Controllers.Account
             {
                 Path = "/",
                 HttpOnly = true,
-                Secure = true, 
-                Expires = DateTimeOffset.UtcNow.AddHours(1) 
+                Secure = true,
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
             };
 
             Response.Cookies.Append("UserName", user.Username, cookieOptions);
@@ -85,9 +85,31 @@ namespace Finance_HD.Controllers.Account
             return Json(new { success = true, message = "Đăng nhập thành công" });
         }
 
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            if (Request.Cookies.ContainsKey("UserName"))
+            {
+                Response.Cookies.Delete("UserName");
+            }
+
+            if (Request.Cookies.ContainsKey("FullName"))
+            {
+                Response.Cookies.Delete("FullName");
+            }
+
+            if (Request.Cookies.ContainsKey("SDT"))
+            {
+                Response.Cookies.Delete("SDT");
+            }
+
+            return Json(new { success = true, message = "Đăng xuất thành công" });
+        }
+
+
         private bool IsValidPassword(string password)
         {
-            return password.Length >= 6; 
+            return password.Length >= 6;
         }
 
     }

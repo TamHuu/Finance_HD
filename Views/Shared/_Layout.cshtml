@@ -39,8 +39,8 @@
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">@ViewData["FullName"]</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-product" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                <a class="dropdown-product" id="Logout">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400" ></i>
                                     Profile
                                 </a>
                                 <div class="dropdown-divider"></div>
@@ -62,7 +62,8 @@
     <a class="scroll-to-top rounded" href="#page-top" style="display: none;">
         <i class="fas fa-angle-up"></i>
     </a>
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <script src="~/vendor/jquery/jquery.min.js"></script>    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -79,12 +80,73 @@
             </div>
         </div>
     </div>
+    <footer style="background-color:#1e63e9" class="main-footer d-flex align-items-center text-white py-3 justify-content-between">
+        <span class="fs-16 fw-700 mx-auto login-footer" title="Tổng Công Ty">Tổng Công Ty</span>
+        <div class="d-flex align-items-center">
+            <a href="/login/logout" class="logout-icon" title="Đăng xuất">
+                <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+            </a>
 
-    <script src="~/vendor/jquery/jquery.min.js"></script>
+        </div>
+    </footer>
+    <style>
+        .main-footer {
+            height: 80px; /* Tăng chiều cao của footer */
+            border-top: 1px solid #ffffff; /* Thêm đường viền trên cùng */
+        }
+
+        .login-footer {
+            display: flex; /* Đảm bảo các phần tử con căn giữa */
+            align-items: center; /* Căn giữa theo chiều dọc */
+            color: #ffffff; /* Đảm bảo chữ trắng */
+        }
+
+        .logout-icon {
+            color: #ffcc00; /* Màu khác cho icon đăng xuất */
+            margin-left: 10px; /* Khoảng cách giữa tên và icon */
+        }
+
+            .logout-icon:hover {
+                color: #ffc107; /* Thay đổi màu khi hover */
+            }
+
+        .logout-icon {
+            color: #ffffff; /* Đặt màu trắng cho icon đăng xuất */
+            margin-left: 10px; /* Khoảng cách giữa tên và icon */
+        }
+
+            .logout-icon:hover {
+                color: #ffc107; /* Thay đổi màu khi hover */
+            }
+
+    </style>
+   
     <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="~/js/sb-admin-2.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <script>
+        $('#Logout').on('click',function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/Account/Logout',
+                contentType: "application/json",
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.href = "/";
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Đã xảy ra lỗi trong quá trình đăng nhập.");
+                }
+            });
+        });
+
+    </script>
 </body>
 </html>
