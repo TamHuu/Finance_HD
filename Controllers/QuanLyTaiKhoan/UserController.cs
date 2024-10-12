@@ -35,23 +35,23 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                            where !(user.Deleted ?? false)
                            select new
                            {
-                               MaUser = user.Ma,
-                               UserName = user.Username,
-                               Msnv = user.Msnv,
-                               CCCD= user.Cccd,
-                               SoDienThoai = user.SoDienThoai,
-                               GioiTinh= user.GioiTinh,
-                               Status = user.Status,
-                               FullName =  user.FullName,
-                               MaDinhDanh = user.MaDinhDanh,
-                               NgaySinh = user.NgaySinh,
-                               DiaChi= user.DiaChi,
-                               NgayVaoLam = user.NgayVaoLam,
-                               NgayKetThuc = user.NgayKetThuc,
-                               MaChiNhanh = chinhanh.Ma,
-                               TenChiNhanh = chinhanh.Ten,
-                               MaPhongBan = ban.Ma,
-                               TenPhongBan = ban.Ten,
+                               MaUser = user.Ma+"",
+                               UserName = user.Username+"",
+                               Msnv = user.Msnv + "",
+                               CCCD= user.Cccd + "",
+                               SoDienThoai = user.SoDienThoai + "",
+                               GioiTinh= user.GioiTinh + "",
+                               Status = user.Status + "",
+                               FullName =  user.FullName + "",
+                               MaDinhDanh = user.MaDinhDanh + "",
+                               NgaySinh = user.NgaySinh + "",
+                               DiaChi= user.DiaChi + "",
+                               NgayVaoLam = user.NgayVaoLam + "",
+                               NgayKetThuc = user.NgayKetThuc + "",
+                               MaChiNhanh = chinhanh.Ma +"",
+                               TenChiNhanh = chinhanh.Ten + "",
+                               MaPhongBan = ban.Ma + "",
+                               TenPhongBan = ban.Ten + "",
                                CreatedDate= DateTime.Now,
                            })
                            
@@ -177,18 +177,27 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
             var user = _dbContext.SysUser.FirstOrDefault(x => x.Ma == Id.GetGuid());
             if (user == null)
             {
-                return Json(new { success = false, message = "người dùng không tồn tại!" });
+                return Json(new { success = false, message = "Người dùng không tồn tại!" });
             }
 
-            // Kích hoạt soft delete
-            user.Deleted = true;  // Đánh dấu đã bị xoá
-            user.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
-            _dbContext.SysUser.Update(user);  // Cập nhật vào CSDL
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+
+            user.Deleted = true;  
+            user.DeletedDate = DateTime.Now; 
+            user.UserDeleted = loggedInUser.Ma;  
+
+            _dbContext.SysUser.Update(user);
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Xoá người dùng thành công!" });
         }
+
 
     }
 }
