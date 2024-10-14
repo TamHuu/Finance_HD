@@ -87,11 +87,20 @@
             <div class="form-group col-md-2">
                 <label for="HinhThuc">Hình thức chi</label>
                 <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
-                    <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)" @(Model.HinhThucChi == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
+                        <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)" @(Model.HinhThucChi == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
                         <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan)" @(Model.HinhThucChi == (int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
                         <!option value="@((int)Finance_HD.Common.HinhThucThuChi.NganHang)" @(Model.HinhThucChi == (int)Finance_HD.Common.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
                 </select>
             </div>
+                <div class="form-group col-md-2">
+                    <label for="TrangThai">Trạng thái</label>
+                    <select class="form-control form-control-sm" id="TrangThai" name="TrangThai">
+                        <!option value="@((int)Finance_HD.Common.TrangThaiChungTu.LapPhieu)" @(Model.TrangThai == (int)Finance_HD.Common.TrangThaiChungTu.LapPhieu ? "selected" : "")>Lập phiếu</!option>
+                        <!option value="@((int)Finance_HD.Common.TrangThaiChungTu.DaDuyet)" @(Model.TrangThai == (int)Finance_HD.Common.TrangThaiChungTu.DaDuyet ? "selected" : "")>Đã duyệt</!option>
+                        <!option value="@((int)Finance_HD.Common.TrangThaiChungTu.DaThu)" @(Model.TrangThai == (int)Finance_HD.Common.TrangThaiChungTu.DaThu ? "selected" : "")>Đã thu</!option>
+                        <!option value="@((int)Finance_HD.Common.TrangThaiChungTu.DaChi)" @(Model.TrangThai == (int)Finance_HD.Common.TrangThaiChungTu.DaChi ? "selected" : "")>Đã chi</!option>
+                    </select>
+                </div>
         </div>
 
         <!-- Dòng 5: Ghi Chú -->

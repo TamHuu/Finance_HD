@@ -154,12 +154,19 @@ function loadChiNhanhDeNghi() {
             var data = response.data;
             var branchSelect = $('#Branch');
             branchSelect.empty();
+            
+            let allOption = $('<option>', {
+                value: '',  
+                text: 'Tất cả'
+            });
+            branchSelect.append(allOption);
+            
             data.forEach(function (branch) {
                 let select = $('<option>', {
                     value: branch.ma,
                     text: branch.ten,
                 });
-                branchSelect.append(select); 
+                branchSelect.append(select);
             });
         },
         error: function () {
@@ -167,6 +174,7 @@ function loadChiNhanhDeNghi() {
         }
     });
 }
+
 
 function XemDanhSach() {
     $('#btnXem').on('click', function (e) {
@@ -217,17 +225,17 @@ function drawDanhSach(data) {
             `<td>${item.nguoiDuyet}</td>`,
             `<td>${item.tenChiNhanhChi}</td>`,
             `<td>${item.tenPhongBanChi}</td>`,
-            `<td>${item.soTien}</td>`,
+            `<td>${addCommas(item.soTien)}</td>`,
             `<td>${item.tenTienTe}</td>`,
             `<td>${item.tyGia}</td>`,
-            `<td>${formatDate(item.ngayYeuCauNhan)}</td>`,
-            `<td>${item.noiDung}</td>`,
-            `<td>${item.hinhThuc}</td>`,
+            `<td>${formatDate(item.ngayYeuCauNhanTien)}</td>`,
+            `<td>${item.noiDungThuChi}</td>`,
+            `<td>${item.hinhThucChi}</td>`,
             `<td>${item.ghiChu || ""}</td>`,
             `<td>${item.status ? "Hoạt động" : "Hết hoạt động"}</td>`,
-            `<td>${item.nguoiChi}</td>`,
+            `<td>${item.nguoiChi??""}</td>`,
             `<td>${formatDate(item.ngayChi)}</td>`,
-            `<td>${item.soTienChi}</td>`,
+            `<td>${addCommas(item.soTienChi)??0}</td>`,
             `
                 <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
                     <i class="fas fa-edit"></i>
@@ -241,4 +249,11 @@ function drawDanhSach(data) {
 
         table.row.add(rowContent).draw();
     });
+}
+function addCommas(amount) {
+    if (amount == null || isNaN(amount)) {
+        return '0';
+    }
+    // Chuyển đổi số thành chuỗi và sử dụng phương thức replace với biểu thức chính quy
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

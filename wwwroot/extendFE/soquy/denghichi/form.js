@@ -19,6 +19,7 @@ function loadDanhSach() {
         var tyGia = $("#TyGia").val();
         var soTien = $("#SoTien").val();
         var hinhThuc = $("#HinhThuc").val();
+        var trangThai = $("#TrangThai").val();
         var ghiChu = $("#GhiChu").val();
         var url = ma !== defaultUID ? '/ExpenseRequest/Edit' : '/ExpenseRequest/Add';
         let formdata ={
@@ -34,7 +35,8 @@ function loadDanhSach() {
             tyGia: tyGia,
             soTien: soTien,
             hinhThuc: hinhThuc,
-            ghiChu: ghiChu
+            ghiChu: ghiChu,
+            trangThai: trangThai,
         };
         console.table(formdata);
 
@@ -131,39 +133,39 @@ function ChiNhanhChi(data) {
     changeSelectBranch(branchSelect, '#PhongBanChi');
 }
 
-function changeSelectBranch(branchSelect, divisionSelectId) {
+function changeSelectBranch(branchSelect, DepartmentSelectId) {
     branchSelect.on('change', function () {
         var selectedBranch = $(this).val();
         console.log("Chi nhánh đã chọn:", selectedBranch);
-        loadBan(selectedBranch, divisionSelectId);
+        loadBan(selectedBranch, DepartmentSelectId);
     });
 }
 
-function loadBan(selectedBranch, divisionSelectId, selectedDivision = '') {
+function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
     $.ajax({
-        url: "/Division/getListDivision",
+        url: "/Department/getListDepartment",
         type: 'GET',
         success: function (response) {
-            var DivisionData = response.data;
-            var DivisionSelect = $(divisionSelectId);
-            DivisionSelect.empty();
-            let listBan = DivisionData.filter(item => item.maChiNhanh == selectedBranch);
+            var DepartmentData = response.data;
+            var DepartmentSelect = $(DepartmentSelectId);
+            DepartmentSelect.empty();
+            let listBan = DepartmentData.filter(item => item.maChiNhanh == selectedBranch);
 
             listBan.forEach(function (item) {
                 let option = $('<option>', {
-                    value: item.ma,
-                    text: item.ten,
+                    value: item.maPhongBan ,
+                    text: item.tenPhongBan,
                 });
 
-                if (item.ma === selectedDivision) {
+                if (item.ma === selectedDepartment) {
                     option.attr('selected', true);
                 }
 
-                DivisionSelect.append(option);
+                DepartmentSelect.append(option);
             });
 
-            if (DivisionSelect.children().length === 0) {
-                DivisionSelect.append($('<option>', {
+            if (DepartmentSelect.children().length === 0) {
+                DepartmentSelect.append($('<option>', {
                     value: '',
                     text: 'Không có ban nào.',
                 }));
