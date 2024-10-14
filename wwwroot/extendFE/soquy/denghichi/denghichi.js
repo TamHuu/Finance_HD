@@ -4,7 +4,8 @@ $(document).ready(function () {
     ConfigTable();  
     DefaultDate()
     loadChiNhanhDeNghi();
-    XemDanhSach();
+    setupEventHandlers(); 
+    loadExpenseRequestData();
 });
 
 
@@ -175,42 +176,42 @@ function loadChiNhanhDeNghi() {
     });
 }
 
-
-function XemDanhSach() {
+function setupEventHandlers() {
     $('#btnXem').on('click', function (e) {
         e.preventDefault();
-
-        let TuNgay = $("#TuNgay").val();
-        let DenNgay = $("#DenNgay").val();
-        var branch = $('#Branch').val();
-        var formdata = {
-            TuNgay: TuNgay,
-            DenNgay: DenNgay,
-            ChiNhanhDeNghi: branch,
-        };
-        console.table(formdata)
-
-        $.ajax({
-            url: "ExpenseRequest/getListExpenseRequest",
-            type: 'POST',
-            data: formdata,
-            success: function (response) {
-                var result = response.data;
-                drawDanhSach(result)
-               
-            },
-            error: function (xhr, status, error) {
-                swal.fire({
-                    title: 'đã xảy ra lỗi!',
-                    text: 'vui lòng thử lại.',
-                    icon: 'error'
-                });
-                console.error(error);
-            }
-        });
+        loadExpenseRequestData(); 
     });
-
 }
+function loadExpenseRequestData() {
+    let TuNgay = $("#TuNgay").val();
+    let DenNgay = $("#DenNgay").val();
+    var branch = $('#Branch').val();
+    var formdata = {
+        TuNgay: TuNgay,
+        DenNgay: DenNgay,
+        ChiNhanhDeNghi: branch,
+    };
+    console.table(formdata);
+
+    $.ajax({
+        url: "ExpenseRequest/getListExpenseRequest",
+        type: 'POST',
+        data: formdata,
+        success: function (response) {
+            var result = response.data;
+            drawDanhSach(result);
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+
 function drawDanhSach(data) {
     table.clear().draw();
     console.log("data", data);
