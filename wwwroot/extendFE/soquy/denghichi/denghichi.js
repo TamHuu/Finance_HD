@@ -14,7 +14,11 @@ function ConfigTable() {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], orderable: false }
+            { width: '200px', className: 'dt-left dt-head-center', targets: [2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 15, 16, 17], orderable: false },
+            { width: '100px', className: 'text-center', targets: [19], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [18], orderable: false },
+            { width: '100px', className: 'text-center', targets: [10], orderable: false },
+            { width: '200px', className: 'dt-right dt-head-center', targets: [8], orderable: false },
         ],
         scrollX: true,
         language: {
@@ -214,7 +218,6 @@ function loadExpenseRequestData() {
 
 function drawDanhSach(data) {
     table.clear().draw();
-    console.log("data", data);
 
     data.forEach(function (item) {
         let rowContent = [
@@ -233,7 +236,7 @@ function drawDanhSach(data) {
             `<td>${item.noiDungThuChi}</td>`,
             `<td>${item.hinhThucChi}</td>`,
             `<td>${item.ghiChu || ""}</td>`,
-            `<td>${item.status ? "Hoạt động" : "Hết hoạt động"}</td>`,
+            `<td>${item.tenTrangThai}</td>`,
             `<td>${item.nguoiChi??""}</td>`,
             `<td>${formatDate(item.ngayChi)}</td>`,
             `<td>${addCommas(item.soTienChi)??0}</td>`,

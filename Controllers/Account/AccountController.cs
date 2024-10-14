@@ -64,7 +64,7 @@ namespace Finance_HD.Controllers.Account
             new Claim("FullName", user.FullName), // Thêm FullName vào Claims
             new Claim("SDT", user.SoDienThoai) // Thêm SDT vào Claims
         }),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddHours(10),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature)
 
             };
@@ -76,7 +76,7 @@ namespace Finance_HD.Controllers.Account
                 Path = "/",
                 HttpOnly = true,
                 Secure = true,
-                Expires = DateTimeOffset.UtcNow.AddHours(1)
+                Expires = DateTimeOffset.UtcNow.AddHours(10)
             };
 
             Response.Cookies.Append("UserName", user.Username, cookieOptions);

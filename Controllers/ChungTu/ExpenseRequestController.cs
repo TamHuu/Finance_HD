@@ -35,11 +35,9 @@ namespace Finance_HD.Controllers.ChungTu
         [HttpPost]
         public IActionResult GetListExpenseRequest(string TuNgay, string DenNgay, string ChiNhanhDeNghi)
         {
-            // Chuyển đổi ngày từ chuỗi sang DateTime
             DateTime dtpTuNgay = TuNgay.ToDateTime2(DateTime.Now)!.Value;
             DateTime dtpDenNgay = DenNgay.ToDateTime2(DateTime.Now)!.Value;
 
-            // Lấy danh sách yêu cầu chi tiêu
             var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
 
                                       join chinhanhdenghi in _dbContext.SysBranch
@@ -97,7 +95,7 @@ namespace Finance_HD.Controllers.ChungTu
                                           TenPhongBanChi = bophanchi.Ten ?? "",
                                           HinhThucChi = denghichi.HinhThucChi == (int)HinhThucThuChi.TienMat?"Tiền mặt" : denghichi.HinhThucChi== (int)HinhThucThuChi.TaiKhoanCaNhan?"Tài khoản cá nhân":denghichi.HinhThucChi== (int)HinhThucThuChi.NganHang?"Ngân hàng":"",
                                           GhiChu = denghichi.GhiChu + "",
-                                          TenTrangThai= denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
+                                          TenTrangThai= denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : denghichi.TrangThai== (int)TrangThaiChungTu.DaChi?"Đã chi":"",
                                           NguoiDuyet = nguoilapphieu.FullName + "",
                                           NgayDuyet = denghichi.NgayDuyet + "",
                                           NgayChi = denghichi.NgayYeuCauNhanTien + "",
@@ -206,6 +204,7 @@ namespace Finance_HD.Controllers.ChungTu
         public IActionResult Edit(string Ma)
         {
             ViewData["listTienTe"] = _dbContext.FiaTienTe.ToList();
+            ViewData["listNoiDung"]=_dbContext.CatNoiDungThuChi.ToList();
             var FiaDeNghiChi = _dbContext.FiaDeNghiChi.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (FiaDeNghiChi == null)
             {

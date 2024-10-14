@@ -6,7 +6,7 @@ $(document).ready(function () {
             { className: "d-none", targets: 0, orderable: false },
             { width: '200px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
             { width: '600px', className: 'dt-left dt-head-center', targets: [2, 3, 4], orderable: false },
-            { width: '100px', className: 'text-center', targets: [5, 6, 7, 8], orderable: false },
+            { width: '150px', className: 'text-center', targets: [5, 6, 7, 8], orderable: false },
         ],
 
         language: {
