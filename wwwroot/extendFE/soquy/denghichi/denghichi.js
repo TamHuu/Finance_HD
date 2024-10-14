@@ -1,10 +1,10 @@
 ﻿let table;
 
 $(document).ready(function () {
-    ConfigTable();  
+    ConfigTable();
     DefaultDate()
     loadChiNhanhDeNghi();
-    setupEventHandlers(); 
+    setupEventHandlers();
     loadExpenseRequestData();
 });
 
@@ -16,9 +16,10 @@ function ConfigTable() {
             { className: "d-none", targets: 0, orderable: false },
             { width: '200px', className: 'dt-left dt-head-center', targets: [2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 15, 16, 17], orderable: false },
             { width: '100px', className: 'text-center', targets: [19], orderable: false },
-            { width: '100px', className: 'dt-right dt-head-center', targets: [18], orderable: false },
+            { minWidth:"200px",width: '200px', className: 'dt-right dt-head-center', targets: [18], orderable: false },
             { width: '100px', className: 'text-center', targets: [10], orderable: false },
             { width: '200px', className: 'dt-right dt-head-center', targets: [8], orderable: false },
+            { width: '100px', className: 'dt-left dt-head-center', targets: [14], orderable: false },
         ],
         scrollX: true,
         language: {
@@ -50,68 +51,6 @@ function Edit(row) {
     window.open('/ExpenseRequest/Edit?ma=' + firstCellValue, '_blank');
 }
 
-
-$('#Table').on('click', '.btnDelete', function (e) {
-    e.preventDefault();
-    var Id = $(this).data('id');
-    handleDelete(Id);
-});
-
-
-function handleDelete(Id) {
-    console.log("id", Id);
-    if (!Id || Id === "0") {
-        Swal.fire({
-            title: 'Lỗi!',
-            text: 'Không có danh mục để xoá.',
-            icon: 'error'
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: 'Xác nhận xoá',
-        text: 'Bạn có chắc chắn muốn xoá danh mục này?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Có, xoá nó!',
-        cancelButtonText: 'Không, huỷ!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/ExpenseRequest/Delete',
-                type: 'DELETE',
-                data: { Id: Id },
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: 'Đã xoá!',
-                            text: response.message,
-                            icon: 'success'
-                        }).then(() => {
-                            loadDanhSach(); // Tải lại danh sách sau khi xóa thành công
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Thất bại!',
-                            text: response.message,
-                            icon: 'error'
-                        });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: 'Đã xảy ra lỗi!',
-                        text: 'Vui lòng thử lại.',
-                        icon: 'error'
-                    });
-                }
-            });
-        }
-    });
-}
-
-// Hàm định dạng ngày tháng
 function formatDate(date) {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -159,13 +98,13 @@ function loadChiNhanhDeNghi() {
             var data = response.data;
             var branchSelect = $('#Branch');
             branchSelect.empty();
-            
+
             let allOption = $('<option>', {
-                value: '',  
+                value: '',
                 text: 'Tất cả'
             });
             branchSelect.append(allOption);
-            
+
             data.forEach(function (branch) {
                 let select = $('<option>', {
                     value: branch.ma,
@@ -183,7 +122,7 @@ function loadChiNhanhDeNghi() {
 function setupEventHandlers() {
     $('#btnXem').on('click', function (e) {
         e.preventDefault();
-        loadExpenseRequestData(); 
+        loadExpenseRequestData();
     });
 }
 function loadExpenseRequestData() {
@@ -237,9 +176,9 @@ function drawDanhSach(data) {
             `<td>${item.hinhThucChi}</td>`,
             `<td>${item.ghiChu || ""}</td>`,
             `<td>${item.tenTrangThai}</td>`,
-            `<td>${item.nguoiChi??""}</td>`,
+            `<td>${item.nguoiChi ?? ""}</td>`,
             `<td>${formatDate(item.ngayChi)}</td>`,
-            `<td>${addCommas(item.soTienChi)??0}</td>`,
+            `<td>${addCommas(item.soTienChi) ?? 0}</td>`,
             `
                 <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
                     <i class="fas fa-edit"></i>
@@ -248,12 +187,133 @@ function drawDanhSach(data) {
                 <button class="btn btn-danger btn-sm btnDelete" data-id="${item.ma}" title="Xóa">
                     <i class="fas fa-trash"></i>
                 </button>
+
+                <button class="btn btn-success btn-sm btnApprove" data-id="${item.ma}" title="Duyệt">
+                     <i class="fas fa-check"></i>
+                </button>
+
             `
         ];
 
         table.row.add(rowContent).draw();
     });
 }
+$('#Table').on('click', '.btnDelete', function (e) {
+    e.preventDefault();
+    var Id = $(this).data('id');
+    handleDelete(Id);
+});
+$('#Table').on('click', '.btnApprove', function (e) {
+    e.preventDefault();
+    var Id = $(this).data('id');
+    handleDelete(Id);
+});
+
+function handleDelete(Id) {
+    console.log("id", Id);
+    if (!Id || Id === "0") {
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Không có danh mục để xoá.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận xoá',
+        text: 'Bạn có chắc chắn muốn xoá danh mục này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có, xoá nó!',
+        cancelButtonText: 'Không, huỷ!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/ExpenseRequest/Delete',
+                type: 'DELETE',
+                data: { Id: Id },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Đã xoá!',
+                            text: response.message,
+                            icon: 'success'
+                        }).then(() => {
+                            loadDanhSach(); // Tải lại danh sách sau khi xóa thành công
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Thất bại!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Đã xảy ra lỗi!',
+                        text: 'Vui lòng thử lại.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+}
+function handleApprove(Id) {
+    console.log("id", Id);
+    if (!Id || Id === "0") {
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Không có danh mục để duyệt.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận Duyệt phiếu',
+        text: 'Bạn có chắc chắn muốn duyệt phiếu này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có, Duyệt!',
+        cancelButtonText: 'Không, Huỷ!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/ExpenseRequest/DuyetPhieuDeNghiChi',
+                type: 'POST',
+                data: { Id: Id },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Đã xoá!',
+                            text: response.message,
+                            icon: 'success'
+                        }).then(() => {
+                            loadDanhSach(); 
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Thất bại!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Đã xảy ra lỗi!',
+                        text: 'Vui lòng thử lại.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+}
+
 function addCommas(amount) {
     if (amount == null || isNaN(amount)) {
         return '0';
