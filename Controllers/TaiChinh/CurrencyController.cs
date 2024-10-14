@@ -67,14 +67,20 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Loại tiền đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var listCurrency = new FaLoaiTien
             {
                 MaTienTe = model.MaTienTe,
                 Code = model.Code,
                 GiaTri = model.GiaTri,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
@@ -105,13 +111,19 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Loại tiền này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             listCurrency.Ma = model.Ma;
             listCurrency.Code = model.Code;
             listCurrency.GiaTri = model.GiaTri;
             listCurrency.MaTienTe = model.MaTienTe;
             listCurrency.Status = model.Status;
-            listCurrency.UserModified = model.UserModified;
+            listCurrency.UserModified = loggedInUser.Ma;
             listCurrency.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.FaLoaiTien.Update(listCurrency);
             _dbContext.SaveChanges();
@@ -126,8 +138,15 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Loại tiền không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
+            listCurrency.UserDeleted = loggedInUser.UserDeleted;
             listCurrency.Deleted = true;  // Đánh dấu đã bị xoá
             listCurrency.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
 

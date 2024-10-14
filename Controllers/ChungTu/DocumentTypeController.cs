@@ -53,7 +53,13 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Loại chứng từ này đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var ListDocumentType = new TblLoaiChungTu
             {
 
@@ -61,7 +67,7 @@ namespace Finance_HD.Controllers.ChungTu
                 Code = model.Code,
                 Ten = model.Ten,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
@@ -90,12 +96,19 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Loại chứng từ này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
 
             TblLoaiChungTu.Ma = model.Ma;
             TblLoaiChungTu.Code = model.Code;
             TblLoaiChungTu.Ten = model.Ten;
             TblLoaiChungTu.Status = model.Status;
-            TblLoaiChungTu.UserModified = model.UserModified;
+            TblLoaiChungTu.UserModified = loggedInUser.Ma;
             TblLoaiChungTu.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.TblLoaiChungTu.Update(TblLoaiChungTu);
             _dbContext.SaveChanges();
@@ -110,8 +123,15 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Loại chứng từ không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
+            TblLoaiChungTu.UserDeleted = loggedInUser.Ma;
             TblLoaiChungTu.Deleted = true;  // Đánh dấu đã bị xoá
             TblLoaiChungTu.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
 

@@ -55,7 +55,13 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             {
                 return Json(new { success = false, message = "Tên quyền đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var permission = new SysPermission
             {
                Name = model.Name,
@@ -63,7 +69,8 @@ namespace Finance_HD.Controllers.QuanLyHeThong
                Description = model.Description,
                FormAccess = model.FormAccess,
                Status = model.Status,
-                CreatedDate = model.CreatedDate ?? DateTime.Now,
+               CreatedDate = model.CreatedDate ?? DateTime.Now,
+               UserCreated = loggedInUser.Ma,
             };
 
             _dbContext.SysPermission.Add(permission);
@@ -91,14 +98,20 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             {
                 return Json(new { success = false, message = "Quyền này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
-          
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+
             permission.Name = model.Name;
             permission.Code = model.Code;
             permission.Description = model.Description;
             permission.FormAccess = model.FormAccess;
             permission.Status = model.Status;
-            permission.UserModified = model.UserModified;
+            permission.UserModified = loggedInUser.Ma;
             permission.ModifiedDate = permission.ModifiedDate ?? DateTime.Now;
             _dbContext.SysPermission.Update(permission);
             _dbContext.SaveChanges();
@@ -113,8 +126,15 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             {
                 return Json(new { success = false, message = "Quyền không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
+            permission.UserDeleted = loggedInUser.Ma;   
             permission.Deleted = true;  // Đánh dấu đã bị xoá
             permission.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
 

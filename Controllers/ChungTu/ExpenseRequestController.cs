@@ -135,7 +135,13 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Hình thức chi không hợp lệ!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var ExpenseRequest = new FiaDeNghiChi
             {
                 MaChiNhanhDeNghi = chiNhanhDeNghi.GetGuid(),
@@ -152,9 +158,9 @@ namespace Finance_HD.Controllers.ChungTu
                 HinhThucChi = Convert.ToInt32(hinhThucChiEnum),
                 GhiChu = ghiChu,
                 CreatedDate = DateTime.Now,
+                UserCreated = loggedInUser.Ma,
             };
 
-            // Lưu vào cơ sở dữ liệu
             _dbContext.FiaDeNghiChi.Add(ExpenseRequest);
             _dbContext.SaveChanges();
 
@@ -202,7 +208,13 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Đề nghị chi này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             ExpenseRequest.Ma = model.Ma;
             ExpenseRequest.MaChiNhanhDeNghi = model.MaChiNhanhDeNghi;
             ExpenseRequest.MaChiNhanhChi = model.MaChiNhanhChi;
@@ -220,7 +232,7 @@ namespace Finance_HD.Controllers.ChungTu
             ExpenseRequest.TrangThai = model.TrangThai;
             ExpenseRequest.NguoiDuyet = model.NguoiDuyet;
             ExpenseRequest.NgayDuyet = model.NgayDuyet;
-            ExpenseRequest.UserModified = model.UserModified;
+            ExpenseRequest.UserModified = loggedInUser.Ma;
             ExpenseRequest.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.FiaDeNghiChi.Update(ExpenseRequest);
             _dbContext.SaveChanges();
@@ -234,11 +246,17 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Đề nghị chi không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
             ExpenseRequest.Deleted = true;  // Đánh dấu đã bị xoá
             ExpenseRequest.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
-
+            ExpenseRequest.UserDeleted = loggedInUser.Ma;
             _dbContext.FiaDeNghiChi.Update(ExpenseRequest);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 

@@ -68,7 +68,13 @@ namespace Finance_HD.Controllers.KhachHang
             {
                 return Json(new { success = false, message = "Khách hàng đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var listCustomer = new FiaKhachHang
             {
                 Ma = model.Ma,
@@ -79,7 +85,7 @@ namespace Finance_HD.Controllers.KhachHang
                 SoDienThoai = model.SoDienThoai,
                 DiaChi = model.DiaChi,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
@@ -108,7 +114,13 @@ namespace Finance_HD.Controllers.KhachHang
             {
                 return Json(new { success = false, message = "Khách hàng này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             listCustomer.Ma = model.Ma;
             listCustomer.Code = model.Code;
             listCustomer.MaChiNhanh = model.MaChiNhanh;
@@ -117,7 +129,7 @@ namespace Finance_HD.Controllers.KhachHang
             listCustomer.SoDienThoai = model.SoDienThoai;
             listCustomer.DiaChi = model.DiaChi;
             listCustomer.Status = model.Status;
-            listCustomer.UserModified = model.UserModified;
+            listCustomer.UserModified = loggedInUser.Ma;
             listCustomer.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.FiaKhachHang.Update(listCustomer);
             _dbContext.SaveChanges();
@@ -132,7 +144,14 @@ namespace Finance_HD.Controllers.KhachHang
             {
                 return Json(new { success = false, message = "Khách hàng không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+            listCustomer.UserDeleted = loggedInUser.Ma;
             listCustomer.Deleted = true;  
             listCustomer.DeletedDate = DateTime.Now; 
 

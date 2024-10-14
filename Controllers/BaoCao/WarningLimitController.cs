@@ -67,14 +67,20 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Hạn mức đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var WarningLimit = new FiaHanMucCanhBao
             {
                 MaBoPhan = model.MaBoPhan,
                 Ma = model.Ma,
                 HanMuc = model.HanMuc,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
@@ -104,12 +110,18 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Hạn mức này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             WarningLimit.Ma = model.Ma;
             WarningLimit.MaBoPhan = model.MaBoPhan;
             WarningLimit.HanMuc = model.HanMuc;
             WarningLimit.Status = model.Status;
-            WarningLimit.UserModified = model.UserModified;
+            WarningLimit.UserModified = loggedInUser.Ma;
             WarningLimit.ModifiedDate = WarningLimit.ModifiedDate ?? DateTime.Now;
             _dbContext.FiaHanMucCanhBao.Update(WarningLimit);
             _dbContext.SaveChanges();
@@ -124,8 +136,15 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Hạn mức không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
+            WarningLimit.UserDeleted = loggedInUser.Ma;
             WarningLimit.Deleted = true;  // Đánh dấu đã bị xoá
             WarningLimit.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
 

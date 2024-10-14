@@ -66,7 +66,13 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Tên báo cáo không được để trống!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var existingReport = _dbContext.TblDanhSachBaoCao.FirstOrDefault(x => x.Ten == model.Ten);
             if (existingReport != null)
             {
@@ -79,6 +85,7 @@ namespace Finance_HD.Controllers.BaoCao
                 Code = model.Code,
                 MenuId = model.MenuId,
                 Status = model.Status,
+                UserCreated = model.UserCreated,
                 CreatedDate = model.CreatedDate ?? DateTime.Now,
             };
 
@@ -107,13 +114,19 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Báo cáo này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
 
             report.Ten = model.Ten;
             report.Code = model.Code;
             report.MenuId = model.MenuId;
             report.Status = model.Status;
-            report.UserModified = model.UserModified;
+            report.UserModified =loggedInUser.Ma;
             report.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.TblDanhSachBaoCao.Update(report);
             _dbContext.SaveChanges();
@@ -128,11 +141,17 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Báo cáo không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
             report.Deleted = true;  // Đánh dấu đã bị xoá
             report.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
-
+            report.UserDeleted = loggedInUser.Ma;
             _dbContext.TblDanhSachBaoCao.Update(report);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 

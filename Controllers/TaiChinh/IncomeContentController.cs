@@ -69,16 +69,23 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Nội dung thu chi đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var IncomeContent = new CatNoiDungThuChi
             {
                 MaLoaiThuChi = model.MaLoaiThuChi,
                 Code = model.Code,
                 Ten = model.Ten,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
                 NoiBo = model.NoiBo,
+
             };
 
             _dbContext.CatNoiDungThuChi.Add(IncomeContent);
@@ -107,14 +114,20 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Nội dung thu chi này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             IncomeContent.Ma = model.Ma;
             IncomeContent.Code = model.Code;
             IncomeContent.Ten = model.Ten;
             IncomeContent.MaLoaiThuChi = model.MaLoaiThuChi;
             IncomeContent.NoiBo = model.NoiBo;
             IncomeContent.Status = model.Status;
-            IncomeContent.UserModified = model.UserModified;
+            IncomeContent.UserModified = loggedInUser.Ma;
             IncomeContent.ModifiedDate = IncomeContent.ModifiedDate ?? DateTime.Now;
             _dbContext.CatNoiDungThuChi.Update(IncomeContent);
             _dbContext.SaveChanges();
@@ -129,8 +142,15 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Nội dung thu chi không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
+            IncomeContent.UserDeleted = loggedInUser.Ma;
             IncomeContent.Deleted = true;  // Đánh dấu đã bị xoá
             IncomeContent.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
 

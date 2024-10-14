@@ -68,14 +68,20 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Tên ban đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var Division = new TblBan
             {
                 MaChiNhanh = model.MaChiNhanh,
                 Code = model.Code,
                 Ten = model.Ten,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
@@ -105,13 +111,20 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Ban này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
 
             division.Ma = model.Ma;
             division.Code = model.Code;
             division.Ten = model.Ten;
             division.MaChiNhanh = model.MaChiNhanh;
             division.Status = model.Status;
-            division.UserModified = model.UserModified;
+            division.UserModified = loggedInUser.Ma;
             division.ModifiedDate = division.ModifiedDate ?? DateTime.Now;
             _dbContext.TblBan.Update(division);
             _dbContext.SaveChanges();
@@ -126,8 +139,15 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Ban không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
+            division.UserDeleted = loggedInUser.Ma;
             division.Deleted = true;  // Đánh dấu đã bị xoá
             division.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
 

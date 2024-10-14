@@ -60,6 +60,13 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                 return Json(new { success = false, message = "Tên Role đã tồn tại!" });
             }
 
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var role = new SysRole
             {
                 Name = model.Name,
@@ -67,6 +74,7 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                 Description = model.Description,
                 Status = model.Status,
                 CreatedDate = model.CreatedDate ?? DateTime.Now,
+                UserModified = loggedInUser.Ma,
             };
 
             _dbContext.SysRole.Add(role);
@@ -95,6 +103,13 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                 return Json(new { success = false, message = "Role này không tồn tại!" });
             }
 
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
 
             role.Name = model.Name;
             role.Code = model.Code;
@@ -102,6 +117,7 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
             role.Status = model.Status;
             role.UserModified = model.UserModified;
             role.ModifiedDate = role.ModifiedDate ?? DateTime.Now;
+            role.UserModified = loggedInUser.Ma;
             _dbContext.SysRole.Update(role);
             _dbContext.SaveChanges();
 
@@ -115,11 +131,18 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
             {
                 return Json(new { success = false, message = "Role không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
 
             // Kích hoạt soft delete
             role.Deleted = true;  // Đánh dấu đã bị xoá
             role.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
-
+            role.UserDeleted = loggedInUser.Ma;
+            role.DeletedDate= DateTime.Now;
             _dbContext.SysRole.Update(role);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 

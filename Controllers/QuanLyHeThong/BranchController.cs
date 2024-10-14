@@ -55,7 +55,13 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             {
                 return Json(new { success = false, message = "Tên chi nhánh đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var branch = new SysBranch
             {
                 Ten = model.Ten,
@@ -66,13 +72,8 @@ namespace Finance_HD.Controllers.QuanLyHeThong
                 Logo = model.Logo,
                 Status = model.Status,
                 CoSoQuy = model.CoSoQuy,
-                UserCreated = model.UserCreated,
-                CreatedDate = DateTime.Now, // Thay đổi thời gian tạo
-                UserModified = model.UserModified,
-                ModifiedDate = null, // Không cần thiết khi tạo mới
-                DeletedDate = null, // Không cần thiết khi tạo mới
-                Deleted = false, // Mới tạo nên chưa xóa
-                UserDeleted = null, // Không cần thiết khi tạo mới
+                CreatedDate = DateTime.Now,
+                UserCreated = loggedInUser.Ma,
             };
 
             _dbContext.SysBranch.Add(branch);
@@ -99,8 +100,15 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             {
                 return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Cập nhật các thuộc tính
+            
             branch.Ten = model.Ten;
             branch.Code = model.Code;
             branch.MaSoThue = model.MaSoThue;
@@ -108,7 +116,7 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             branch.DiaChi = model.DiaChi;
             branch.CoSoQuy = model.CoSoQuy;
             branch.Status = model.Status;
-            branch.UserModified = model.UserModified;
+            branch.UserModified = loggedInUser.Ma;
             branch.ModifiedDate = DateTime.Now;
 
             _dbContext.SysBranch.Update(branch);
@@ -124,33 +132,21 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             {
                 return Json(new { success = false, message = "Sản phẩm không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
-            branch.Deleted = true;  // Đánh dấu đã bị xoá
-            branch.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+            branch.UserDeleted = loggedInUser.Ma;
+            branch.Deleted = true; 
+            branch.DeletedDate = DateTime.Now;  
 
-            _dbContext.SysBranch.Update(branch);  // Cập nhật vào CSDL
+            _dbContext.SysBranch.Update(branch); 
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Xoá sản phẩm thành công!" });
         }
-
-        [HttpGet]
-        public JsonResult LoadDanhSachBanTheoChiNhanh()
-        {
-            var listCN = (from chinhanh in _dbContext.SysBranch
-                         join ban in _dbContext.TblBan
-                         on chinhanh.Ma equals ban.MaChiNhanh into banGroup
-                         from ban in banGroup.DefaultIfEmpty() 
-                         select new
-                         {
-                             MaChiNhanh = chinhanh.Ma,
-                             TenChiNhanh = chinhanh.Ten,
-                             MaBan = ban != null ? ban.Ma : (Guid?)null, 
-                             TenBan = ban != null ? ban.Ten : "" ,
-                         }).ToList();
-
-            return Json(new { Data = listCN });
-        }
-
     }
 }

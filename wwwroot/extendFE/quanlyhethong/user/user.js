@@ -60,7 +60,7 @@ function drawDanhSach(data) {
         let chucdanh = item.chucdanh ?? "";
         let chucvu = item.chucvu ?? "";
         let ldap = item.ldap == true ? "Đăng nhập" : "Đăng xuất";
-        let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
+        let tentrangthai = item.status;
         let donvi = item.tenChiNhanh ?? "";
         let sodienthoai = item.soDienThoai ?? 0;
         let rowContent = [

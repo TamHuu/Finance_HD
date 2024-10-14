@@ -74,7 +74,13 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Tên phòng ban đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var Department = new TblPhongBan
             {
                 Ten = model.Ten,
@@ -84,7 +90,7 @@ namespace Finance_HD.Controllers.TaiChinh
                 MaBan = model.MaBan,
                 CoSoQuy= model.CoSoQuy,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
@@ -111,7 +117,13 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Phòng ban này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             department.Ma = model.Ma;
             department.Code = model.Code;
             department.MaBan = model.MaBan;
@@ -120,7 +132,7 @@ namespace Finance_HD.Controllers.TaiChinh
             department.CoSoQuy = model.CoSoQuy;
             department.MaChiNhanh = model.MaChiNhanh;
             department.Status = model.Status;
-            department.UserModified = model.UserModified;
+            department.UserModified = loggedInUser.Ma;
             department.ModifiedDate = department.ModifiedDate ?? DateTime.Now;
             _dbContext.TblPhongBan.Update(department);
             _dbContext.SaveChanges();
@@ -135,7 +147,14 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Phòng ban này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+            department.UserDeleted = loggedInUser.Ma;
             department.Deleted = true;
             department.DeletedDate = DateTime.Now;  
             _dbContext.TblPhongBan.Update(department); 

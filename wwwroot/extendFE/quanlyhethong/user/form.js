@@ -48,7 +48,7 @@ function loadDanhSach() {
             Status: Status,
         };
 
-        console.table(formdata)
+        console.log(formdata)
 
         $.ajax({
             url: url,
@@ -127,7 +127,6 @@ function getListChiNhanh(data) {
 function changeSelectBranch(branchSelect) {
     branchSelect.on('change', function () {
         var selectedBranch = $(this).val();
-        console.log("Chi nhánh đã chọn:", selectedBranch);
         loadBan(selectedBranch);
     });
 }
@@ -138,7 +137,6 @@ function loadBan(selectedBranch) {
         type: 'GET',
         success: function (response) {
             var DepartmentData = response.data;
-            console.log("list ban", DepartmentData)
             var DepartmentSelect = $('#Department');
             DepartmentSelect.empty();
             let listBan = DepartmentData.filter(item => item.maChiNhanh == selectedBranch);

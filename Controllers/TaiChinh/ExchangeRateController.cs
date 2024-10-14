@@ -67,7 +67,13 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Tỷ giá này đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var ExchangeRate = new TblTyGia
             {
 
@@ -75,7 +81,7 @@ namespace Finance_HD.Controllers.TaiChinh
                 MaTienTe = model.MaTienTe,
                 TyGia = model.TyGia,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 NgayApDung = model.NgayApDung,
                 CreatedDate = DateTime.Now,
             };
@@ -106,13 +112,19 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Tỷ giá này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             ExchangeRate.Ma = model.Ma;
             ExchangeRate.MaTienTe = model.MaTienTe;
             ExchangeRate.TyGia = model.TyGia;
             ExchangeRate.NgayApDung = model.NgayApDung;
             ExchangeRate.Status = model.Status;
-            ExchangeRate.UserModified = model.UserModified;
+            ExchangeRate.UserModified = loggedInUser.Ma;
             ExchangeRate.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.TblTyGia.Update(ExchangeRate);
             _dbContext.SaveChanges();
@@ -127,8 +139,15 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Tỷ giá không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
+            ExchangeRate.UserDeleted = loggedInUser.Ma;
             ExchangeRate.Deleted = true;  // Đánh dấu đã bị xoá
             ExchangeRate.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
 

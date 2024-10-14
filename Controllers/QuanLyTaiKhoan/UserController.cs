@@ -29,32 +29,32 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
         public JsonResult getListUser()
         {
             var listUser = (from user in _dbContext.SysUser
-                           join chinhanh in _dbContext.SysBranch on user.BranchId equals  chinhanh.Ma
-                           join phongban in _dbContext.TblPhongBan on user.MaPhongBan equals phongban.Ma into banGroup
-                           from ban in banGroup.DefaultIfEmpty()
-                           where !(user.Deleted ?? false)
-                           select new
-                           {
-                               MaUser = user.Ma+"",
-                               UserName = user.Username+"",
-                               Msnv = user.Msnv + "",
-                               CCCD= user.Cccd + "",
-                               SoDienThoai = user.SoDienThoai + "",
-                               GioiTinh= user.GioiTinh + "",
-                               Status = user.Status + "",
-                               FullName =  user.FullName + "",
-                               MaDinhDanh = user.MaDinhDanh + "",
-                               NgaySinh = user.NgaySinh + "",
-                               DiaChi= user.DiaChi + "",
-                               NgayVaoLam = user.NgayVaoLam + "",
-                               NgayKetThuc = user.NgayKetThuc + "",
-                               MaChiNhanh = chinhanh.Ma +"",
-                               TenChiNhanh = chinhanh.Ten + "",
-                               MaPhongBan = ban.Ma + "",
-                               TenPhongBan = ban.Ten + "",
-                               CreatedDate= DateTime.Now,
-                           })
-                           
+                            join chinhanh in _dbContext.SysBranch on user.BranchId equals chinhanh.Ma
+                            join phongban in _dbContext.TblPhongBan on user.MaPhongBan equals phongban.Ma into banGroup
+                            from ban in banGroup.DefaultIfEmpty()
+                            where !(user.Deleted ?? false)
+                            select new
+                            {
+                                MaUser = user.Ma + "",
+                                UserName = user.Username + "",
+                                Msnv = user.Msnv + "",
+                                CCCD = user.Cccd + "",
+                                SoDienThoai = user.SoDienThoai + "",
+                                GioiTinh = user.GioiTinh + "",
+                                Status = user.Status==true?"Hoạt động":"Hết hoạt động",
+                                FullName = user.FullName + "",
+                                MaDinhDanh = user.MaDinhDanh + "",
+                                NgaySinh = user.NgaySinh + "",
+                                DiaChi = user.DiaChi + "",
+                                NgayVaoLam = user.NgayVaoLam + "",
+                                NgayKetThuc = user.NgayKetThuc + "",
+                                MaChiNhanh = chinhanh.Ma + "",
+                                TenChiNhanh = chinhanh.Ten + "",
+                                MaPhongBan = ban.Ma + "",
+                                TenPhongBan = ban.Ten + "",
+                                CreatedDate = DateTime.Now,
+                            })
+
                              .OrderByDescending(role => role.CreatedDate)
                              .ToList();
 
@@ -98,13 +98,19 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
             {
                 return Json(new { success = false, message = "Ngày sinh không được để trống!" });
             }
-          
+
             var existingUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == model.Username);
             if (existingUser != null)
             {
                 return Json(new { success = false, message = "Tên người dùng đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var user = new SysUser
             {
                 Username = model.Username,
@@ -122,6 +128,7 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                 NgayVaoLam = model.NgayVaoLam,
                 SoDienThoai = model.SoDienThoai,
                 NgayKetThuc = model.NgayKetThuc,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = model.CreatedDate ?? DateTime.Now,
             };
 
@@ -150,21 +157,30 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
             {
                 return Json(new { success = false, message = "người dùng này này không tồn tại!" });
             }
+
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+
             user.Username = model.Username;
             user.Msnv = model.Msnv;
             user.MaDinhDanh = model.MaDinhDanh;
             user.BranchId = model.BranchId;
-            user.MaPhongBan=model.MaPhongBan;
+            user.MaPhongBan = model.MaPhongBan;
             user.Cccd = model.Cccd;
             user.FullName = model.FullName;
             user.DiaChi = model.DiaChi;
             user.GioiTinh = model.GioiTinh;
-            user.NgaySinh = model.NgaySinh; 
+            user.NgaySinh = model.NgaySinh;
             user.NgayVaoLam = model.NgayVaoLam;
             user.SoDienThoai = model.SoDienThoai;
             user.NgayKetThuc = model.NgayKetThuc;
             user.Status = model.Status;
-            user.UserModified = model.UserModified;
+            user.UserModified = loggedInUser.Ma;
             user.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.SysUser.Update(user);
             _dbContext.SaveChanges();
@@ -188,9 +204,9 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
 
-            user.Deleted = true;  
-            user.DeletedDate = DateTime.Now; 
-            user.UserDeleted = loggedInUser.Ma;  
+            user.Deleted = true;
+            user.DeletedDate = DateTime.Now;
+            user.UserDeleted = loggedInUser.Ma;
 
             _dbContext.SysUser.Update(user);
             _dbContext.SaveChanges();

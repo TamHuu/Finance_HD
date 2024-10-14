@@ -52,14 +52,20 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Loại thu chi này đã tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             var IncomeExpenseType = new CatLoaiThuChi
             {
                 
                 Code = model.Code,
                 Ten = model.Ten,
                 Status = model.Status,
-                UserCreated = model.UserCreated,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
@@ -88,12 +94,18 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Loại thu chi này không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+            IncomeExpenseType.UserModified = loggedInUser.Ma;
             IncomeExpenseType.Ma = model.Ma;
             IncomeExpenseType.Code = model.Code;
             IncomeExpenseType.Ten = model.Ten;
             IncomeExpenseType.Status = model.Status;
-            IncomeExpenseType.UserModified = model.UserModified;
             IncomeExpenseType.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
             _dbContext.CatLoaiThuChi.Update(IncomeExpenseType);
             _dbContext.SaveChanges();
@@ -108,11 +120,17 @@ namespace Finance_HD.Controllers.TaiChinh
             {
                 return Json(new { success = false, message = "Loại thu chi không tồn tại!" });
             }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
             // Kích hoạt soft delete
             IncomeExpenseType.Deleted = true;  // Đánh dấu đã bị xoá
             IncomeExpenseType.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
-
+            IncomeExpenseType.UserDeleted = loggedInUser.Ma;
             _dbContext.CatLoaiThuChi.Update(IncomeExpenseType);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 
