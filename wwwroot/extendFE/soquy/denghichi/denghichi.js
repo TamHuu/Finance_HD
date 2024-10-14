@@ -200,13 +200,14 @@ function drawDanhSach(data) {
 }
 $('#Table').on('click', '.btnDelete', function (e) {
     e.preventDefault();
+    console.log("mã của delete", )
     var Id = $(this).data('id');
     handleDelete(Id);
 });
 $('#Table').on('click', '.btnApprove', function (e) {
     e.preventDefault();
     var Id = $(this).data('id');
-    handleDelete(Id);
+    handleApprove(Id);
 });
 
 function handleDelete(Id) {

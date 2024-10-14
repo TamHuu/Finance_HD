@@ -116,7 +116,7 @@ namespace Finance_HD.Controllers.ChungTu
             return View("Form", new FiaDeNghiChi());
         }
         [HttpPost]
-        public JsonResult Add(string ngayLap, string ngayNhanTien, string chiNhanhDeNghi, string phongBanDeNghi, string chiNhanhChi, string phongBanChi, string noiDung, string tienTe, decimal tyGia, decimal soTien, string hinhThuc, string ghiChu, string trangThai)
+        public JsonResult Add(string ngayLap, string ngayNhanTien, string chiNhanhDeNghi, string phongBanDeNghi, string chiNhanhChi, string phongBanChi, string noiDung, string tienTe, decimal tyGia, decimal soTien, string hinhThuc, string ghiChu)
         {
             if (soTien <= 0 || tyGia <= 0)
             {
@@ -142,10 +142,6 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Hình thức chi không hợp lệ!" });
             }
-            if (!Enum.TryParse(trangThai, out trangThaiChungTuEnum))
-            {
-                return Json(new { success = false, message = "Trạng thái chứng từ không hợp lệ!" });
-            }
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -166,7 +162,7 @@ namespace Finance_HD.Controllers.ChungTu
                 MaTienTe = tienTe.GetGuid(),
                 TyGia = tyGia,
                 SoTien = soTien,
-                TrangThai = Convert.ToInt32(trangThaiChungTuEnum),
+                TrangThai = (int)TrangThaiChungTu.LapPhieu,
                 HinhThucChi = Convert.ToInt32(hinhThucChiEnum),
                 GhiChu = ghiChu,
                 CreatedDate = DateTime.Now,
@@ -279,9 +275,9 @@ namespace Finance_HD.Controllers.ChungTu
             return Json(new { success = true, message = "Xoá thành công!" });
         }
         [HttpPost]
-        public JsonResult DuyetPhieuDeNghiChi(string ma)
+        public JsonResult DuyetPhieuDeNghiChi(string Id)
         {
-            var item = _dbContext.FiaDeNghiChi.FirstOrDefault(x => x.Ma == ma.GetGuid());
+            var item = _dbContext.FiaDeNghiChi.FirstOrDefault(x => x.Ma == Id.GetGuid());
             if (item == null)
             {
                 return Json(new { success = false, message = "Phiếu này không tồn tại" });
