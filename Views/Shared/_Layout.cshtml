@@ -39,15 +39,15 @@
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">@ViewData["FullName"]</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-product" id="Logout">
+                                <a class="dropdown-product" id="Profile">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400" ></i>
                                     Profile
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-product" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <button class="dropdown-product"  id="Logout">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
-                                </a>
+                                </button>
                             </div>
                         </li>
                     </ul>
@@ -124,29 +124,10 @@
     <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="~/js/sb-admin-2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-    <script>
-        $('#Logout').on('click',function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: 'POST',
-                url: '/Account/Logout',
-                contentType: "application/json",
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message);
-                        window.location.href = "/";
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function () {
-                    alert("Đã xảy ra lỗi trong quá trình đăng nhập.");
-                }
-            });
-        });
 
-    </script>
+    <script defer src="/extendFE/logout/logout.js"></script>
 </body>
 </html>
