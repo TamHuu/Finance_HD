@@ -102,7 +102,6 @@ namespace Finance_HD.Controllers.ChungTu
                                           NgayChi = denghichi.NgayYeuCauNhanTien + "",
                                       }).ToList();
 
-            // Trả về kết quả dưới dạng JSON
             return Json(new { success = true, Data = listExpenseRequest });
         }
 

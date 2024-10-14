@@ -15,8 +15,8 @@ function ConfigTable() {
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
             { width: '200px', className: 'dt-left dt-head-center', targets: [2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 15, 16, 17], orderable: false },
-            { width: '100px', className: 'text-center', targets: [19], orderable: false },
-            { minWidth:"200px",width: '200px', className: 'dt-right dt-head-center', targets: [18], orderable: false },
+            { width: '200px', className: 'text-center', targets: [19], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [18], orderable: false },
             { width: '100px', className: 'text-center', targets: [10], orderable: false },
             { width: '200px', className: 'dt-right dt-head-center', targets: [8], orderable: false },
             { width: '100px', className: 'dt-left dt-head-center', targets: [14], orderable: false },
@@ -180,6 +180,10 @@ function drawDanhSach(data) {
             `<td>${formatDate(item.ngayChi)}</td>`,
             `<td>${addCommas(item.soTienChi) ?? 0}</td>`,
             `
+                 <button class="btn btn-success btn-sm btnApprove" data-id="${item.ma}" title="Duyệt">
+                     <i class="fas fa-check"></i>
+                </button>
+                     <span>|</span>
                 <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -187,10 +191,8 @@ function drawDanhSach(data) {
                 <button class="btn btn-danger btn-sm btnDelete" data-id="${item.ma}" title="Xóa">
                     <i class="fas fa-trash"></i>
                 </button>
-
-                <button class="btn btn-success btn-sm btnApprove" data-id="${item.ma}" title="Duyệt">
-                     <i class="fas fa-check"></i>
-                </button>
+                       
+           
 
             `
         ];
