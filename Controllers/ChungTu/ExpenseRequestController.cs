@@ -2,8 +2,10 @@
 using Finance_HD.Helpers;
 using Finance_HD.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using OfficeOpenXml;
 using Enum = System.Enum;
 
 namespace Finance_HD.Controllers.ChungTu
@@ -104,6 +106,124 @@ namespace Finance_HD.Controllers.ChungTu
 
             return Json(new { success = true, Data = listExpenseRequest });
         }
+        [HttpGet]
+        public IActionResult ExportExcel()
+        {
+            try
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "templates", "BaoCaoDanhMucSanPham.xlsx");
+
+                using (var stream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0];
+                        var categories = _dbContext.FiaDeNghiChi.ToList();
+
+                        for (int i = 0; i < categories.Count; i++)
+                        {
+                            int rowIndex = i + 5;
+
+                            worksheet.Cells[rowIndex, 1].Value = i + 1;
+                            worksheet.Cells[rowIndex, 2].Value = categories[i].NgayLap;
+                            worksheet.Cells[rowIndex, 3].Value = categories[i].SoPhieu;
+                            worksheet.Cells[rowIndex, 4].Value = categories[i].NguoiDuyet;
+                            worksheet.Cells[rowIndex, 5].Value = categories[i].GhiChu;
+                            worksheet.Cells[rowIndex, 6].Value = categories[i].CreatedDate?.ToString("dd/MM/yyyy");
+
+                            worksheet.Cells[rowIndex, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[rowIndex, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[rowIndex, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                            worksheet.Cells[rowIndex, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                            worksheet.Cells[rowIndex, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                            worksheet.Cells[rowIndex, 6].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+
+                            var border = worksheet.Cells[rowIndex, 1, rowIndex, 6].Style.Border;
+                            border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                        }
+
+                        var excelStream = new MemoryStream();
+                         package.SaveAsAsync(excelStream);
+                        var fileName = $"BaoCaoDanhMucSanPham_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+
+                        excelStream.Position = 0;
+
+                        return File(excelStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        //public IActionResult GeneratePdf()
+        //{
+        //    using (MemoryStream stream = new MemoryStream())
+        //    {
+        //        try
+        //        {
+        //            PdfWriter writer = new PdfWriter(stream);
+        //            PdfDocument pdf = new PdfDocument(writer);
+        //            Document document = new Document(pdf);
+
+        //            // Thêm font hỗ trợ tiếng Việt
+        //            string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "alegreya-sans", "AlegreyaSans-Medium.otf"); // Đường dẫn tới file font
+        //            PdfFont font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H); //
+
+        //            // Thêm tiêu đề
+        //            document.Add(new Paragraph("Danh sách Danh Mục Sản Phẩm")
+        //                .SetFont(font) // Sử dụng font
+        //                .SetBold()
+        //                .SetFontSize(20)
+        //                .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+        //            document.Add(new Paragraph(" ")); // Thêm dòng trống
+
+        //            // Tạo bảng
+        //            Table table = new Table(4); // 4 cột: STT, Tên Danh Mục, Tiêu Đề SEO, Trạng Thái
+        //            table.AddHeaderCell(new Cell().Add(new Paragraph("STT").SetFont(font)));
+        //            table.AddHeaderCell(new Cell().Add(new Paragraph("Tên Danh Mục").SetFont(font)));
+        //            table.AddHeaderCell(new Cell().Add(new Paragraph("Tiêu Đề SEO").SetFont(font)));
+        //            table.AddHeaderCell(new Cell().Add(new Paragraph("Trạng Thái").SetFont(font)));
+
+        //            // Lấy dữ liệu từ cơ sở dữ liệu
+        //            var categories = _dbContext.TbProductCategory.ToList();
+
+        //            for (int i = 0; i < categories.Count; i++)
+        //            {
+        //                // Thêm hàng vào bảng
+        //                table.AddCell(new Cell().Add(new Paragraph((i + 1).ToString()).SetFont(font)));
+        //                table.AddCell(new Cell().Add(new Paragraph(categories[i].Name).SetFont(font)));
+        //                table.AddCell(new Cell().Add(new Paragraph(categories[i].SeoTitle).SetFont(font)));
+        //                table.AddCell(new Cell().Add(new Paragraph(categories[i].Status == true ? "Hoạt động" : "Hết hoạt động").SetFont(font)));
+        //            }
+
+        //            document.Add(table); // Thêm bảng vào tài liệu
+        //            document.Close();
+
+        //            return File(stream.ToArray(), "application/pdf", "DanhSachDanhMucSanPham.pdf");
+        //        }
+        //        catch (iText.Kernel.Exceptions.PdfException ex)
+        //        {
+        //            return BadRequest($"PDF generation failed: {ex.Message}");
+        //        }
+        //        catch (NotSupportedException ex)
+        //        {
+        //            return BadRequest($"NotSupportedException: {ex.Message}");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return BadRequest($"An error occurred: {ex.Message}");
+        //        }
+        //    }
+        //}
 
 
         [HttpGet]

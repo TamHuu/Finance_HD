@@ -324,3 +324,30 @@ function addCommas(amount) {
     // Chuyển đổi số thành chuỗi và sử dụng phương thức replace với biểu thức chính quy
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+function exportToExcel() {
+    let TuNgay = $("#TuNgay").val();
+    let DenNgay = $("#DenNgay").val();
+    var branch = $('#Branch').val();
+    var formdata = {
+        TuNgay: TuNgay,
+        DenNgay: DenNgay,
+        ChiNhanhDeNghi: branch,
+    };
+
+    // Tạo một biểu mẫu mới để tải tệp Excel
+    var form = $('<form></form>').attr({
+        method: 'POST',
+        action: '/ExpenseRequest/ExportExpenseRequest',
+        target: '_blank' // Mở trong tab mới
+    });
+
+    // Thêm các trường vào biểu mẫu
+    $.each(formdata, function (key, value) {
+        form.append($('<input>').attr({ type: 'hidden', name: key, value: value }));
+    });
+
+    // Thêm biểu mẫu vào body và gửi
+    $('body').append(form);
+    form.submit();
+    form.remove(); // Xóa biểu mẫu sau khi gửi
+}
