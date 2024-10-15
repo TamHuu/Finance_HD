@@ -106,61 +106,112 @@ namespace Finance_HD.Controllers.ChungTu
 
             return Json(new { success = true, Data = listExpenseRequest });
         }
-        [HttpGet]
-        public IActionResult ExportExcel()
+        [HttpPost]
+        public IActionResult ExportToExcel(string TuNgay, string DenNgay, string ChiNhanhDeNghi, string fileType)
         {
             try
             {
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "templates", "BaoCaoDanhMucSanPham.xlsx");
+                var dtpTuNgay = TuNgay.ToDateTime2(DateTime.Now)!.Value;
+                var dtpDenNgay = DenNgay.ToDateTime2(DateTime.Now)!.Value;
+                string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+                var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+                var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
+                                          join chinhanhdenghi in _dbContext.SysBranch
+                                          on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
+                                          from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty()
+                                          join bophandenghi in _dbContext.TblPhongBan
+                                          on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
+                                          from bophandenghi in bophandenghiGroup.DefaultIfEmpty()
+                                          join chinhanhchi in _dbContext.SysBranch
+                                          on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
+                                          from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty()
+                                          join bophanchi in _dbContext.TblPhongBan
+                                          on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
+                                          from bophanchi in bophanchiGroup.DefaultIfEmpty()
+                                          join noidungthuchi in _dbContext.CatNoiDungThuChi
+                                          on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
+                                          from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty()
+                                          join tien in _dbContext.FiaTienTe
+                                          on denghichi.MaTienTe equals tien.Ma into tienGroup
+                                          from tien in tienGroup.DefaultIfEmpty()
+                                          join user in _dbContext.SysUser
+                                          on denghichi.UserCreated equals user.Ma
+                                          where !(denghichi.Deleted ?? false) &&
+                                                (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
+                                                 denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||
+                                                 ChiNhanhDeNghi.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID) &&
+                                                (denghichi.NgayLap >= dtpTuNgay && denghichi.NgayLap <= dtpDenNgay)
+                                          orderby denghichi.CreatedDate descending
+                                          select new
+                                          {
+                                              Ma = denghichi.Ma + "",
+                                              MaChiNhanhDeNghi = chinhanhdenghi.Ma + "",
+                                              MaChiNhanhChi = chinhanhchi.Ma + "",
+                                              MaPhongBanDeNghi = bophandenghi.Ma + "",
+                                              MaPhongBanChi = bophanchi.Ma + "",
+                                              SoPhieu = denghichi.SoPhieu + "",
+                                              NgayLap = denghichi.NgayLap + "",
+                                              NgayYeuCauNhanTien = denghichi.NgayYeuCauNhanTien + "",
+                                              MaNoiDung = noidungthuchi.Ma + "",
+                                              MaTienTe = tien.Ma + "",
+                                              TyGia = denghichi.TyGia ?? 1,
+                                              SoTien = denghichi.SoTien ?? 0,
+                                              NoiDungThuChi = noidungthuchi.Ten + "",
+                                              TenChiNhanhDeNghi = chinhanhdenghi.Ten + "",
+                                              TenChiNhanhChi = chinhanhchi.Ten + "",
+                                              TenTienTe = tien.Ten + "",
+                                              TenPhongBanDeNghi = bophandenghi.Ten ?? "",
+                                              TenPhongBanChi = bophanchi.Ten ?? "",
+                                              HinhThucChi = denghichi.HinhThucChi == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : denghichi.HinhThucChi == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : denghichi.HinhThucChi == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
+                                              GhiChu = denghichi.GhiChu + "",
+                                              TenTrangThai = denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
+                                              TenNguoiDuyet = loggedInUser.FullName + "",
+                                              TenNguoiLapPhieu = user.FullName + "",
+                                              NgayDuyet = denghichi.NgayDuyet + "",
+                                              NgayChi = denghichi.NgayYeuCauNhanTien + "",
+                                          }).ToList();
+
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "templates", "DeNghiChi.xlsx");
 
                 using (var stream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
                 {
                     using (var package = new ExcelPackage(stream))
                     {
                         var worksheet = package.Workbook.Worksheets[0];
-                        var categories = _dbContext.FiaDeNghiChi.ToList();
 
-                        for (int i = 0; i < categories.Count; i++)
+                        for (int i = 0; i < listExpenseRequest.Count; i++)
                         {
                             int rowIndex = i + 5;
-
                             worksheet.Cells[rowIndex, 1].Value = i + 1;
-                            worksheet.Cells[rowIndex, 2].Value = categories[i].NgayLap;
-                            worksheet.Cells[rowIndex, 3].Value = categories[i].SoPhieu;
-                            worksheet.Cells[rowIndex, 4].Value = categories[i].NguoiDuyet;
-                            worksheet.Cells[rowIndex, 5].Value = categories[i].GhiChu;
-                            worksheet.Cells[rowIndex, 6].Value = categories[i].CreatedDate?.ToString("dd/MM/yyyy");
-
-                            worksheet.Cells[rowIndex, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                            worksheet.Cells[rowIndex, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                            worksheet.Cells[rowIndex, 5].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                            worksheet.Cells[rowIndex, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-                            worksheet.Cells[rowIndex, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-                            worksheet.Cells[rowIndex, 6].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-
-                            var border = worksheet.Cells[rowIndex, 1, rowIndex, 6].Style.Border;
-                            border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                            border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                            border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                            border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            worksheet.Cells[rowIndex, 2].Value = listExpenseRequest[i].TenChiNhanhDeNghi;
+                            worksheet.Cells[rowIndex, 3].Value = listExpenseRequest[i].SoPhieu;
+                            worksheet.Cells[rowIndex, 4].Value = listExpenseRequest[i].TenChiNhanhDeNghi;
+                            worksheet.Cells[rowIndex, 5].Value = listExpenseRequest[i].TenPhongBanDeNghi;
+                            worksheet.Cells[rowIndex, 6].Value = listExpenseRequest[i].TenNguoiLapPhieu;
+                            worksheet.Cells[rowIndex, 7].Value = listExpenseRequest[i].TenChiNhanhChi;
+                            worksheet.Cells[rowIndex, 8].Value = listExpenseRequest[i].TenPhongBanChi;
+                            worksheet.Cells[rowIndex, 9].Value = listExpenseRequest[i].SoTien;
+                            worksheet.Cells[rowIndex, 10].Value = listExpenseRequest[i].TenTienTe;
+                            worksheet.Cells[rowIndex, 11].Value = listExpenseRequest[i].NoiDungThuChi;
+                            worksheet.Cells[rowIndex, 12].Value = listExpenseRequest[i].HinhThucChi;
+                            worksheet.Cells[rowIndex, 13].Value = listExpenseRequest[i].GhiChu;
+                            worksheet.Cells[rowIndex, 14].Value = listExpenseRequest[i].TenTrangThai;
+                            worksheet.Cells[rowIndex, 16].Value = listExpenseRequest[i].NgayChi;
                         }
 
                         var excelStream = new MemoryStream();
-                         package.SaveAsAsync(excelStream);
-                        var fileName = $"BaoCaoDanhMucSanPham_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
-
+                        package.SaveAs(excelStream);
                         excelStream.Position = 0;
-
+                        var fileName = $"DeNghiChi_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
                         return File(excelStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                     }
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return Json(new { success = false, message = ex.Message });
             }
         }
 

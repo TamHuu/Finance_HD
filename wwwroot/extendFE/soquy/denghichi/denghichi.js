@@ -124,6 +124,10 @@ function setupEventHandlers() {
         e.preventDefault();
         loadExpenseRequestData();
     });
+    $('#btnXuatExcel').on('click', function (e) {
+        e.preventDefault();
+        ExportData('excel');
+    });
 }
 function loadExpenseRequestData() {
     let TuNgay = $("#TuNgay").val();
@@ -139,7 +143,7 @@ function loadExpenseRequestData() {
     $.ajax({
         url: "ExpenseRequest/getListExpenseRequest",
         type: 'POST',
-        data: formdata,
+        data: formdata,  
         success: function (response) {
             var result = response.data;
             drawDanhSach(result);
@@ -151,6 +155,51 @@ function loadExpenseRequestData() {
                 icon: 'error'
             });
             console.error(error);
+        }
+    });
+}
+function ExportData(fileType) {
+    let TuNgay = $("#TuNgay").val();
+    let DenNgay = $("#DenNgay").val();
+    var branch = $('#Branch').val();
+    var formdata = {
+        TuNgay: TuNgay,
+        DenNgay: DenNgay,
+        ChiNhanhDeNghi: branch,
+        fileType: fileType
+    };
+    console.table(formdata);
+
+    $.ajax({
+        url: "ExpenseRequest/ExportToExcel",
+        type: 'POST',
+        data: formdata,
+        xhr: function () {
+            var xhr = new window.XMLHttpRequest();
+            xhr.responseType = 'blob'; // Set response type to blob for file download
+            return xhr;
+        },
+        success: function (data, status, xhr) {
+            // Create a URL for the blob
+            var blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
+            var link = document.createElement('a');
+            var contentDisposition = xhr.getResponseHeader('Content-Disposition');
+
+            // Extract the filename correctly
+            var filename = contentDisposition
+                .split('filename=')[1]
+                ?.replace(/['"]/g, '') // Remove any surrounding quotes
+                .split(';')[0] // Get the first part before any other parameters
+                .trim(); // Trim whitespace
+
+            link.href = URL.createObjectURL(blob);
+            link.download = filename || 'download.xlsx'; // Fallback filename if extraction fails
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error occurred:", error);
         }
     });
 }
@@ -324,30 +373,4 @@ function addCommas(amount) {
     // Chuyển đổi số thành chuỗi và sử dụng phương thức replace với biểu thức chính quy
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-function exportToExcel() {
-    let TuNgay = $("#TuNgay").val();
-    let DenNgay = $("#DenNgay").val();
-    var branch = $('#Branch').val();
-    var formdata = {
-        TuNgay: TuNgay,
-        DenNgay: DenNgay,
-        ChiNhanhDeNghi: branch,
-    };
 
-    // Tạo một biểu mẫu mới để tải tệp Excel
-    var form = $('<form></form>').attr({
-        method: 'POST',
-        action: '/ExpenseRequest/ExportExpenseRequest',
-        target: '_blank' // Mở trong tab mới
-    });
-
-    // Thêm các trường vào biểu mẫu
-    $.each(formdata, function (key, value) {
-        form.append($('<input>').attr({ type: 'hidden', name: key, value: value }));
-    });
-
-    // Thêm biểu mẫu vào body và gửi
-    $('body').append(form);
-    form.submit();
-    form.remove(); // Xóa biểu mẫu sau khi gửi
-}
