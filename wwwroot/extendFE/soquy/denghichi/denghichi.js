@@ -229,22 +229,26 @@ function drawDanhSach(data) {
             `<td>${formatDate(item.ngayChi)}</td>`,
             `<td>${addCommas(item.soTienChi) ?? 0}</td>`,
             `
-                 <button class="btn btn-success btn-sm btnApprove" data-id="${item.ma}" title="Duyệt">
-                     <i class="fas fa-check"></i>
-                </button>
-                     <span>|</span>
-                <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <span>|</span>
-                <button class="btn btn-danger btn-sm btnDelete" data-id="${item.ma}" title="Xóa">
-                    <i class="fas fa-trash"></i>
-                </button>
-                       
-           
-
-            `
+    <td>
+        ${item.tenTrangThai === "Lập phiếu"
+                ? `<button class="btn btn-success btn-sm btnApprove" data-id="${item.ma}" title="Duyệt">
+                    <i class="fas fa-check"></i>
+                </button>`
+                : `<button class="btn btn-danger btn-sm btnRemoveApprove" data-id="${item.ma}" title="Bỏ duyệt">
+                    <i class="fas fa-times"></i>
+                </button>`}
+        <span>|</span>
+        <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
+            <i class="fas fa-edit"></i>
+        </button>
+        <span>|</span>
+        <button class="btn btn-danger btn-sm btnDelete" data-id="${item.ma}" title="Xóa">
+            <i class="fas fa-trash"></i>
+        </button>
+    </td>
+    `
         ];
+
 
         table.row.add(rowContent).draw();
     });
@@ -260,7 +264,11 @@ $('#Table').on('click', '.btnApprove', function (e) {
     var Id = $(this).data('id');
     handleApprove(Id);
 });
-
+$('#Table').on('click', '.btnRemoveApprove', function (e) {
+    e.preventDefault();
+    var Id = $(this).data('id');
+    handleRemoveApprove(Id);
+});
 function handleDelete(Id) {
     console.log("id", Id);
     if (!Id || Id === "0") {
@@ -345,6 +353,58 @@ function handleApprove(Id) {
                             icon: 'success'
                         }).then(() => {
                             loadDanhSach(); 
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Thất bại!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Đã xảy ra lỗi!',
+                        text: 'Vui lòng thử lại.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+}
+function handleRemoveApprove(Id) {
+    console.log("id", Id);
+    if (!Id || Id === "0") {
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Không có danh mục để duyệt.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận bỏ duyệt phiếu',
+        text: 'Bạn có chắc chắn muốn bỏ duyệt phiếu này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có!',
+        cancelButtonText: 'Không, Huỷ!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/ExpenseRequest/BoDuyetPhieuDeNghiChi',
+                type: 'POST',
+                data: { Id: Id },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Đã bỏ duyệt!',
+                            text: response.message,
+                            icon: 'success'
+                        }).then(() => {
+                            loadDanhSach();
                         });
                     } else {
                         Swal.fire({
