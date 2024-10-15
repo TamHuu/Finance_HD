@@ -157,7 +157,7 @@ function loadExpenseRequestData() {
 
 function drawDanhSach(data) {
     table.clear().draw();
-
+    console.table(data)
     data.forEach(function (item) {
         let rowContent = [
             `<td>${item.ma}</td>`,

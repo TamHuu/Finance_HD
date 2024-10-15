@@ -4,72 +4,70 @@
     ViewData["Title"] = "Đề nghị chi";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="m-0 font-weight-bold text-primary">Lọc dữ liệu</h5>
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="m-0 font-weight-bold">Lọc dữ liệu</h5>
     </div>
     <div class="card-body">
         <div class="form-row align-items-end">
             <div class="form-group col-md-3">
-                <label for="TuNgay" class="mr-2">Từ ngày</label>
+                <label for="TuNgay" class="font-weight-bold">Từ ngày</label>
                 <input type="datetime-local" class="form-control form-control-sm" id="TuNgay" name="TuNgay" />
             </div>
             <div class="form-group col-md-3">
-                <label for="DenNgay" class="mr-2">Đến ngày</label>
+                <label for="DenNgay" class="font-weight-bold">Đến ngày</label>
                 <input type="datetime-local" class="form-control form-control-sm" id="DenNgay" name="DenNgay" />
             </div>
             <div class="form-group col-md-3">
-                <label for="Branch" class="mr-2">Chi Nhánh Đề Nghị</label>
+                <label for="Branch" class="font-weight-bold">Chi Nhánh Đề Nghị</label>
                 <select class="form-control form-control-sm" id="Branch" name="Branch"></select>
             </div>
         </div>
         <div class="form-row">
-            <div class="col-md-12">
+            <div class="col-md-12 text-right">
                 <button class="btn btn-secondary btn-sm mr-2" id="btnXem"><i class="fas fa-eye"></i> Xem</button>
                 <button class="btn btn-warning btn-sm mr-2"><i class="fas fa-print"></i> In phiếu đề nghị</button>
                 <button class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i> Xuất Excel</button>
             </div>
         </div>
     </div>
-
 </div>
 
 <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex flex-row align-products-center justify-content-between">
-        <h5 class="m-0 font-weight-bold text-primary">@ViewData["Title"]</h5>
-        <div class="arrow">
-            <a class="btn btn-link btn-sm" href="/ExpenseRequest/Add">
-                <i class="fas fa-plus"></i>
-            </a>
-        </div>
+    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-primary">
+        <h5 class="m-0 font-weight-bold text-white ">@ViewData["Title"]</h5>
+        <a class="btn btn-link btn-sm text-white" href="/ExpenseRequest/Add">
+            <i class="fas fa-plus"></i> Thêm đề nghị
+        </a>
     </div>
     <div class="card-body">
-        <table id="Table" class="table table-bordered table-hover">
-            <thead>
+        <table id="Table" class="table table-bordered table-hover table-striped">
+            <thead class="thead-dark">
                 <tr>
                     <th hidden>Mã</th>
                     <th>Ngày</th>
-                    <th>SỐ PHIẾU </th>
-                    <th>ĐƠN VỊ ĐỀ NGHỊ </th>
-                    <th>BỘ PHẬN ĐỀ NGHỊ </th>
-                    <th>NGƯỜI LẬP </th>
-                    <th>ĐƠN VỊ CHI </th>
-                    <th>BỘ PHẬN CHI </th>
-                    <th>SỐ TIỀN ĐỀ NGHỊ </th>
-                    <th>ĐƠN VỊ TIỀN </th>
-                    <th>TỶ GIÁ </th>
-                    <th>NGÀY YÊU CẦU NHẬN </th>
-                    <th>NỘI DUNG </th>
-                    <th>HÌNH THỨC </th>
-                    <th>GHI CHÚ </th>
-                    <th>TRẠNG THÁI</th>
-                    <th>NGƯỜI CHI</th>
-                    <th>NGÀY CHI</th>
-                    <th>SỐ TIỀN CHI</th>
-                    <th>CHỨC NĂNG</th>
+                    <th>Số phiếu</th>
+                    <th>Đơn vị đề nghị</th>
+                    <th>Bộ phận đề nghị</th>
+                    <th>Người lập</th>
+                    <th>Đơn vị chi</th>
+                    <th>Bộ phận chi</th>
+                    <th>Số tiền đề nghị</th>
+                    <th>Đơn vị tiền</th>
+                    <th>Tỷ giá</th>
+                    <th>Ngày yêu cầu nhận</th>
+                    <th>Nội dung</th>
+                    <th>Hình thức</th>
+                    <th>Ghi chú</th>
+                    <th>Trạng thái</th>
+                    <th>Người chi</th>
+                    <th>Ngày chi</th>
+                    <th>Số tiền chi</th>
+                    <th>Chức năng</th>
                 </tr>
             </thead>
             <tbody>
+                <!-- Dữ liệu sẽ được thêm ở đây bằng JavaScript -->
             </tbody>
         </table>
     </div>
@@ -87,7 +85,7 @@
                 <div class="modal-body">Bạn có chắc chắn muốn xóa danh mục này?</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="button" id="btnDelete" class="btn btn-danger">Xoá danh mục</button>
+                    <button type="button" id="btnDelete" class="btn btn-danger">Xóa danh mục</button>
                 </div>
             </div>
         </div>
@@ -100,10 +98,11 @@
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/soquy/denghichi/denghichi.js"></script>
-    <style>
 
+    <style>
         .table thead th {
-            font-size: 14px;
+            text-transform: uppercase;
+            font-size: 13px;
             font-weight: bold;
             background-color: #007bff;
             color: white;
@@ -111,8 +110,45 @@
 
         .table tbody td {
             color: #333;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-    </style>
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
 
+        .card-body {
+            padding: 15px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .btn-warning {
+            color: white;
+            background-color: #ffc107;
+        }
+
+            .btn-warning:hover {
+                background-color: #e0a800;
+            }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .btn-success:hover {
+                background-color: #218838;
+            }
+    </style>
 }
