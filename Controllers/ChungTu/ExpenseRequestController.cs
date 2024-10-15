@@ -171,6 +171,7 @@ namespace Finance_HD.Controllers.ChungTu
                                               TenNguoiLapPhieu = user.FullName + "",
                                               NgayDuyet = denghichi.NgayDuyet + "",
                                               NgayChi = denghichi.NgayYeuCauNhanTien + "",
+                                              SoTienChi = 0,
                                           }).ToList();
 
                 var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "templates", "DeNghiChi.xlsx");
@@ -184,21 +185,24 @@ namespace Finance_HD.Controllers.ChungTu
                         for (int i = 0; i < listExpenseRequest.Count; i++)
                         {
                             int rowIndex = i + 5;
-                            worksheet.Cells[rowIndex, 1].Value = i + 1;
-                            worksheet.Cells[rowIndex, 2].Value = listExpenseRequest[i].TenChiNhanhDeNghi;
-                            worksheet.Cells[rowIndex, 3].Value = listExpenseRequest[i].SoPhieu;
-                            worksheet.Cells[rowIndex, 4].Value = listExpenseRequest[i].TenChiNhanhDeNghi;
-                            worksheet.Cells[rowIndex, 5].Value = listExpenseRequest[i].TenPhongBanDeNghi;
-                            worksheet.Cells[rowIndex, 6].Value = listExpenseRequest[i].TenNguoiLapPhieu;
-                            worksheet.Cells[rowIndex, 7].Value = listExpenseRequest[i].TenChiNhanhChi;
-                            worksheet.Cells[rowIndex, 8].Value = listExpenseRequest[i].TenPhongBanChi;
-                            worksheet.Cells[rowIndex, 9].Value = listExpenseRequest[i].SoTien;
-                            worksheet.Cells[rowIndex, 10].Value = listExpenseRequest[i].TenTienTe;
-                            worksheet.Cells[rowIndex, 11].Value = listExpenseRequest[i].NoiDungThuChi;
-                            worksheet.Cells[rowIndex, 12].Value = listExpenseRequest[i].HinhThucChi;
-                            worksheet.Cells[rowIndex, 13].Value = listExpenseRequest[i].GhiChu;
-                            worksheet.Cells[rowIndex, 14].Value = listExpenseRequest[i].TenTrangThai;
-                            worksheet.Cells[rowIndex, 16].Value = listExpenseRequest[i].NgayChi;
+                            worksheet.Cells[rowIndex, 1].Value = listExpenseRequest[i].NgayLap; ;
+                            worksheet.Cells[rowIndex, 2].Value = listExpenseRequest[i].SoPhieu;
+                            worksheet.Cells[rowIndex, 3].Value = listExpenseRequest[i].TenChiNhanhDeNghi;
+                            worksheet.Cells[rowIndex, 4].Value = listExpenseRequest[i].TenPhongBanDeNghi;
+                            worksheet.Cells[rowIndex, 5].Value = listExpenseRequest[i].TenNguoiLapPhieu;
+                            worksheet.Cells[rowIndex, 6].Value = listExpenseRequest[i].TenChiNhanhChi;
+                            worksheet.Cells[rowIndex, 7].Value = listExpenseRequest[i].TenPhongBanChi;
+                            worksheet.Cells[rowIndex, 8].Value = listExpenseRequest[i].SoTien;
+                            worksheet.Cells[rowIndex, 9].Value = listExpenseRequest[i].TenTienTe;
+                            worksheet.Cells[rowIndex, 10].Value = listExpenseRequest[i].TyGia;
+                            worksheet.Cells[rowIndex, 11].Value = listExpenseRequest[i].NgayYeuCauNhanTien;
+                            worksheet.Cells[rowIndex, 12].Value = listExpenseRequest[i].NoiDungThuChi;
+                            worksheet.Cells[rowIndex, 13].Value = listExpenseRequest[i].HinhThucChi;
+                            worksheet.Cells[rowIndex, 14].Value = listExpenseRequest[i].GhiChu;
+                            worksheet.Cells[rowIndex, 15].Value = listExpenseRequest[i].TenTrangThai;
+                            worksheet.Cells[rowIndex, 16].Value = listExpenseRequest[i].TenNguoiDuyet;
+                            worksheet.Cells[rowIndex, 17].Value = listExpenseRequest[i].NgayChi;
+                            worksheet.Cells[rowIndex, 18].Value = listExpenseRequest[i].SoTienChi;
                         }
 
                         var excelStream = new MemoryStream();
