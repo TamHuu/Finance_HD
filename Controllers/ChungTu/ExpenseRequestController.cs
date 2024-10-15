@@ -224,7 +224,6 @@ namespace Finance_HD.Controllers.ChungTu
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
 
-            // Cập nhật các trường từ tham số
             ExpenseRequest.Ma = ma.GetGuid();
             ExpenseRequest.MaChiNhanhDeNghi = chiNhanhDeNghi.GetGuid();
             ExpenseRequest.MaChiNhanhChi = chiNhanhChi.GetGuid();
@@ -301,9 +300,9 @@ namespace Finance_HD.Controllers.ChungTu
         }
 
         [HttpPost]
-        public JsonResult BoDuyetPhieuDeNghiChi(string ma)
+        public JsonResult BoDuyetPhieuDeNghiChi(string Id)
         {
-            var item = _dbContext.FiaDeNghiChi.FirstOrDefault(x => x.Ma == ma.GetGuid());
+            var item = _dbContext.FiaDeNghiChi.FirstOrDefault(x => x.Ma == Id.GetGuid());
             if (item == null)
             {
                 return Json(new { success = false, message = "Phiếu này không tồn tại" });
@@ -325,12 +324,13 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Phiếu đã chi tiền" });
             }
-            item.TrangThai = (int)TrangThaiChungTu.DaDuyet;
+            item.TrangThai = (int)TrangThaiChungTu.LapPhieu;
             item.NguoiDuyet = loggedInUser.Ma;
             item.NgayDuyet = DateTime.Now;
+            item.UserModified = loggedInUser.Ma;
             _dbContext.Update(item);
             _dbContext.SaveChanges();
-            return Json(new { success = true, message = "Duyệt phiếu thành công" });
+            return Json(new { success = true, message = "Bỏ duyệt phiếu thành công" });
         }
     }
 }

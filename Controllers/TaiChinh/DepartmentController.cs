@@ -25,22 +25,32 @@ namespace Finance_HD.Controllers.TaiChinh
             }
             return View();
         }
+        [HttpPost]
+        public JsonResult loadPhongBanTheoChiNhanh(string Ma)
+        {
+            var result = _dbContext.TblPhongBan.FirstOrDefault(x => x.MaChiNhanh == Ma.GetGuid());
+            if (result == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy phòng ban này" });
+            }
+            return Json(new { success = true, data = result });
+        }
         [HttpGet]
         public JsonResult getListDepartment()
         {
             var listDepartment = (from phongban in _dbContext.TblPhongBan
-                                  join chinhanh in _dbContext.SysBranch on phongban.MaChiNhanh equals chinhanh.Ma 
-                                  join ban in _dbContext.TblBan on phongban.MaBan equals ban.Ma into banGroup 
+                                  join chinhanh in _dbContext.SysBranch on phongban.MaChiNhanh equals chinhanh.Ma
+                                  join ban in _dbContext.TblBan on phongban.MaBan equals ban.Ma into banGroup
                                   from ban in banGroup.DefaultIfEmpty()
                                   where !(phongban.Deleted ?? false)
                                   select new
                                   {
                                       MaPhongBan = phongban.Ma,
                                       TenPhongBan = phongban.Ten,
-                                      MaChiNhanh = chinhanh.Ma, 
+                                      MaChiNhanh = chinhanh.Ma,
                                       TenChiNhanh = chinhanh.Ten,
                                       MaBan = ban != null ? ban.Ma : (Guid?)null,
-                                      TenBan = ban != null ? ban.Ten : "", 
+                                      TenBan = ban != null ? ban.Ten : "",
                                       Code = phongban.Code,
                                       IsCoSoQuy = phongban.CoSoQuy,
                                       IsBan = phongban.Ban,
@@ -52,7 +62,7 @@ namespace Finance_HD.Controllers.TaiChinh
         [HttpGet]
         public IActionResult Add()
         {
-          
+
             return View("Form", new TblPhongBan());
         }
 
@@ -88,7 +98,7 @@ namespace Finance_HD.Controllers.TaiChinh
                 MaChiNhanh = model.MaChiNhanh,
                 Ban = model.Ban,
                 MaBan = model.MaBan,
-                CoSoQuy= model.CoSoQuy,
+                CoSoQuy = model.CoSoQuy,
                 Status = model.Status,
                 UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
@@ -102,7 +112,7 @@ namespace Finance_HD.Controllers.TaiChinh
 
         public IActionResult Edit(string Ma)
         {
-            var listDepartment = _dbContext.TblPhongBan.FirstOrDefault(x=>x.Ma==Ma.GetGuid());
+            var listDepartment = _dbContext.TblPhongBan.FirstOrDefault(x => x.Ma == Ma.GetGuid());
             if (listDepartment == null)
             {
                 return NotFound();
@@ -156,8 +166,8 @@ namespace Finance_HD.Controllers.TaiChinh
             }
             department.UserDeleted = loggedInUser.Ma;
             department.Deleted = true;
-            department.DeletedDate = DateTime.Now;  
-            _dbContext.TblPhongBan.Update(department); 
+            department.DeletedDate = DateTime.Now;
+            _dbContext.TblPhongBan.Update(department);
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Xoá phòng ban thành công!" });

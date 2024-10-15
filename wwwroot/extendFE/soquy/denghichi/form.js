@@ -157,7 +157,7 @@ function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
                     text: item.tenPhongBan,
                 });
 
-                if (item.ma === selectedDepartment) {
+                if (item.maPhongBan === selectedDepartment) {
                     option.attr('selected', true);
                 }
 
@@ -167,7 +167,7 @@ function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
             if (DepartmentSelect.children().length === 0) {
                 DepartmentSelect.append($('<option>', {
                     value: '',
-                    text: 'Không có ban nào.',
+                    text: '',
                 }));
             }
         },
