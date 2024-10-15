@@ -185,7 +185,7 @@ namespace Finance_HD.Controllers.ChungTu
                         for (int i = 0; i < listExpenseRequest.Count; i++)
                         {
                             int rowIndex = i + 5;
-                            worksheet.Cells[rowIndex, 1].Value = listExpenseRequest[i].NgayLap; ;
+                            worksheet.Cells[rowIndex, 1].Value = listExpenseRequest[i].NgayLap;
                             worksheet.Cells[rowIndex, 2].Value = listExpenseRequest[i].SoPhieu;
                             worksheet.Cells[rowIndex, 3].Value = listExpenseRequest[i].TenChiNhanhDeNghi;
                             worksheet.Cells[rowIndex, 4].Value = listExpenseRequest[i].TenPhongBanDeNghi;
@@ -203,6 +203,22 @@ namespace Finance_HD.Controllers.ChungTu
                             worksheet.Cells[rowIndex, 16].Value = listExpenseRequest[i].TenNguoiDuyet;
                             worksheet.Cells[rowIndex, 17].Value = listExpenseRequest[i].NgayChi;
                             worksheet.Cells[rowIndex, 18].Value = listExpenseRequest[i].SoTienChi;
+
+                            for (int colIndex = 1; colIndex <= 18; colIndex++)
+                            {
+                                var cell = worksheet.Cells[rowIndex, colIndex];
+
+                                cell.Style.Font.Bold = true; 
+                                cell.Style.Font.Color.SetColor(System.Drawing.Color.Black); 
+                                cell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                cell.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center; 
+                                cell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid; 
+                                cell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightYellow); 
+                                cell.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                cell.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                cell.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                cell.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                            }
                         }
 
                         var excelStream = new MemoryStream();
