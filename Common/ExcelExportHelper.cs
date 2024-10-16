@@ -1,46 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using System.Collections.Generic;
-using System.IO;
+using System.Drawing; // Namespace cho System.Drawing.Color
 
 namespace Finance_HD.Common
 {
-    public class ExcelExportHelper
+    public static class ExcelHelper
     {
-        public static FileContentResult ExportToExcel<T>(List<T> data, string fileName)
+        public static void FillData<T>(ExcelWorksheet worksheet, List<T> dataList, int startRow, int totalColumns, Func<T, int, object> getValueForColumn)
         {
-            // Thiết lập sử dụng EPPlus
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Thiết lập ngữ cảnh giấy phép
-
-            using (var package = new ExcelPackage())
+            for (int i = 0; i < dataList.Count; i++)
             {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-
-                // Thiết lập tiêu đề
-                var properties = typeof(T).GetProperties();
-                for (int i = 0; i < properties.Length; i++)
+                int rowIndex = i + startRow;
+                for (int colIndex = 1; colIndex <= totalColumns; colIndex++) // Sử dụng số lượng cột được truyền vào
                 {
-                    worksheet.Cells[1, i + 1].Value = properties[i].Name; // Tiêu đề
+                    worksheet.Cells[rowIndex, colIndex].Value = getValueForColumn(dataList[i], colIndex);
                 }
-
-                // Điền dữ liệu vào Excel
-                for (int i = 0; i < data.Count; i++)
-                {
-                    for (int j = 0; j < properties.Length; j++)
-                    {
-                        var value = properties[j].GetValue(data[i]);
-                        worksheet.Cells[i + 2, j + 1].Value = value; // Dữ liệu
-                    }
-                }
-
-                // Chuyển đổi tệp Excel thành mảng byte
-                var excelData = package.GetAsByteArray();
-                return new FileContentResult(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                {
-                    FileDownloadName = $"{fileName}.xlsx"
-                };
             }
         }
-    }
 
+
+        // Hàm áp dụng style cho ô Excel
+        public static void ApplyCellStyle(ExcelRange cell, bool isBold, Color fontColor, Color backgroundColor, OfficeOpenXml.Style.ExcelHorizontalAlignment horizontalAlignment)
+        {
+            cell.Style.Font.Bold = isBold; // Định dạng chữ in đậm
+            cell.Style.Font.Color.SetColor(fontColor); // Màu chữ
+            cell.Style.HorizontalAlignment = horizontalAlignment; // Căn chỉnh theo chiều ngang
+            cell.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center; // Căn chỉnh theo chiều dọc
+            cell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid; // Kiểu nền
+            cell.Style.Fill.BackgroundColor.SetColor(backgroundColor); // Màu nền
+            cell.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin; // Viền trên mỏng
+            cell.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin; // Viền dưới mỏng
+            cell.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin; // Viền trái mỏng
+            cell.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin; // Viền phải mỏng
+
+        }
+    }
 }

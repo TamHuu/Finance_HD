@@ -164,9 +164,14 @@ namespace Finance_HD.Controllers.ChungTu
                                               TenTienTe = tien.Ten + "",
                                               TenPhongBanDeNghi = bophandenghi.Ten ?? "",
                                               TenPhongBanChi = bophanchi.Ten ?? "",
-                                              HinhThucChi = denghichi.HinhThucChi == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : denghichi.HinhThucChi == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : denghichi.HinhThucChi == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
+                                              HinhThucChi = denghichi.HinhThucChi == (int)HinhThucThuChi.TienMat ? "Tiền mặt" :
+                                                            denghichi.HinhThucChi == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" :
+                                                            denghichi.HinhThucChi == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
                                               GhiChu = denghichi.GhiChu + "",
-                                              TenTrangThai = denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
+                                              TenTrangThai = denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" :
+                                                             denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" :
+                                                             denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" :
+                                                             denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
                                               TenNguoiDuyet = loggedInUser.FullName + "",
                                               TenNguoiLapPhieu = user.FullName + "",
                                               NgayDuyet = denghichi.NgayDuyet + "",
@@ -182,52 +187,71 @@ namespace Finance_HD.Controllers.ChungTu
                     {
                         var worksheet = package.Workbook.Worksheets[0];
 
+                        // Fill data into the worksheet
+                        ExcelHelper.FillData(
+                            worksheet,
+                            listExpenseRequest,
+                            5, // Starting row
+                            18, // Number of columns
+                            (item, colIndex) =>
+                            {
+                                var propertyValues = new List<object>
+                                {
+                    item.NgayLap,
+                    item.SoPhieu,
+                    item.TenChiNhanhDeNghi,
+                    item.TenPhongBanDeNghi,
+                    item.TenNguoiLapPhieu,
+                    item.TenChiNhanhChi,
+                    item.TenPhongBanChi,
+                    item.SoTien,
+                    item.TenTienTe,
+                    item.TyGia,
+                    item.NgayYeuCauNhanTien,
+                    item.NoiDungThuChi,
+                    item.HinhThucChi,
+                    item.GhiChu,
+                    item.TenTrangThai,
+                    item.TenNguoiDuyet,
+                    item.NgayChi,
+                    item.SoTienChi
+                                };
+
+                                return propertyValues[colIndex - 1]; // Adjust for 0-based indexing
+                            });
+
+                        // Apply formatting to filled data
                         for (int i = 0; i < listExpenseRequest.Count; i++)
                         {
-                            int rowIndex = i + 5;
-                            worksheet.Cells[rowIndex, 1].Value = listExpenseRequest[i].NgayLap;
-                            worksheet.Cells[rowIndex, 2].Value = listExpenseRequest[i].SoPhieu;
-                            worksheet.Cells[rowIndex, 3].Value = listExpenseRequest[i].TenChiNhanhDeNghi;
-                            worksheet.Cells[rowIndex, 4].Value = listExpenseRequest[i].TenPhongBanDeNghi;
-                            worksheet.Cells[rowIndex, 5].Value = listExpenseRequest[i].TenNguoiLapPhieu;
-                            worksheet.Cells[rowIndex, 6].Value = listExpenseRequest[i].TenChiNhanhChi;
-                            worksheet.Cells[rowIndex, 7].Value = listExpenseRequest[i].TenPhongBanChi;
-                            worksheet.Cells[rowIndex, 8].Value = listExpenseRequest[i].SoTien;
-                            worksheet.Cells[rowIndex, 9].Value = listExpenseRequest[i].TenTienTe;
-                            worksheet.Cells[rowIndex, 10].Value = listExpenseRequest[i].TyGia;
-                            worksheet.Cells[rowIndex, 11].Value = listExpenseRequest[i].NgayYeuCauNhanTien;
-                            worksheet.Cells[rowIndex, 12].Value = listExpenseRequest[i].NoiDungThuChi;
-                            worksheet.Cells[rowIndex, 13].Value = listExpenseRequest[i].HinhThucChi;
-                            worksheet.Cells[rowIndex, 14].Value = listExpenseRequest[i].GhiChu;
-                            worksheet.Cells[rowIndex, 15].Value = listExpenseRequest[i].TenTrangThai;
-                            worksheet.Cells[rowIndex, 16].Value = listExpenseRequest[i].TenNguoiDuyet;
-                            worksheet.Cells[rowIndex, 17].Value = listExpenseRequest[i].NgayChi;
-                            worksheet.Cells[rowIndex, 18].Value = listExpenseRequest[i].SoTienChi;
-
+                            int rowIndex = i + 5; // Starting row
                             for (int colIndex = 1; colIndex <= 18; colIndex++)
                             {
                                 var cell = worksheet.Cells[rowIndex, colIndex];
 
-                                cell.Style.Font.Bold = true; 
-                                cell.Style.Font.Color.SetColor(System.Drawing.Color.Black); 
-                                cell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                                cell.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center; 
-                                cell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid; 
-                                cell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightYellow); 
-                                cell.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                                cell.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                                cell.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                                // Apply general cell style
+                                ExcelHelper.ApplyCellStyle(cell, true, System.Drawing.Color.Black, System.Drawing.Color.LightYellow, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+
+                                // Set the right border to thin for visual clarity
                                 cell.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+
+                                // Format cell as currency for specific columns (SoTien and SoTienChi)
+                                if (colIndex == 8 || colIndex == 18)
+                                {
+                                    cell.Style.Numberformat.Format = "#,##0.00"; // Format for currency
+                                }
                             }
                         }
 
                         var excelStream = new MemoryStream();
                         package.SaveAs(excelStream);
                         excelStream.Position = 0;
+
+                        // Ensure the content type is set correctly
                         var fileName = $"DeNghiChi_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
                         return File(excelStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                     }
                 }
+
             }
             catch (Exception ex)
             {
