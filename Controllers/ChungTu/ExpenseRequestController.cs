@@ -220,12 +220,12 @@ namespace Finance_HD.Controllers.ChungTu
                     item.SoTienChi
                                 };
 
-                                return propertyValues[colIndex - 1]; 
+                                return propertyValues[colIndex - 1];
                             });
 
                         for (int i = 0; i < listExpenseRequest.Count; i++)
                         {
-                            int rowIndex = i + 5; 
+                            int rowIndex = i + 5;
                             for (int colIndex = 1; colIndex <= 18; colIndex++)
                             {
                                 var cell = worksheet.Cells[rowIndex, colIndex];
@@ -269,79 +269,81 @@ namespace Finance_HD.Controllers.ChungTu
                 var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
 
                 // Truy vấn dữ liệu
-                var listExpenseRequest  = (from denghichi in _dbContext.FiaDeNghiChi
+                var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
 
-                                                                   join chinhanhdenghi in _dbContext.SysBranch
-                                                                   on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
-                                                                   from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty()
+                                          join chinhanhdenghi in _dbContext.SysBranch
+                                          on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
+                                          from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty()
 
-                                                                   join bophandenghi in _dbContext.TblPhongBan
-                                                                   on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
-                                                                   from bophandenghi in bophandenghiGroup.DefaultIfEmpty()
+                                          join bophandenghi in _dbContext.TblPhongBan
+                                          on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
+                                          from bophandenghi in bophandenghiGroup.DefaultIfEmpty()
 
-                                                                   join chinhanhchi in _dbContext.SysBranch
-                                                                   on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
-                                                                   from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty()
+                                          join chinhanhchi in _dbContext.SysBranch
+                                          on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
+                                          from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty()
 
-                                                                   join bophanchi in _dbContext.TblPhongBan
-                                                                   on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
-                                                                   from bophanchi in bophanchiGroup.DefaultIfEmpty()
+                                          join bophanchi in _dbContext.TblPhongBan
+                                          on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
+                                          from bophanchi in bophanchiGroup.DefaultIfEmpty()
 
-                                                                   join noidungthuchi in _dbContext.CatNoiDungThuChi
-                                                                   on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
-                                                                   from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty()
+                                          join noidungthuchi in _dbContext.CatNoiDungThuChi
+                                          on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
+                                          from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty()
 
-                                                                   join tien in _dbContext.FiaTienTe
-                                                                   on denghichi.MaTienTe equals tien.Ma into tienGroup
-                                                                   from tien in tienGroup.DefaultIfEmpty()
+                                          join tien in _dbContext.FiaTienTe
+                                          on denghichi.MaTienTe equals tien.Ma into tienGroup
+                                          from tien in tienGroup.DefaultIfEmpty()
 
-                                                                   join nguoilapphieu in _dbContext.SysUser
-                                                                   on denghichi.UserCreated equals nguoilapphieu.Ma
+                                          join nguoilapphieu in _dbContext.SysUser
+                                          on denghichi.UserCreated equals nguoilapphieu.Ma
 
-                                                                   where !(denghichi.Deleted ?? false) &&
-                                                                         (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
-                                                                          denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||
-                                                                          ChiNhanhDeNghi.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID) &&
-                                                                         (denghichi.NgayLap >= dtpTuNgay && denghichi.NgayLap <= dtpDenNgay)
-                                                                   orderby denghichi.CreatedDate descending
-                                                                   select new
-                                                                   {
-                                                                       Ma = denghichi.Ma + "",
-                                                                       MaChiNhanhDeNghi = chinhanhdenghi.Ma + "",
-                                                                       MaChiNhanhChi = chinhanhchi.Ma + "",
-                                                                       MaPhongBanDeNghi = bophandenghi.Ma + "",
-                                                                       MaPhongBanChi = bophanchi.Ma + "",
-                                                                       SoPhieu = denghichi.SoPhieu + "",
-                                                                       NgayLap = denghichi.NgayLap + "",
-                                                                       NgayYeuCauNhanTien = denghichi.NgayYeuCauNhanTien + "",
-                                                                       MaNoiDung = noidungthuchi.Ma + "",
-                                                                       MaTienTe = tien.Ma + "",
-                                                                       TyGia = denghichi.TyGia ?? 1,
-                                                                       SoTien = denghichi.SoTien ?? 0,
-                                                                       NoiDungThuChi = noidungthuchi.Ten + "",
-                                                                       TenChiNhanhDeNghi = chinhanhdenghi.Ten + "",
-                                                                       TenChiNhanhChi = chinhanhchi.Ten + "",
-                                                                       TenTienTe = tien.Ten + "",
-                                                                       TenPhongBanDeNghi = bophandenghi.Ten ?? "",
-                                                                       TenPhongBanChi = bophanchi.Ten ?? "",
-                                                                       HinhThucChi = denghichi.HinhThucChi == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : denghichi.HinhThucChi == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : denghichi.HinhThucChi == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
-                                                                       GhiChu = denghichi.GhiChu + "",
-                                                                       TenTrangThai = denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
-                                                                       NguoiDuyet = nguoilapphieu.FullName + "",
-                                                                       NgayDuyet = denghichi.NgayDuyet + "",
-                                                                       NgayChi = denghichi.NgayYeuCauNhanTien + "",
-                                                                   }).ToList();
+                                          where !(denghichi.Deleted ?? false) &&
+                                                (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
+                                                 denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||
+                                                 ChiNhanhDeNghi.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID) &&
+                                                (denghichi.NgayLap >= dtpTuNgay && denghichi.NgayLap <= dtpDenNgay)
+                                          orderby denghichi.CreatedDate descending
+                                          select new
+                                          {
+                                              Ma = denghichi.Ma + "",
+                                              MaChiNhanhDeNghi = chinhanhdenghi.Ma + "",
+                                              MaChiNhanhChi = chinhanhchi.Ma + "",
+                                              MaPhongBanDeNghi = bophandenghi.Ma + "",
+                                              MaPhongBanChi = bophanchi.Ma + "",
+                                              SoPhieu = denghichi.SoPhieu + "",
+                                              NgayLap = denghichi.NgayLap + "",
+                                              NgayYeuCauNhanTien = denghichi.NgayYeuCauNhanTien + "",
+                                              MaNoiDung = noidungthuchi.Ma + "",
+                                              MaTienTe = tien.Ma + "",
+                                              TyGia = denghichi.TyGia ?? 1,
+                                              SoTien = denghichi.SoTien ?? 0,
+                                              NoiDungThuChi = noidungthuchi.Ten + "",
+                                              TenChiNhanhDeNghi = chinhanhdenghi.Ten + "",
+                                              TenChiNhanhChi = chinhanhchi.Ten + "",
+                                              TenTienTe = tien.Ten + "",
+                                              TenPhongBanDeNghi = bophandenghi.Ten ?? "",
+                                              TenPhongBanChi = bophanchi.Ten ?? "",
+                                              HinhThucChi = denghichi.HinhThucChi == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : denghichi.HinhThucChi == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : denghichi.HinhThucChi == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
+                                              GhiChu = denghichi.GhiChu + "",
+                                              TenTrangThai = denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
+                                              NguoiDuyet = nguoilapphieu.FullName + "",
+                                              NgayDuyet = denghichi.NgayDuyet + "",
+                                              NgayChi = denghichi.NgayYeuCauNhanTien + "",
+                                          }).ToList();
 
 
                 // Tạo PDF
                 // Tạo PDF
                 using (var memoryStream = new MemoryStream())
                 {
+                    var pageSize = iText.Kernel.Geom.PageSize.A4.Rotate();
+
                     using (var pdfWriter = new PdfWriter(memoryStream))
                     using (var pdfDocument = new PdfDocument(pdfWriter))
                     {
                         var document = new Document(pdfDocument);
-
+                        pdfDocument.SetDefaultPageSize(pageSize);
                         // Thêm tiêu đề
                         document.Add(new Paragraph("Danh Sách Đề Nghị Chi")
                             .SetTextAlignment(TextAlignment.CENTER)
@@ -352,24 +354,54 @@ namespace Finance_HD.Controllers.ChungTu
                             .SetFontSize(12));
 
                         // Tạo bảng
-                        var table = new iText.Layout.Element.Table(UnitValue.CreatePercentArray(new float[] { 1, 2, 2, 1, 2 })).UseAllAvailableWidth();
+                        var table = new iText.Layout.Element.Table(UnitValue.CreatePercentArray(new float[] { 8, 15, 15, 15, 10, 15, 15, 15, 10, 10, 15, 15, 15, 15, 15, 15, 15, 10 }))
+      .UseAllAvailableWidth();
                         table.SetMarginTop(20);
 
                         // Thêm tiêu đề cho bảng
-                        table.AddHeaderCell("Số Phiếu");
-                        table.AddHeaderCell("Ngày Lập");
-                        table.AddHeaderCell("Chi Nhánh Đề Nghị");
-                        table.AddHeaderCell("Số Tiền");
-                        table.AddHeaderCell("Ghi Chú");
+                        table.AddHeaderCell("Ngày");
+                        table.AddHeaderCell("Số phiếu");
+                        table.AddHeaderCell("Đơn vị Đề Nghị");
+                        table.AddHeaderCell("Bộ phận đề nghị");
+                        table.AddHeaderCell("Người lập");
+                        table.AddHeaderCell("Đơn vị chi");
+                        table.AddHeaderCell("Bộ phận chi");
+                        table.AddHeaderCell("Số tiền đề nghị");
+                        table.AddHeaderCell("Đơn vị tiền");
+                        table.AddHeaderCell("Tỷ giá");
+                        table.AddHeaderCell("Ngày yêu cầu nhận");
+                        table.AddHeaderCell("Nội dung");
+                        table.AddHeaderCell("Hình thức");
+                        table.AddHeaderCell("Ghi chú");
+                        table.AddHeaderCell("Trạng thái");
+                        table.AddHeaderCell("Người chi");
+                        table.AddHeaderCell("Ngày chi");
+                        table.AddHeaderCell("Số tiền chi");
+
 
                         // Thêm dữ liệu vào bảng
                         foreach (var request in listExpenseRequest)
                         {
-                            table.AddCell(new Cell().Add(new Paragraph(request.SoPhieu)));
+                            // Thêm dữ liệu vào bảng
                             table.AddCell(new Cell().Add(new Paragraph(request.NgayLap))); // Định dạng ngày
-                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhDeNghi)));
+                            table.AddCell(new Cell().Add(new Paragraph(request.SoPhieu))); // Số Phiếu
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhDeNghi))); // Chi Nhánh Đề Nghị
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenPhongBanDeNghi))); // Phòng Ban Đề Nghị
+                            table.AddCell(new Cell().Add(new Paragraph(request.NguoiDuyet))); // Người Duyệt
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhChi))); // Chi Nhánh Chi
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenPhongBanChi))); // Phòng Ban Chi
+                            table.AddCell(new Cell().Add(new Paragraph(request.SoTien.ToString("N0")))); // Định dạng số tiền (nghìn)
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenTienTe))); // Tên Tiền Tệ
+                            table.AddCell(new Cell().Add(new Paragraph(request.TyGia.ToString("N4")))); // Định dạng tỷ giá
+                            table.AddCell(new Cell().Add(new Paragraph(request.NgayYeuCauNhanTien))); // Ngày Yêu Cầu Nhận Tiền
+                            table.AddCell(new Cell().Add(new Paragraph(request.NoiDungThuChi))); // Nội Dung Thu Chi
+                            table.AddCell(new Cell().Add(new Paragraph(request.HinhThucChi))); // Hình Thức Chi
+                            table.AddCell(new Cell().Add(new Paragraph(request.GhiChu))); // Ghi Chú
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenTrangThai))); // Tên Trạng Thái
+                            table.AddCell(new Cell().Add(new Paragraph(request.NguoiDuyet))); // Người Duyệt
+                            table.AddCell(new Cell().Add(new Paragraph(request.NgayChi))); // Ngày Chi
                             table.AddCell(new Cell().Add(new Paragraph(request.SoTien.ToString("N0")))); // Định dạng số tiền
-                            table.AddCell(new Cell().Add(new Paragraph(request.GhiChu)));
+
                         }
 
                         // Thêm bảng vào tài liệu
@@ -389,7 +421,7 @@ namespace Finance_HD.Controllers.ChungTu
             }
         }
 
-      
+
 
 
         [HttpGet]
