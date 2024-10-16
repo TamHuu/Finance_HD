@@ -1,10 +1,14 @@
 ﻿using Finance_HD.Common;
 using Finance_HD.Helpers;
 using Finance_HD.Models;
+using iText.Kernel.Pdf;
+using iText.Layout.Element;
+using iText.Layout.Properties;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using iText.Layout;
 using OfficeOpenXml;
 using Enum = System.Enum;
 
@@ -180,7 +184,6 @@ namespace Finance_HD.Controllers.ChungTu
                                           }).ToList();
 
                 var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "templates", "DeNghiChi.xlsx");
-
                 using (var stream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
                 {
                     using (var package = new ExcelPackage(stream))
@@ -217,27 +220,23 @@ namespace Finance_HD.Controllers.ChungTu
                     item.SoTienChi
                                 };
 
-                                return propertyValues[colIndex - 1]; // Adjust for 0-based indexing
+                                return propertyValues[colIndex - 1]; 
                             });
 
-                        // Apply formatting to filled data
                         for (int i = 0; i < listExpenseRequest.Count; i++)
                         {
-                            int rowIndex = i + 5; // Starting row
+                            int rowIndex = i + 5; 
                             for (int colIndex = 1; colIndex <= 18; colIndex++)
                             {
                                 var cell = worksheet.Cells[rowIndex, colIndex];
 
-                                // Apply general cell style
                                 ExcelHelper.ApplyCellStyle(cell, true, System.Drawing.Color.Black, System.Drawing.Color.LightYellow, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
 
-                                // Set the right border to thin for visual clarity
                                 cell.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
 
-                                // Format cell as currency for specific columns (SoTien and SoTienChi)
                                 if (colIndex == 8 || colIndex == 18)
                                 {
-                                    cell.Style.Numberformat.Format = "#,##0.00"; // Format for currency
+                                    cell.Style.Numberformat.Format = "#,##0.00";
                                 }
                             }
                         }
@@ -246,7 +245,6 @@ namespace Finance_HD.Controllers.ChungTu
                         package.SaveAs(excelStream);
                         excelStream.Position = 0;
 
-                        // Ensure the content type is set correctly
                         var fileName = $"DeNghiChi_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
                         return File(excelStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                     }
@@ -259,66 +257,139 @@ namespace Finance_HD.Controllers.ChungTu
             }
         }
 
-        //public IActionResult GeneratePdf()
-        //{
-        //    using (MemoryStream stream = new MemoryStream())
-        //    {
-        //        try
-        //        {
-        //            PdfWriter writer = new PdfWriter(stream);
-        //            PdfDocument pdf = new PdfDocument(writer);
-        //            Document document = new Document(pdf);
+        [HttpPost]
+        public IActionResult ExportToPdf(string TuNgay, string DenNgay, string ChiNhanhDeNghi, string fileType)
+        {
+            try
+            {
+                // Chuyển đổi ngày từ chuỗi sang DateTime
+                var dtpTuNgay = TuNgay.ToDateTime2(DateTime.Now)!.Value;
+                var dtpDenNgay = DenNgay.ToDateTime2(DateTime.Now)!.Value;
+                string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+                var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
 
-        //            // Thêm font hỗ trợ tiếng Việt
-        //            string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "alegreya-sans", "AlegreyaSans-Medium.otf"); // Đường dẫn tới file font
-        //            PdfFont font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H); //
+                // Truy vấn dữ liệu
+                var listExpenseRequest  = (from denghichi in _dbContext.FiaDeNghiChi
 
-        //            // Thêm tiêu đề
-        //            document.Add(new Paragraph("Danh sách Danh Mục Sản Phẩm")
-        //                .SetFont(font) // Sử dụng font
-        //                .SetBold()
-        //                .SetFontSize(20)
-        //                .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
-        //            document.Add(new Paragraph(" ")); // Thêm dòng trống
+                                                                   join chinhanhdenghi in _dbContext.SysBranch
+                                                                   on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
+                                                                   from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty()
 
-        //            // Tạo bảng
-        //            Table table = new Table(4); // 4 cột: STT, Tên Danh Mục, Tiêu Đề SEO, Trạng Thái
-        //            table.AddHeaderCell(new Cell().Add(new Paragraph("STT").SetFont(font)));
-        //            table.AddHeaderCell(new Cell().Add(new Paragraph("Tên Danh Mục").SetFont(font)));
-        //            table.AddHeaderCell(new Cell().Add(new Paragraph("Tiêu Đề SEO").SetFont(font)));
-        //            table.AddHeaderCell(new Cell().Add(new Paragraph("Trạng Thái").SetFont(font)));
+                                                                   join bophandenghi in _dbContext.TblPhongBan
+                                                                   on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
+                                                                   from bophandenghi in bophandenghiGroup.DefaultIfEmpty()
 
-        //            // Lấy dữ liệu từ cơ sở dữ liệu
-        //            var categories = _dbContext.TbProductCategory.ToList();
+                                                                   join chinhanhchi in _dbContext.SysBranch
+                                                                   on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
+                                                                   from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty()
 
-        //            for (int i = 0; i < categories.Count; i++)
-        //            {
-        //                // Thêm hàng vào bảng
-        //                table.AddCell(new Cell().Add(new Paragraph((i + 1).ToString()).SetFont(font)));
-        //                table.AddCell(new Cell().Add(new Paragraph(categories[i].Name).SetFont(font)));
-        //                table.AddCell(new Cell().Add(new Paragraph(categories[i].SeoTitle).SetFont(font)));
-        //                table.AddCell(new Cell().Add(new Paragraph(categories[i].Status == true ? "Hoạt động" : "Hết hoạt động").SetFont(font)));
-        //            }
+                                                                   join bophanchi in _dbContext.TblPhongBan
+                                                                   on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
+                                                                   from bophanchi in bophanchiGroup.DefaultIfEmpty()
 
-        //            document.Add(table); // Thêm bảng vào tài liệu
-        //            document.Close();
+                                                                   join noidungthuchi in _dbContext.CatNoiDungThuChi
+                                                                   on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
+                                                                   from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty()
 
-        //            return File(stream.ToArray(), "application/pdf", "DanhSachDanhMucSanPham.pdf");
-        //        }
-        //        catch (iText.Kernel.Exceptions.PdfException ex)
-        //        {
-        //            return BadRequest($"PDF generation failed: {ex.Message}");
-        //        }
-        //        catch (NotSupportedException ex)
-        //        {
-        //            return BadRequest($"NotSupportedException: {ex.Message}");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return BadRequest($"An error occurred: {ex.Message}");
-        //        }
-        //    }
-        //}
+                                                                   join tien in _dbContext.FiaTienTe
+                                                                   on denghichi.MaTienTe equals tien.Ma into tienGroup
+                                                                   from tien in tienGroup.DefaultIfEmpty()
+
+                                                                   join nguoilapphieu in _dbContext.SysUser
+                                                                   on denghichi.UserCreated equals nguoilapphieu.Ma
+
+                                                                   where !(denghichi.Deleted ?? false) &&
+                                                                         (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
+                                                                          denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||
+                                                                          ChiNhanhDeNghi.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID) &&
+                                                                         (denghichi.NgayLap >= dtpTuNgay && denghichi.NgayLap <= dtpDenNgay)
+                                                                   orderby denghichi.CreatedDate descending
+                                                                   select new
+                                                                   {
+                                                                       Ma = denghichi.Ma + "",
+                                                                       MaChiNhanhDeNghi = chinhanhdenghi.Ma + "",
+                                                                       MaChiNhanhChi = chinhanhchi.Ma + "",
+                                                                       MaPhongBanDeNghi = bophandenghi.Ma + "",
+                                                                       MaPhongBanChi = bophanchi.Ma + "",
+                                                                       SoPhieu = denghichi.SoPhieu + "",
+                                                                       NgayLap = denghichi.NgayLap + "",
+                                                                       NgayYeuCauNhanTien = denghichi.NgayYeuCauNhanTien + "",
+                                                                       MaNoiDung = noidungthuchi.Ma + "",
+                                                                       MaTienTe = tien.Ma + "",
+                                                                       TyGia = denghichi.TyGia ?? 1,
+                                                                       SoTien = denghichi.SoTien ?? 0,
+                                                                       NoiDungThuChi = noidungthuchi.Ten + "",
+                                                                       TenChiNhanhDeNghi = chinhanhdenghi.Ten + "",
+                                                                       TenChiNhanhChi = chinhanhchi.Ten + "",
+                                                                       TenTienTe = tien.Ten + "",
+                                                                       TenPhongBanDeNghi = bophandenghi.Ten ?? "",
+                                                                       TenPhongBanChi = bophanchi.Ten ?? "",
+                                                                       HinhThucChi = denghichi.HinhThucChi == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : denghichi.HinhThucChi == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : denghichi.HinhThucChi == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
+                                                                       GhiChu = denghichi.GhiChu + "",
+                                                                       TenTrangThai = denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
+                                                                       NguoiDuyet = nguoilapphieu.FullName + "",
+                                                                       NgayDuyet = denghichi.NgayDuyet + "",
+                                                                       NgayChi = denghichi.NgayYeuCauNhanTien + "",
+                                                                   }).ToList();
+
+
+                // Tạo PDF
+                // Tạo PDF
+                using (var memoryStream = new MemoryStream())
+                {
+                    using (var pdfWriter = new PdfWriter(memoryStream))
+                    using (var pdfDocument = new PdfDocument(pdfWriter))
+                    {
+                        var document = new Document(pdfDocument);
+
+                        // Thêm tiêu đề
+                        document.Add(new Paragraph("Danh Sách Đề Nghị Chi")
+                            .SetTextAlignment(TextAlignment.CENTER)
+                            .SetFontSize(20));
+
+                        document.Add(new Paragraph($"Người lập: {loggedInUser.FullName}")
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .SetFontSize(12));
+
+                        // Tạo bảng
+                        var table = new iText.Layout.Element.Table(UnitValue.CreatePercentArray(new float[] { 1, 2, 2, 1, 2 })).UseAllAvailableWidth();
+                        table.SetMarginTop(20);
+
+                        // Thêm tiêu đề cho bảng
+                        table.AddHeaderCell("Số Phiếu");
+                        table.AddHeaderCell("Ngày Lập");
+                        table.AddHeaderCell("Chi Nhánh Đề Nghị");
+                        table.AddHeaderCell("Số Tiền");
+                        table.AddHeaderCell("Ghi Chú");
+
+                        // Thêm dữ liệu vào bảng
+                        foreach (var request in listExpenseRequest)
+                        {
+                            table.AddCell(new Cell().Add(new Paragraph(request.SoPhieu)));
+                            table.AddCell(new Cell().Add(new Paragraph(request.NgayLap))); // Định dạng ngày
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhDeNghi)));
+                            table.AddCell(new Cell().Add(new Paragraph(request.SoTien.ToString("N0")))); // Định dạng số tiền
+                            table.AddCell(new Cell().Add(new Paragraph(request.GhiChu)));
+                        }
+
+                        // Thêm bảng vào tài liệu
+                        document.Add(table);
+                        document.Close();
+                    }
+
+                    // Trả về file PDF cho người dùng
+                    var fileName = $"DeNghiChi_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                    return File(memoryStream.ToArray(), "application/pdf", fileName);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+      
 
 
         [HttpGet]

@@ -128,6 +128,11 @@ function setupEventHandlers() {
         e.preventDefault();
         ExportData('excel');
     });
+    $('#btnXuatPDF').on('click', function (e) {
+        e.preventDefault();
+        ExportDataPDF('pdf');
+    });
+
 }
 function loadExpenseRequestData() {
     let TuNgay = $("#TuNgay").val();
@@ -172,6 +177,51 @@ function ExportData(fileType) {
 
     $.ajax({
         url: "ExpenseRequest/ExportToExcel",
+        type: 'POST',
+        data: formdata,
+        xhr: function () {
+            var xhr = new window.XMLHttpRequest();
+            xhr.responseType = 'blob'; // Set response type to blob for file download
+            return xhr;
+        },
+        success: function (data, status, xhr) {
+            // Create a URL for the blob
+            var blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
+            var link = document.createElement('a');
+            var contentDisposition = xhr.getResponseHeader('Content-Disposition');
+
+            // Extract the filename correctly
+            var filename = contentDisposition
+                .split('filename=')[1]
+                ?.replace(/['"]/g, '') // Remove any surrounding quotes
+                .split(';')[0] // Get the first part before any other parameters
+                .trim(); // Trim whitespace
+
+            link.href = URL.createObjectURL(blob);
+            link.download = filename || 'download.xlsx'; // Fallback filename if extraction fails
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error occurred:", error);
+        }
+    });
+}
+function ExportDataPDF(fileType) {
+    let TuNgay = $("#TuNgay").val();
+    let DenNgay = $("#DenNgay").val();
+    var branch = $('#Branch').val();
+    var formdata = {
+        TuNgay: TuNgay,
+        DenNgay: DenNgay,
+        ChiNhanhDeNghi: branch,
+        fileType: fileType
+    };
+    console.table(formdata);
+
+    $.ajax({
+        url: "ExpenseRequest/ExportToPdf",
         type: 'POST',
         data: formdata,
         xhr: function () {
