@@ -334,7 +334,6 @@ namespace Finance_HD.Controllers.ChungTu
 
 
                 // Tạo PDF
-                // Tạo PDF
                 using (var memoryStream = new MemoryStream())
                 {
                     var pageSize = iText.Kernel.Geom.PageSize.A4.Rotate();
@@ -344,7 +343,7 @@ namespace Finance_HD.Controllers.ChungTu
                     {
                         var document = new Document(pdfDocument);
                         pdfDocument.SetDefaultPageSize(pageSize);
-                        // Thêm tiêu đề
+                     
                         document.Add(new Paragraph("Danh Sách Đề Nghị Chi")
                             .SetTextAlignment(TextAlignment.CENTER)
                             .SetFontSize(20));
@@ -353,12 +352,10 @@ namespace Finance_HD.Controllers.ChungTu
                             .SetTextAlignment(TextAlignment.LEFT)
                             .SetFontSize(12));
 
-                        // Tạo bảng
-                        var table = new iText.Layout.Element.Table(UnitValue.CreatePercentArray(new float[] { 8, 15, 15, 15, 10, 15, 15, 15, 10, 10, 15, 15, 15, 15, 15, 15, 15, 10 }))
+                        var table = new iText.Layout.Element.Table(UnitValue.CreatePercentArray(new float[] { 8, 15, 15, 15, 10, 15, 15, 15, 10, 10, 15, 20, 20, 20, 20, 20, 20, 10 }))
       .UseAllAvailableWidth();
                         table.SetMarginTop(20);
 
-                        // Thêm tiêu đề cho bảng
                         table.AddHeaderCell("Ngày");
                         table.AddHeaderCell("Số phiếu");
                         table.AddHeaderCell("Đơn vị Đề Nghị");
@@ -378,38 +375,33 @@ namespace Finance_HD.Controllers.ChungTu
                         table.AddHeaderCell("Ngày chi");
                         table.AddHeaderCell("Số tiền chi");
 
-
-                        // Thêm dữ liệu vào bảng
                         foreach (var request in listExpenseRequest)
                         {
-                            // Thêm dữ liệu vào bảng
-                            table.AddCell(new Cell().Add(new Paragraph(request.NgayLap))); // Định dạng ngày
-                            table.AddCell(new Cell().Add(new Paragraph(request.SoPhieu))); // Số Phiếu
-                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhDeNghi))); // Chi Nhánh Đề Nghị
-                            table.AddCell(new Cell().Add(new Paragraph(request.TenPhongBanDeNghi))); // Phòng Ban Đề Nghị
-                            table.AddCell(new Cell().Add(new Paragraph(request.NguoiDuyet))); // Người Duyệt
-                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhChi))); // Chi Nhánh Chi
-                            table.AddCell(new Cell().Add(new Paragraph(request.TenPhongBanChi))); // Phòng Ban Chi
-                            table.AddCell(new Cell().Add(new Paragraph(request.SoTien.ToString("N0")))); // Định dạng số tiền (nghìn)
-                            table.AddCell(new Cell().Add(new Paragraph(request.TenTienTe))); // Tên Tiền Tệ
-                            table.AddCell(new Cell().Add(new Paragraph(request.TyGia.ToString("N4")))); // Định dạng tỷ giá
-                            table.AddCell(new Cell().Add(new Paragraph(request.NgayYeuCauNhanTien))); // Ngày Yêu Cầu Nhận Tiền
-                            table.AddCell(new Cell().Add(new Paragraph(request.NoiDungThuChi))); // Nội Dung Thu Chi
-                            table.AddCell(new Cell().Add(new Paragraph(request.HinhThucChi))); // Hình Thức Chi
-                            table.AddCell(new Cell().Add(new Paragraph(request.GhiChu))); // Ghi Chú
-                            table.AddCell(new Cell().Add(new Paragraph(request.TenTrangThai))); // Tên Trạng Thái
-                            table.AddCell(new Cell().Add(new Paragraph(request.NguoiDuyet))); // Người Duyệt
-                            table.AddCell(new Cell().Add(new Paragraph(request.NgayChi))); // Ngày Chi
-                            table.AddCell(new Cell().Add(new Paragraph(request.SoTien.ToString("N0")))); // Định dạng số tiền
+                            table.AddCell(new Cell().Add(new Paragraph(request.NgayLap))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.SoPhieu))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhDeNghi))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenPhongBanDeNghi))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.NguoiDuyet))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenChiNhanhChi)));
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenPhongBanChi))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.SoTien.ToString("N0"))));
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenTienTe))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.TyGia.ToString("N4"))));
+                            table.AddCell(new Cell().Add(new Paragraph(request.NgayYeuCauNhanTien)));
+                            table.AddCell(new Cell().Add(new Paragraph(request.NoiDungThuChi))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.HinhThucChi))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.GhiChu))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.TenTrangThai))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.NguoiDuyet))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.NgayChi))); 
+                            table.AddCell(new Cell().Add(new Paragraph(request.SoTien.ToString("N0"))));
 
                         }
 
-                        // Thêm bảng vào tài liệu
                         document.Add(table);
                         document.Close();
                     }
 
-                    // Trả về file PDF cho người dùng
                     var fileName = $"DeNghiChi_{DateTime.Now:yyyyMMddHHmmss}.pdf";
                     return File(memoryStream.ToArray(), "application/pdf", fileName);
                 }

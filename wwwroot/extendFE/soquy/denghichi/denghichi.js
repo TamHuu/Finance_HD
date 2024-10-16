@@ -9,7 +9,6 @@ $(document).ready(function () {
 });
 
 
-
 function ConfigTable() {
     table = $('#Table').DataTable({
         columnDefs: [
@@ -43,8 +42,6 @@ function ConfigTable() {
         }
     });
 }
-
-
 
 function Edit(row) {
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
@@ -350,7 +347,7 @@ function handleDelete(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadDanhSach(); // Tải lại danh sách sau khi xóa thành công
+                            loadExpenseRequestData(); // Tải lại danh sách sau khi xóa thành công
                         });
                     } else {
                         Swal.fire({
@@ -402,7 +399,7 @@ function handleApprove(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadDanhSach(); 
+                            loadExpenseRequestData(); 
                         });
                     } else {
                         Swal.fire({
@@ -454,7 +451,7 @@ function handleRemoveApprove(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadDanhSach();
+                            loadExpenseRequestData();
                         });
                     } else {
                         Swal.fire({
