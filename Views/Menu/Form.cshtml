@@ -2,61 +2,111 @@
 
 @{
     bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
-    ViewData["Title"] = isEdit ? "Chỉnh sửa báo cáo" : "Thêm mới báo cáo";
+    ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
     // var menus = ViewData["listMenu"] as List<Finance_HD.Models.SysMenu>;
 }
-
-<div class="card">
+<div class="col-md-6">
+    <div class="card shadow-lg">
     <div class="card-header">
         <h5 class="mb-0">@ViewData["Title"]</h5>
     </div>
     <div class="card-body">
-        <form id="Form">
-            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+        <div class="col-md-6">
 
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Name">Tên </label>
-                        <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Name" />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Code">Code</label>
-                        <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
-                    </div>
-                </div>
-              @*   <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Menu">Tên menu:</label>
-                        <select class="form-control" id="Menu" name="Menu">
-                            @foreach (var menu in menus)
-                            {
-                                <option value="@menu.Ma">@menu.Name</option>
-                            }
-                        </select>
-                    </div>
-                </div> *@
-               
-               
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Status">Trạng thái</label>
-                        <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status==true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(!Model.Status==true ? "selected" : "")>Không hoạt động</!option>
-                        </select>
-                    </div>
-                </div>
+        </div>
+<form id="Form">
+    <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Website">Website sử dụng</label>
+                <select class="form-control" id="Website" name="Website">
+                    <option value="Tất cả">Tất cả</option>
+                    <option value="Quản lý công việc">Quản lý công việc</option>
+                    <option value="Thu mua tập trung">Thu mua tập trung</option>
+                </select>
             </div>
+        </div>
 
-            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
-        </form>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Code">Code</label>
+                <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="MenuCha">Menu cha</label>
+                <select class="form-control" id="MenuCha" name="MenuCha">
+                    <option value="Dashboard">Dashboard</option>
+                    <option value="Danh mục">Danh mục</option>
+                    <option value="Sổ quỹ">Sổ quỹ</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Name">Tên</label>
+                <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Name" />
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="STT">Nhập số thứ tự</label>
+                <input type="number" class="form-control form-control-sm" id="STT" name="STT" required value="@Model.Name" />
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Url">Đường dẫn</label>
+                <input type="text" class="form-control form-control-sm" id="Url" name="Url" required value="@Model.Name" />
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Icon">Icon</label>
+                <input type="text" class="form-control form-control-sm" id="Icon" name="Icon" required value="@Model.Icon" />
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="MenuCon">Con của menu</label>
+                <select class="form-control" id="MenuCon" name="MenuCon">
+                    <option value="Dashboard">Dashboard</option>
+                    <option value="Danh mục">Danh mục</option>
+                    <option value="Sổ quỹ">Sổ quỹ</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Status">Trạng thái</label>
+                <select class="form-control form-control-sm" id="Status" name="Status">
+                    <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                    <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+</form>
+
+
     </div>
 </div>
+</div>
+
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
