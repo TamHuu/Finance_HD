@@ -40,7 +40,7 @@ function ConfigTable() {
         }
     });
 
-    TableDanhSachBangKe = $('#TableChiTietBangKe').DataTable({
+    TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
             { width: '200px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4], orderable: false },
@@ -67,9 +67,10 @@ function ConfigTable() {
         }
     });
 
-    TableDanhSachBangKe = $('#TableChiTietNhanVien').DataTable({
+    TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
-            { width: '200px', className: 'dt-left dt-head-center', targets: [0,1,2,3], orderable: false },
+            { className: "d-none", targets: 0, orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1,2,3], orderable: false },
         ],
         scrollX: true,
         language: {
@@ -344,7 +345,7 @@ function DanhSachBangKe(data) {
         ];
 
 
-        table.row.add(rowContent).draw();
+        TableDanhSachBangKe.row.add(rowContent).draw();
     });
 }
 $('#Table').on('click', '.btnDelete', function (e) {
