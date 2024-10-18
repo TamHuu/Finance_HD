@@ -1,7 +1,141 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Phiếu thu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@* Danh sách phiếu chi nội bộ đơn vị và bảng kê nộp tiền *@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                Danh sách phiếu chi nội bộ đơn vị và bảng kê nộp tiền
+            </div>
+            <div class="card-body">
+                <div class="row" style="white-space: nowrap;">
+                    <div class="form-group" style="display: inline-block; width: 25%; vertical-align: top; margin-right: 5%;">
+                        <label for="TuNgay" class="font-weight-bold">Từ ngày</label>
+                        <input type="datetime-local" class="form-control form-control-sm custom-datetime" id="TuNgay" name="TuNgay" />
+                    </div>
+                    <div class="form-group" style="display: inline-block; width: 25%; vertical-align: top; margin-right: 5%;">
+                        <label for="DenNgay" class="font-weight-bold">Đến ngày</label>
+                        <input type="datetime-local" class="form-control form-control-sm custom-datetime" id="DenNgay" name="DenNgay" />
+                    </div>
+                    <div class="form-group" style="display: inline-block; width: 25%; vertical-align: top; margin-right: 5%;">
+                        <label for="Branch" class="font-weight-bold">Chi Nhánh Đề Nghị</label>
+                        <select class="form-control form-control-sm" id="Branch" name="Branch"></select>
+                    </div>
+                    <div class="form-group" style="display: inline-block; width: 20%; vertical-align: top;">
+                        <button class="btn btn-secondary btn-sm mr-2" id="btnXem"><i class="fas fa-eye"></i> Xem</button>
+                        <button class="btn btn-success btn-sm" id="btnXuatExcel"><i class="fas fa-file-excel"></i> Xuất Excel</button>
+                    </div>
+                </div>
 
-<h1>Index</h1>
 
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="col-md-12" style="padding:80px 0px">
+    <div class="col-md-12">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                Danh sách phiếu thu
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Tiêu đề chính</h5>
+                <p class="card-text">Nội dung của card.</p>
+                <a href="#" class="btn btn-primary">Xem thêm</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Xác Nhận -->
+<div class="modal fade" id="modelDelete" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteLabel">Xóa Danh Mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">Bạn có chắc chắn muốn xóa danh mục này?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" id="btnDelete" class="btn btn-danger">Xóa danh mục</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/soquy/denghichi/denghichi.js"></script>
+
+    <style>
+        .custom-datetime {
+            height: 30px; /* Thay đổi chiều cao tùy ý */
+            font-size: 14px;
+            width: 200px; /* Thay đổi kích thước font chữ tùy ý */
+        }
+
+        .table thead th {
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table tbody td {
+            color: #333;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .btn-warning {
+            color: white;
+            background-color: #ffc107;
+        }
+
+            .btn-warning:hover {
+                background-color: #e0a800;
+            }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .btn-success:hover {
+                background-color: #218838;
+            }
+    </style>
+}

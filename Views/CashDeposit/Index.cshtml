@@ -4,90 +4,120 @@
     ViewData["Title"] = "Bảng kê nộp tiền";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div class="card shadow mb-3">
+    <div class="card-header bg-primary text-white">Lọc dữ liệu</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="form-group d-flex align-items-center">
+                <label for="TuNgay" class="font-weight-bold mr-2 label-top-padding">Từ ngày</label>
+                <input type="datetime-local" class="form-control form-control-sm custom-datetime" id="TuNgay" name="TuNgay" />
+            </div>
 
-<div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex flex-row align-products-center justify-content-between">
-        <h2 class="m-0 font-weight-bold text-primary">@ViewData["Title"]</h2>
+            <div class="form-group d-flex align-items-center">
+                <label for="DenNgay" class="font-weight-bold mr-2 label-top-padding">Đến ngày</label>
+                <input type="datetime-local" class="form-control form-control-sm custom-datetime" id="DenNgay" name="DenNgay" />
+            </div>
+
+            <div class="form-group d-flex align-items-center">
+                <label for="Branch" class="font-weight-bold mr-2 label-top-padding" style="width:300px">Chi Nhánh Đề Nghị</label>
+                <select class="form-control form-control-sm" id="Branch" name="Branch"></select>
+            </div>
+
+            <div class="form-group d-flex align-items-center">
+                <button class="btn btn-secondary btn-sm mr-2" id="btnXem"><i class="fas fa-eye"></i> Xem</button>
+                <button class="btn btn-success btn-sm" id="btnXuatExcel"><i class="fas fa-file-excel"></i> Xuất Excel</button>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="card shadow mb-3">
+    <div class="card-header bg-primary py-3 d-flex flex-row align-products-center justify-content-between">
+        <h6 class="m-0 text-white">@ViewData["Title"]</h6>
         <div class="arrow">
-            <a class="btn btn-link btn-sm" href="/CashDeposit/Add">
+            <a class="btn btn-link btn-sm text-white" href="/CashDeposit/Add">
                 <i class="fas fa-plus"></i>
             </a>
         </div>
     </div>
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-12">
-                <table id="Table" class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th hidden>Mã</th>
-                            <th>NGÀY ÁP DỤNG</th>
-                            <th>TIỀN TỆ </th>
-                            <th>TỶ GIÁ </th>
-                            <th>TRẠNG THÁI</th>
-                            <th>CHỨC NĂNG</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <table id="Table" class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th hidden>Mã</th>
-                            <th>NGÀY ÁP DỤNG</th>
-                            <th>TIỀN TỆ </th>
-                            <th>TỶ GIÁ </th>
-                            <th>TRẠNG THÁI</th>
-                            <th>CHỨC NĂNG</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <table id="Table" class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th hidden>Mã</th>
-                            <th>NGÀY ÁP DỤNG</th>
-                            <th>TIỀN TỆ </th>
-                            <th>TỶ GIÁ </th>
-                            <th>TRẠNG THÁI</th>
-                            <th>CHỨC NĂNG</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            
-        </div>
-       
+        <table id="TableDanhSachBangKe" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th hidden>Mã</th>
+                    <th>Số Phiếu</th>
+                    <th>Chi nhánh nộp </th>
+                    <th>Chi nhánh nhận</th>
+                    <th>Phòng ban nhận</th>
+                    <th>Ngày lập</th>
+                    <th>Ngày nộp</th>
+                    <th>Người nộp</th>
+                    <th>Địa chỉ</th>
+                    <th>Nội dung</th>
+                    <th>Người nhận</th>
+                    <th>Ghi chú</th>
+                    <th>Tiền</th>
+                    <th>Tỷ giá</th>
+                    <th>Hình thức</th>
+                    <th>Số tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Chức năng</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
-
-    <!-- Modal Xác Nhận -->
-    <div class="modal fade" id="modelDelete" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteLabel">Xóa Danh Mục</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">Bạn có chắc chắn muốn xóa danh mục này?</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="button" id="btnDelete" class="btn btn-danger">Xoá danh mục</button>
-                </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-3">
+            <div class="card-header bg-primary">
+                <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
+            </div>
+            <div class="card-body">
+                <table id="TableChiTietBangKe" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th hidden>Mã</th>
+                            <th>Loại tiền</th>
+                            <th>Số lượng </th>
+                            <th>Thành tiền</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow mb-3">
+            <div class="card-header bg-primary">
+                <h6 class="m-0 text-white">Chi tiết nhân viên</h6>
+            </div>
+            <div class="card-body">
+                <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Tên nhân viên</th>
+                            <th>TÊN </th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
+
 
 @section Scripts {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
@@ -102,11 +132,29 @@
             font-weight: bold;
             background-color: #007bff;
             color: white;
+            text-transform:uppercase;
         }
 
         .table tbody td {
             color: #333;
         }
 
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-right: 20px; /* Khoảng cách giữa các form-group */
+        }
+
+            .form-group label {
+                margin-right: 10px; /* Khoảng cách giữa label và input */
+            }
+
+        .custom-datetime {
+            width: 200px; /* Điều chỉnh kích thước ô input */
+        }
+
+        .label-top-padding{
+            padding-top:8px
+        }
     </style>
 }
