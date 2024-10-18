@@ -5,6 +5,40 @@ $(document).ready(function () {
     loadDanhSach();
     ConfigTable();
     loadChiTietBangKe();
+    TableChiTietBangKe.on('draw', function () {
+        $('#TableChiTietBangKe tbody tr td:nth-child(3)')
+            .attr('contenteditable', 'true')
+            .addClass('editable')
+            .on('keypress', function (e) {
+                let charCode = e.which ? e.which : e.keyCode;
+                if (charCode === 8 || charCode === 9 || charCode === 46) {
+                    return true;
+                }
+
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+            })
+            .on('input', function () {
+                let currentRow = $(this).closest('tr');
+                let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(2)').text()) || 0;
+                let columnSoLuong = parseFloat($(this).text()) || 0;
+                let columnThanhTien = columnLoaiTien * columnSoLuong;
+
+                currentRow.find('td:nth-child(4)').text(addCommas(columnThanhTien));
+            });
+            
+        $('#TableChiTietBangKe tbody tr td:nth-child(5)')
+            .attr('contenteditable', 'true')
+            .addClass('editable')
+            .on('input', function () {
+                let enteredText = $(this).text();
+                console.log('Giá trị ô thứ 5:', enteredText);
+            });
+    });
+
+
+
 });
 function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
@@ -260,19 +294,29 @@ function loadChiTietBangKe() {
         }
     });
 }
+
 function ChiTietBangKe(data) {
-    console.table(data)
-    TableChiTietBangKe.clear().draw();
+    TableChiTietBangKe.clear();
     data.forEach(function (item) {
-            let rowContent = [
-                `<td>${item.ma}</td>`,
-                `<td>${item.giaTri}</td>`,
-                `<td>0</td>`,     
-                `<td>0</td>`,      
-                `<td></td>`     
-            ];
-            
-            TableChiTietBangKe.row.add(rowContent).draw();
-        }
-    );
+        let rowContent = [
+            item.ma,
+            item.giaTri,
+            '0', 
+            '0',
+            ''
+        ];
+
+        TableChiTietBangKe.row.add(rowContent);  
+    });
+    
+    TableChiTietBangKe.draw();
 }
+
+function addCommas(amount) {
+    if (amount == null || isNaN(amount)) {
+        return '0';
+    }
+    // Chuyển đổi số thành chuỗi và sử dụng phương thức replace với biểu thức chính quy
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
