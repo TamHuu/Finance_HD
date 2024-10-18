@@ -143,11 +143,16 @@ namespace Finance_HD.Controllers.ChungTu
         [HttpGet]
         public IActionResult Add()
         {
-            ViewData["listTienTe"] = _dbContext.FiaTienTe.ToList();
-            ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.ToList();
-            ViewData["listNguoiNopTien"] = _dbContext.SysUser.ToList();
+            // Lọc danh sách để chỉ lấy các bản ghi chưa bị xóa
+            ViewData["listTienTe"] = _dbContext.FiaTienTe.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listNhanVien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
+
             return View("Form", new FiaBangKeNopTien());
         }
+
+
         [HttpPost]
         public JsonResult Add(FiaBangKeNopTien model)
         {

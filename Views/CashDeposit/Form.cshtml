@@ -8,7 +8,8 @@
     var listTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
     var listNoiDung = ViewData["listNoiDung"] as List<Finance_HD.Models.CatNoiDungThuChi>;
     var listNguoiNopTien = ViewData["listNguoiNopTien"] as List<Finance_HD.Models.SysUser>;
-    
+    var listNhanVien = ViewData["listNhanVien"] as List<Finance_HD.Models.SysUser>;
+
 }
 <div class="row">
     <div class="col-md-12">
@@ -22,23 +23,23 @@
                     <div class="form-row ">
                         <div class="form-group col-md-2">
                             <label for="NgayNopTien">Ngày Nộp Tiền</label>
-                            <input type="date" id="dtpNgayNopTien" class="form-control form-control-sm" 
+                            <input type="date" id="dtpNgayNopTien" class="form-control form-control-sm"
                                    value="@((Model.NgayNopTien.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayNopTien.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
                         </div>
                         <div class="form-group col-md-2">
                             <label for="NgayLap">Ngày Lập</label>
-                            <input type="date" id="dtpNgayLap" class="form-control form-control-sm" 
+                            <input type="date" id="dtpNgayLap" class="form-control form-control-sm"
                                    value="@((Model.NgayLap.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayLap.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
                         </div>
                         <div class="form-group col-md-2">
                             <label for="HinhThuc">Hình thức chi</label>
                             <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
-                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)" 
-                                        @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
-                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan)" 
-                                        @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
-                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.NganHang)" 
-                                        @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
+                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)"
+                                @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
+                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan)"
+                                @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
+                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.NganHang)"
+                                @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
                             </select>
                         </div>
                         <div class="form-group col-md-2">
@@ -110,10 +111,6 @@
                             <input type="text" placeholder="Nhập địa chỉ" class="form-control form-control-sm w-100" id="DiaChi" name="DiaChi" value="@Model.DiaChi" />
                         </div>
                     </div>
-                   
-                       
-
-                  
                 </form>
             </div>
         </div>
@@ -147,13 +144,33 @@
     <div class="col-md-6 mb-3">
         <div class="card shadow">
             <div class="card-header bg-primary">
-                <h6 class="m-0 text-white">Chi tiết nhân viên</h6>
+                <div class="row">
+                    <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
+                        <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
+                        <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
+                            @foreach (var nhanvien in listNhanVien)
+                            {
+                                <!option value="@nhanvien.Ma" @(Model.NguoiNhanTien == nhanvien.Ma ? "selected" : "")>@nhanvien.FullName</!option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
+                        <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
+                        <input type="number" placeholder="Nhập số tiền" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" value="@Model.SoTien" />
+                        <button class="btn-custom" id="btnSaveChiTietNhanVien">
+                            <i class="fa fa-check-circle fa-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+
             </div>
+
             <div class="card-body">
+
                 <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th hidden>Mã</th>
                             <th>Mã nhân viên</th>
                             <th>Tên nhân viên</th>
                             <th>Số tiền</th>
@@ -164,17 +181,18 @@
                 </table>
             </div>
         </div>
+
     </div>
 
-<div class="col-md-12">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">Chức năng</div>
-        <div class="card-body text-center">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">Chức năng</div>
+            <div class="card-body text-center">
                 <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
                 <button type="button" id="btnCancel" class="btn btn-danger btn-sm">Huỷ</button>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 
@@ -194,6 +212,36 @@
         .table tbody td {
             color: #333;
         }
+
+        .btn-custom {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 11px;
+            transition: background-color 0.3s, transform 0.2s;
+            cursor: pointer;
+        }
+
+        .d-flex > h6 {
+            margin-right: 5px; 
+        }
+
+        .d-flex > input {
+            margin-right: 5px; 
+        }
+
+            /* Hiệu ứng hover */
+            .btn-custom:hover {
+                background-color: #218838;
+                transform: scale(1.05);
+            }
+
+            .btn-custom:active {
+                transform: scale(0.95);
+            }
+
     </style>
     <script>
         var defaultUID = '@defaultUID';

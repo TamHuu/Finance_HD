@@ -37,8 +37,6 @@ $(document).ready(function () {
             });
     });
 
-
-
 });
 function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
@@ -72,8 +70,9 @@ function ConfigTable() {
 
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
-            { className: "d-none", targets: 0, orderable: false },
-            { width: '170px', className: 'dt-left dt-head-center', targets: [1, 2, 3], orderable: false },
+            { width: '250px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
+            { width: '150px', className: 'dt-left dt-head-center', targets: [ 1], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [ 2], orderable: false },
         ],
         lengthChange: false,
         language: {
@@ -311,12 +310,53 @@ function ChiTietBangKe(data) {
     
     TableChiTietBangKe.draw();
 }
+$('#btnSaveChiTietNhanVien').on('click', function (e) {
+    e.preventDefault();
+    ChiTietNhanVien();
+});
+function ChiTietNhanVien() {
+    TableChiTietNhanVien.clear();
+    var maNhanVien = $("#MaNhanVien").val();
+    var sotien = $("#SoTienNhanVien").val();
+
+    $.ajax({
+        url: "/User/getListUser",
+        type: 'GET',
+        success: function (response) {
+            var result = response.data;
+
+            // Kiểm tra từng item trong result
+            result.forEach(function (item) {
+                if (item.ma== maNhanVien) {
+                    let rowContent = [
+                        item.ma,
+                        item.fullName,
+                        addCommas(sotien),
+                        
+                    ];
+                    TableChiTietNhanVien.row.add(rowContent);
+                }
+            });
+            
+            TableChiTietNhanVien.draw();
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+
+
 
 function addCommas(amount) {
     if (amount == null || isNaN(amount)) {
         return '0';
     }
-    // Chuyển đổi số thành chuỗi và sử dụng phương thức replace với biểu thức chính quy
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 

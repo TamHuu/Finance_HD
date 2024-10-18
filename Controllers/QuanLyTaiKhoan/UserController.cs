@@ -30,12 +30,13 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
         {
             var listUser = (from user in _dbContext.SysUser
                             join chinhanh in _dbContext.SysBranch on user.BranchId equals chinhanh.Ma
+
                             join phongban in _dbContext.TblPhongBan on user.MaPhongBan equals phongban.Ma into banGroup
                             from ban in banGroup.DefaultIfEmpty()
                             where !(user.Deleted ?? false)
                             select new
                             {
-                                MaUser = user.Ma + "",
+                                Ma = user.Ma + "",
                                 UserName = user.Username + "",
                                 Msnv = user.Msnv + "",
                                 CCCD = user.Cccd + "",
