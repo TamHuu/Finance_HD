@@ -7,36 +7,38 @@ function loadDanhSach() {
     $('#btnSave').on('click', function (e) {
         e.preventDefault();
 
-        var ma = $("#Ma").val();
-        var ngayLap = $("#dtpNgayLap").val();
-        var ngayNhanTien = $("#dtpNgayNhanTien").val();
-        var chiNhanhDeNghi = $("#ChiNhanhDeNghi").val();
-        var phongBanDeNghi = $("#PhongBanDeNghi").val();
-        var chiNhanhChi = $("#ChiNhanhChi").val();
-        var phongBanChi = $("#PhongBanChi").val();
-        var noiDung = $("#NoiDung").val();
-        var tienTe = $("#TienTe").val();
-        var tyGia = $("#TyGia").val();
-        var soTien = $("#SoTien").val();
-        var hinhThuc = $("#HinhThuc").val();
-        var trangThai = $("#TrangThai").val();
-        var ghiChu = $("#GhiChu").val();
-        var url = ma !== defaultUID ? '/ExpenseRequest/Edit' : '/ExpenseRequest/Add';
-        let formdata ={
+        var ma = $('#Ma').val();
+        var ngayNopTien = $('#dtpNgayNopTien').val();
+        var ngayLap = $('#dtpNgayLap').val();
+        var hinhThuc = $('#HinhThuc').val();
+        var tienTe = $('#TienTe').val();
+        var tyGia = $('#TyGia').val();
+        var nguoiNopTien = $('#NguoiNopTien').val();
+        var donViNop = $('#DonViNop').val();
+        var boPhanNop = $('#BoPhanNop').val();
+        var donViNhan = $('#DonViNhan').val();
+        var boPhanNhan = $('#BoPhanNhan').val();
+        var tenNguoiNopTien = $('#TenNguoiNopTien').val();
+        var noiDung = $('#NoiDung').val();
+        var ghiChu = $('#GhiChu').val();
+        var diaChi = $('#DiaChi').val();
+        var url = ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
+        let formdata = {
             ma: ma,
+            ngayNopTien: ngayNopTien,
             ngayLap: ngayLap,
-            ngayNhanTien: ngayNhanTien,
-            chiNhanhDeNghi: chiNhanhDeNghi,
-            phongBanDeNghi: phongBanDeNghi,
-            chiNhanhChi: chiNhanhChi,
-            phongBanChi: phongBanChi,
-            noiDung: noiDung,
+            hinhThuc: hinhThuc,
             tienTe: tienTe,
             tyGia: tyGia,
-            soTien: soTien,
-            hinhThuc: hinhThuc,
+            nguoiNopTien: nguoiNopTien,
+            donViNop: donViNop,
+            boPhanNop: boPhanNop,
+            donViNhan: donViNhan,
+            boPhanNhan: boPhanNhan,
+            tenNguoiNopTien: tenNguoiNopTien,
+            noiDung: noiDung,
             ghiChu: ghiChu,
-            trangThai: trangThai,
+            diaChi: diaChi,
         };
         console.table(formdata);
 
@@ -51,7 +53,7 @@ function loadDanhSach() {
                         text: response.message,
                         icon: 'success'
                     }).then(() => {
-                        window.location.href = "/ExpenseRequest";
+                        window.location.href = "/CashDeposit";
                     });
                 } else {
                     swal.fire({
@@ -79,8 +81,8 @@ function loadChiNhanh() {
         type: 'GET',
         success: function (response) {
             var branchData = response.data;
-            ChiNhanhDeNghi(branchData);
-            ChiNhanhChi(branchData);
+            DonViNop(branchData);
+            DonViNhan(branchData);
         },
         error: function (error) {
             Swal.fire({
@@ -93,8 +95,8 @@ function loadChiNhanh() {
     });
 }
 
-function ChiNhanhDeNghi(data) {
-    var branchSelect = $('#ChiNhanhDeNghi');
+function DonViNop(data) {
+    var branchSelect = $('#DonViNop');
     branchSelect.empty();
     data.forEach(function (branch) {
         let select = $('<option>', {
@@ -102,19 +104,19 @@ function ChiNhanhDeNghi(data) {
             text: branch.ten,
         });
 
-        if (branch.ma == maChiNhanhDeNghi) {
+        if (branch.ma == MaDonViNop) {
             select.attr('selected', true);
         }
         branchSelect.append(select);
     });
 
     var selectedBranch = branchSelect.val();
-    loadBan(selectedBranch, '#PhongBanDeNghi', MaPhongBanDeNghi);
-    changeSelectBranch(branchSelect, '#PhongBanDeNghi');
+    loadBan(selectedBranch, '#BoPhanNop', MaBoPhanNop);
+    changeSelectBranch(branchSelect, '#BoPhanNop');
 }
 
-function ChiNhanhChi(data) {
-    var branchSelect = $('#ChiNhanhChi');
+function DonViNhan(data) {
+    var branchSelect = $('#DonViNhan');
     branchSelect.empty();
     data.forEach(function (branch) {
         let select = $('<option>', {
@@ -122,15 +124,15 @@ function ChiNhanhChi(data) {
             text: branch.ten,
         });
 
-        if (branch.ma == maChiNhanhChi) {
+        if (branch.ma == MaDonViNhan) {
             select.attr('selected', true);
         }
         branchSelect.append(select);
     });
 
     var selectedBranch = branchSelect.val();
-    loadBan(selectedBranch, '#PhongBanChi', maPhongBanChi);
-    changeSelectBranch(branchSelect, '#PhongBanChi');
+    loadBan(selectedBranch, '#BoPhanNhan', MaBoPhanNhan);
+    changeSelectBranch(branchSelect, '#BoPhanNhan');
 }
 
 function changeSelectBranch(branchSelect, DepartmentSelectId) {

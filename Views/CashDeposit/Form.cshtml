@@ -1,0 +1,194 @@
+﻿@model Finance_HD.Models.FiaBangKeNopTien
+
+@{
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
+    string formAction = isEdit ? "Edit" : "Add";
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+    var listTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
+    var listNoiDung = ViewData["listNoiDung"] as List<Finance_HD.Models.CatNoiDungThuChi>;
+    var listNguoiNopTien = ViewData["listNguoiNopTien"] as List<Finance_HD.Models.SysUser>;
+    
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">@ViewData["Title"]</h5>
+            </div>
+            <div class="card-body">
+                <form id="Form">
+                    <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+                    <div class="form-row ">
+                        <div class="form-group col-md-2">
+                            <label for="NgayNopTien">Ngày Nộp Tiền</label>
+                            <input type="date" id="dtpNgayNopTien" class="form-control form-control-sm" 
+                                   value="@((Model.NgayNopTien.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayNopTien.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="NgayLap">Ngày Lập</label>
+                            <input type="date" id="dtpNgayLap" class="form-control form-control-sm" 
+                                   value="@((Model.NgayLap.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayLap.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="HinhThuc">Hình thức chi</label>
+                            <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
+                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)" 
+                                        @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
+                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan)" 
+                                        @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
+                                <!option value="@((int)Finance_HD.Common.HinhThucThuChi.NganHang)" 
+                                        @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="TienTe">Tiền tệ:</label>
+                            <select class="form-control form-control-sm" id="TienTe" name="TienTe">
+                                @foreach (var tt in listTienTe)
+                                {
+                                    <!option value="@tt.Ma" @(Model.MaTienTe == tt.Ma ? "selected" : "")>@tt.Ten</!option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="TyGia">Tỷ Giá</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" required
+                                   value="@((Model.TyGia.HasValue) ? Model.TyGia.Value.ToString("F2") : "1")" />
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label for="NguoiNopTien">Người nộp:</label>
+                            <select class="form-control form-control-sm" id="NguoiNopTien" name="NguoiNopTien">
+                                @foreach (var tt in listNguoiNopTien)
+                                {
+                                    <!option value="@tt.Ma" @(Model.NguoiNopTien == tt.Ma ? "selected" : "")>@tt.FullName</!option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="DonViNop">Đơn vị nộp</label>
+                            <select class="form-control form-control-sm" id="DonViNop" name="DonViNop"></select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="BoPhanNop">Bộ phận nộp</label>
+                            <select class="form-control form-control-sm" id="BoPhanNop" name="BoPhanNop"></select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="DonViNhan">Đơn vị nhận</label>
+                            <select class="form-control form-control-sm" id="DonViNhan" name="DonViNhan"></select>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="BoPhanNhan">Bộ phận nhận</label>
+                            <select class="form-control form-control-sm" id="BoPhanNhan" name="BoPhanNhan"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="KhachHang">Khách hàng</label>
+                            <input placeholder="Nhập tên khách hàng" type="text" class="form-control form-control-sm" id="TenNguoiNopTien" name="TenNguoiNopTien" required value="@Model.TenNguoiNopTien" />
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="NoiDung">Tên nội dung:</label>
+                            <select class="form-control form-control-sm" id="NoiDung" name="NoiDung">
+                                @foreach (var nd in listNoiDung)
+                                {
+                                    <!option value="@nd.Ma" @(Model.MaNoiDung == nd.Ma ? "selected" : "")>@nd.Ten</!option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label for="GhiChu">Ghi Chú</label>
+                            <input type="text" placeholder="Nhập ghi chú" class="form-control form-control-sm w-100" id="GhiChu" name="GhiChu" value="@Model.GhiChu" />
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="DiaChi">Địa chỉ</label>
+                            <input type="text" placeholder="Nhập địa chỉ" class="form-control form-control-sm w-100" id="DiaChi" name="DiaChi" value="@Model.DiaChi" />
+                        </div>
+                    </div>
+                   
+                       
+
+                  
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6 mb-3">
+        <div class="card shadow">
+            <div class="card-header bg-primary">
+                <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
+            </div>
+            <div class="card-body">
+                <table id="TableChiTietBangKe" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th hidden>Mã</th>
+                            <th>Loại tiền</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow">
+            <div class="card-header bg-primary">
+                <h6 class="m-0 text-white">Chi tiết nhân viên</h6>
+            </div>
+            <div class="card-body">
+                <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th hidden>Mã</th>
+                            <th>Mã nhân viên</th>
+                            <th>Tên nhân viên</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<div class="col-md-12">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">Chức năng</div>
+        <div class="card-body text-center">
+                <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+                <button type="button" id="btnCancel" class="btn btn-danger btn-sm">Huỷ</button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/soquy/bangkenoptien/form.js"></script>
+    <script>
+        var defaultUID = '@defaultUID';
+        // Pass the isEdit variable to JavaScript
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var MaDonViNop = '@Model.MaChiNhanhNop';
+        var MaBoPhanNop = '@Model.MaPhongBanNop';
+        var MaDonViNhan = '@Model.MaChiNhanhNhan';
+        var MaBoPhanNhan = '@Model.MaPhongBanNhan'
+    </script>
+}

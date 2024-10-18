@@ -6,7 +6,7 @@ $(document).ready(function () {
     DefaultDate()
     loadChiNhanhDeNghi();
     setupEventHandlers();
-    loadExpenseRequestData();
+    loadCashDepositData();
 });
 
 
@@ -97,7 +97,7 @@ function ConfigTable() {
 
 function Edit(row) {
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
-    window.open('/ExpenseRequest/Edit?ma=' + firstCellValue, '_blank');
+    window.open('/CashDeposit/Edit?ma=' + firstCellValue, '_blank');
 }
 
 function formatDate(date) {
@@ -171,7 +171,7 @@ function loadChiNhanhDeNghi() {
 function setupEventHandlers() {
     $('#btnXem').on('click', function (e) {
         e.preventDefault();
-        loadExpenseRequestData();
+        loadCashDepositData();
     });
     $('#btnXuatExcel').on('click', function (e) {
         e.preventDefault();
@@ -183,19 +183,19 @@ function setupEventHandlers() {
     });
 
 }
-function loadExpenseRequestData() {
+function loadCashDepositData() {
     let TuNgay = $("#TuNgay").val();
     let DenNgay = $("#DenNgay").val();
-    var branch = $('#Branch').val();
+    var Branch = $('#Branch').val();
     var formdata = {
         TuNgay: TuNgay,
         DenNgay: DenNgay,
-        ChiNhanhDeNghi: branch,
+        DonViNop: Branch,
     };
     console.table(formdata);
 
     $.ajax({
-        url: "ExpenseRequest/getListExpenseRequest",
+        url: "CashDeposit/getDanhSachBangKe",
         type: 'POST',
         data: formdata,  
         success: function (response) {
@@ -225,7 +225,7 @@ function ExportData(fileType) {
     console.table(formdata);
 
     $.ajax({
-        url: "ExpenseRequest/ExportToExcel",
+        url: "CashDeposit/ExportToExcel",
         type: 'POST',
         data: formdata,
         xhr: function () {
@@ -268,7 +268,7 @@ function ExportDataPDF(fileType) {
     console.table(formdata);
 
     $.ajax({
-        url: "ExpenseRequest/ExportToPdf",
+        url: "CashDeposit/ExportToPdf",
         type: 'POST',
         data: formdata,
         xhr: function () {
@@ -385,7 +385,7 @@ function handleDelete(Id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/ExpenseRequest/Delete',
+                url: '/CashDeposit/Delete',
                 type: 'DELETE',
                 data: { Id: Id },
                 success: function (response) {
@@ -395,7 +395,7 @@ function handleDelete(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadExpenseRequestData(); // Tải lại danh sách sau khi xóa thành công
+                            loadCashDepositData(); // Tải lại danh sách sau khi xóa thành công
                         });
                     } else {
                         Swal.fire({
@@ -437,7 +437,7 @@ function handleApprove(Id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/ExpenseRequest/DuyetPhieuDeNghiChi',
+                url: '/CashDeposit/DuyetPhieuDeNghiChi',
                 type: 'POST',
                 data: { Id: Id },
                 success: function (response) {
@@ -447,7 +447,7 @@ function handleApprove(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadExpenseRequestData(); 
+                            loadCashDepositData(); 
                         });
                     } else {
                         Swal.fire({
@@ -489,7 +489,7 @@ function handleRemoveApprove(Id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/ExpenseRequest/BoDuyetPhieuDeNghiChi',
+                url: '/CashDeposit/BoDuyetPhieuDeNghiChi',
                 type: 'POST',
                 data: { Id: Id },
                 success: function (response) {
@@ -499,7 +499,7 @@ function handleRemoveApprove(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadExpenseRequestData();
+                            loadCashDepositData();
                         });
                     } else {
                         Swal.fire({
