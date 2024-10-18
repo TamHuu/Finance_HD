@@ -27,7 +27,7 @@ $(document).ready(function () {
 
                 currentRow.find('td:nth-child(4)').text(addCommas(columnThanhTien));
             });
-            
+
         $('#TableChiTietBangKe tbody tr td:nth-child(5)')
             .attr('contenteditable', 'true')
             .addClass('editable')
@@ -45,8 +45,11 @@ function ConfigTable() {
             { width: '170px', className: 'dt-right dt-head-center', targets: [1, 2, 3], orderable: false },
             { width: '170px', className: 'dt-left dt-head-center', targets: [4], orderable: false },
         ],
-        sort:false,
+        searching: false,
+        sort: false,
+        paging: false,
         lengthChange: false,
+        info: false,
         language: {
             "decimal": "",
             "emptyTable": "Không có dữ liệu trong bảng",
@@ -71,10 +74,14 @@ function ConfigTable() {
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
             { width: '250px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
-            { width: '150px', className: 'dt-left dt-head-center', targets: [ 1], orderable: false },
-            { width: '100px', className: 'dt-right dt-head-center', targets: [ 2], orderable: false },
+            { width: '150px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [2], orderable: false },
         ],
+        searching: false,
         lengthChange: false,
+        sort: false,
+        paging: false,
+        info: false,
         language: {
             "decimal": "",
             "emptyTable": "Không có dữ liệu trong bảng",
@@ -247,7 +254,7 @@ function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
 
             listBan.forEach(function (item) {
                 let option = $('<option>', {
-                    value: item.maPhongBan ,
+                    value: item.maPhongBan,
                     text: item.tenPhongBan,
                 });
 
@@ -300,14 +307,14 @@ function ChiTietBangKe(data) {
         let rowContent = [
             item.ma,
             item.giaTri,
-            '0', 
+            '0',
             '0',
             ''
         ];
 
-        TableChiTietBangKe.row.add(rowContent);  
+        TableChiTietBangKe.row.add(rowContent);
     });
-    
+
     TableChiTietBangKe.draw();
 }
 $('#btnSaveChiTietNhanVien').on('click', function (e) {
@@ -327,17 +334,17 @@ function ChiTietNhanVien() {
 
             // Kiểm tra từng item trong result
             result.forEach(function (item) {
-                if (item.ma== maNhanVien) {
+                if (item.ma == maNhanVien) {
                     let rowContent = [
                         item.ma,
                         item.fullName,
                         addCommas(sotien),
-                        
+
                     ];
                     TableChiTietNhanVien.row.add(rowContent);
                 }
             });
-            
+
             TableChiTietNhanVien.draw();
         },
         error: function (xhr, status, error) {
