@@ -21,7 +21,7 @@ namespace Finance_HD.Controllers.ChungTu
             }
             else
             {
-                ViewData["FullName"] = "Cookie không tồn tại";
+                return Redirect("/");
             }
             return View();
         }
@@ -93,6 +93,53 @@ namespace Finance_HD.Controllers.ChungTu
             return Json(new { success = true, Data = listBangKe });
         }
 
+
+        [HttpPost]
+        public JsonResult getChiTietBangKe(string Ma)
+        {
+            var listChiTietBangKe = (from chitietbangke in _dbContext.FiaChiTietBangKeNopTien
+                                     join loaitien in _dbContext.FaLoaiTien
+                                     on chitietbangke.MaLoaiTien equals loaitien.Ma
+
+                                     join bangkenoptien in _dbContext.FiaChiTietBangKeNopTien
+                                     on chitietbangke.MaBangKeNopTien equals bangkenoptien.Ma
+
+                                     where chitietbangke.MaBangKeNopTien == Ma.GetGuid()
+                           && !(chitietbangke.Deleted ?? false)
+                                     select new
+                                     {
+                                         Ma = chitietbangke.Ma + "",
+                                         TenBangKe = bangkenoptien.Ma + "",
+                                         MaLoaiTien = loaitien.Ma + "",
+                                         SoLuong = chitietbangke.SoLuong ?? 0,
+                                         ThanhTien = chitietbangke.ThanhTien ?? 0,
+                                         GhiChu = chitietbangke.GhiChu + "",
+                                         CreatedDate = DateTime.Now,
+                                     }).OrderByDescending(x => x.CreatedDate).ToList();
+            return Json(new { success = true, Data = listChiTietBangKe });
+        }
+        [HttpPost]
+        public JsonResult getChiTietNhanVien(string Ma)
+        {
+            var listChiTietNhanVien = (from bangkenhanvien in _dbContext.FiaChiTietBangKeNhanVien
+                                       join nhanvien in _dbContext.SysUser
+                                       on bangkenhanvien.MaNhanVien equals nhanvien.Ma
+
+                                       join bangkenoptien in _dbContext.FiaChiTietBangKeNopTien
+                                       on bangkenhanvien.MaBangKe equals bangkenoptien.Ma
+                                       where bangkenhanvien.MaBangKe == Ma.GetGuid()
+                             && !(bangkenhanvien.Deleted ?? false)
+                                       select new
+                                       {
+                                           Ma = bangkenhanvien.Ma + "",
+                                           MaBangKe = bangkenoptien.Ma + "",
+                                           MaNhanVien = nhanvien.Ma + "",
+                                           SoTien = bangkenhanvien.SoTien ?? 0,
+                                           UserCreated = bangkenhanvien.UserCreated,
+                                           CreatedDate = DateTime.Now,
+                                       }).OrderByDescending(x => x.CreatedDate).ToList();
+            return Json(new { success = true, Data = listChiTietNhanVien });
+        }
         [HttpGet]
         public IActionResult Add()
         {

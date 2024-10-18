@@ -4,15 +4,16 @@ $(document).ready(function () {
     loadChiNhanh();
     loadDanhSach();
     ConfigTable();
+    loadChiTietBangKe();
 });
 function ConfigTable() {
-
-
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '170px', className: 'dt-left dt-head-center', targets: [1, 2, 3, 4], orderable: false },
+            { width: '170px', className: 'dt-right dt-head-center', targets: [1, 2, 3], orderable: false },
+            { width: '170px', className: 'dt-left dt-head-center', targets: [4], orderable: false },
         ],
+        sort:false,
         lengthChange: false,
         language: {
             "decimal": "",
@@ -100,7 +101,6 @@ function loadDanhSach() {
             ghiChu: ghiChu,
             diaChi: diaChi,
         };
-        console.table(formdata);
 
         $.ajax({
             url: url,
@@ -198,7 +198,6 @@ function DonViNhan(data) {
 function changeSelectBranch(branchSelect, DepartmentSelectId) {
     branchSelect.on('change', function () {
         var selectedBranch = $(this).val();
-        console.log("Chi nhánh đã chọn:", selectedBranch);
         loadBan(selectedBranch, DepartmentSelectId);
     });
 }
@@ -242,4 +241,38 @@ function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
             console.error('Lỗi:', error);
         }
     });
+}
+function loadChiTietBangKe() {
+    $.ajax({
+        url: "/Currency/getListCurrency",
+        type: 'GET',
+        success: function (response) {
+            var result = response.data;
+            ChiTietBangKe(result);
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+function ChiTietBangKe(data) {
+    console.table(data)
+    TableChiTietBangKe.clear().draw();
+    data.forEach(function (item) {
+            let rowContent = [
+                `<td>${item.ma}</td>`,
+                `<td>${item.giaTri}</td>`,
+                `<td>0</td>`,     
+                `<td>0</td>`,      
+                `<td></td>`     
+            ];
+            
+            TableChiTietBangKe.row.add(rowContent).draw();
+        }
+    );
 }
