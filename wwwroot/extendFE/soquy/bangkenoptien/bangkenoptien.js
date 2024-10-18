@@ -18,6 +18,7 @@ function ConfigTable() {
             { width: '100px', className: 'text-center', targets: [10], orderable: false },
             { width: '200px', className: 'dt-right dt-head-center', targets: [8], orderable: false },
         ],
+        lengthChange: false,
         scrollX: true,
         language: {
             "decimal": "",
@@ -43,9 +44,9 @@ function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4], orderable: false },
+            { width: '170px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4], orderable: false },
         ],
-        scrollX: true,
+        lengthChange: false,
         language: {
             "decimal": "",
             "emptyTable": "Không có dữ liệu trong bảng",
@@ -70,9 +71,9 @@ function ConfigTable() {
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1,2,3], orderable: false },
+            { width: '100px', className: 'dt-left dt-head-center', targets: [1,2,3], orderable: false },
         ],
-        scrollX: true,
+        lengthChange: false,
         language: {
             "decimal": "",
             "emptyTable": "Không có dữ liệu trong bảng",

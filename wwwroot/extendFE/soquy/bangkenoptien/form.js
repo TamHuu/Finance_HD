@@ -1,7 +1,67 @@
-﻿$(document).ready(function () {
+﻿let TableChiTietBangKe;
+let TableChiTietNhanVien;
+$(document).ready(function () {
     loadChiNhanh();
     loadDanhSach();
+    ConfigTable();
 });
+function ConfigTable() {
+
+
+    TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
+        columnDefs: [
+            { className: "d-none", targets: 0, orderable: false },
+            { width: '170px', className: 'dt-left dt-head-center', targets: [1, 2, 3, 4], orderable: false },
+        ],
+        lengthChange: false,
+        language: {
+            "decimal": "",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
+            "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
+            "infoFiltered": "(đã lọc từ _MAX_ mục)",
+            "lengthMenu": "Hiển thị _MENU_ mục",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "searchPlaceholder": "Nhập từ khóa...",
+            "zeroRecords": "Không tìm thấy kết quả nào",
+            "paginate": {
+                "first": "Đầu tiên",
+                "last": "Cuối cùng",
+                "next": "Kế tiếp",
+                "previous": "Trước"
+            }
+        }
+    });
+
+    TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
+        columnDefs: [
+            { className: "d-none", targets: 0, orderable: false },
+            { width: '170px', className: 'dt-left dt-head-center', targets: [1, 2, 3], orderable: false },
+        ],
+        lengthChange: false,
+        language: {
+            "decimal": "",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
+            "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
+            "infoFiltered": "(đã lọc từ _MAX_ mục)",
+            "lengthMenu": "Hiển thị _MENU_ mục",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "searchPlaceholder": "Nhập từ khóa...",
+            "zeroRecords": "Không tìm thấy kết quả nào",
+            "paginate": {
+                "first": "Đầu tiên",
+                "last": "Cuối cùng",
+                "next": "Kế tiếp",
+                "previous": "Trước"
+            }
+        }
+    });
+}
 
 function loadDanhSach() {
     $('#btnSave').on('click', function (e) {
