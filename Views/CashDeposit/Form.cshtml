@@ -12,7 +12,7 @@
 
 }
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12 mb-3">
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">@ViewData["Title"]</h5>
@@ -115,9 +115,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="row mt-3">
     <div class="col-md-6 mb-3">
         <div class="card shadow">
             <div class="card-header bg-primary">
@@ -140,7 +137,7 @@
                         <tr>
                             <th></th>
                             <th colspan="2">Tổng Tiền(VNĐ)</th>
-                            <th style="text-align:right" id="TotalMoney">2222220</th>
+                            <th style="text-align:right" id="TotalMoney">0</th>
                             <th></th>
                         </tr>
                     </tfoot>
@@ -149,7 +146,6 @@
             </div>
         </div>
     </div>
-
     <div class="col-md-6 mb-3">
         <div class="card shadow">
             <div class="card-header bg-primary">
@@ -157,7 +153,6 @@
                     <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
                         <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
                         <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
-          
                         </select>
                     </div>
                     <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
@@ -190,8 +185,7 @@
         </div>
 
     </div>
-
-    <div class="col-md-12">
+    <div class="col-md-12 mb-3">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">Chức năng</div>
             <div class="card-body text-center">
@@ -201,8 +195,6 @@
         </div>
     </div>
 </div>
-
-
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

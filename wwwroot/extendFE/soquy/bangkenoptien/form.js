@@ -137,22 +137,22 @@ function loadDanhSach() {
         var url = ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
         let formdata = {
             ma: ma,
-            ngayNopTien: ngayNopTien,
-            ngayLap: ngayLap,
-            hinhThuc: hinhThuc,
-            tienTe: tienTe,
-            tyGia: tyGia,
-            nguoiNopTien: nguoiNopTien,
-            donViNop: donViNop,
-            boPhanNop: boPhanNop,
-            donViNhan: donViNhan,
-            boPhanNhan: boPhanNhan,
-            tenNguoiNopTien: tenNguoiNopTien,
-            noiDung: noiDung,
-            ghiChu: ghiChu,
-            diaChi: diaChi,
+            MaChiNhanhNhan: donViNhan,
+            MaChiNhanhNop: donViNop,
+            MaPhongBanNhan: boPhanNhan,
+            MaPhongBanNop: boPhanNop,
+            NgayNopTien: ngayNopTien,
+            NgayLap: ngayLap,
+            MaHinhThuc: hinhThuc,
+            MaTienTe: tienTe,
+            TyGia: tyGia,
+            NguoiNopTien: nguoiNopTien,
+            TenNguoiNopTien: tenNguoiNopTien,
+            MaNoiDung: noiDung,
+            GhiChu: ghiChu,
+            DiaChi: diaChi,
         };
-
+        console.log("14 mục", formdata)
         $.ajax({
             url: url,
             type: 'post',

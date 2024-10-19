@@ -13,6 +13,27 @@ namespace Finance_HD.Controllers.ChungTu
         {
             _dbContext = context;
         }
+        // Hàm để lấy số thứ tự tiếp theo
+        private int GetNextSequentialNumber(string chiNhanhCode)
+        {
+            var lastRequest = _dbContext.FiaDeNghiChi
+                .Where(x => x.SoPhieu.StartsWith($"DNC/{chiNhanhCode}/"))
+                .OrderByDescending(x => x.CreatedDate)
+                .FirstOrDefault();
+
+            if (lastRequest != null)
+            {
+                // Lấy số thứ tự từ số phiếu hiện tại
+                var parts = lastRequest.SoPhieu.Split('/');
+                if (parts.Length > 3 && int.TryParse(parts[3], out int lastNumber))
+                {
+                    return lastNumber + 1; // Tăng số thứ tự lên 1
+                }
+            }
+
+            return 1; // Nếu không có số nào, bắt đầu từ 1
+        }
+
         public IActionResult Index()
         {
             if (Request.Cookies["FullName"] != null)
@@ -161,6 +182,12 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
             }
+            SysBranch? cn = _dbContext.SysBranch.FirstOrDefault(t => t.Ma == model.MaChiNhanhNop);
+            if (cn == null)
+            {
+                return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
+            }
+            int nextSequentialNumber = GetNextSequentialNumber(cn.Code);
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -178,7 +205,6 @@ namespace Finance_HD.Controllers.ChungTu
                 MaChiNhanhNop = model.MaChiNhanhNop,
                 MaPhongBanNhan = model.MaPhongBanNhan,
                 MaPhongBanNop = model.MaPhongBanNop,
-                SoPhieu = model.SoPhieu,
                 NgayLap = model.NgayLap,
                 NgayNopTien = model.NgayNopTien,
                 NguoiNopTien = model.NguoiNopTien,
@@ -191,9 +217,10 @@ namespace Finance_HD.Controllers.ChungTu
                 GhiChu = model.GhiChu,
                 NguoiNhanTien = model.NguoiNhanTien,
                 MaNoiDung = model.MaNoiDung,
-                TrangThai = model.TrangThai,
                 MaHinhThuc = model.MaHinhThuc,
+                SoPhieu = string.Format("BK/{0}/{1:yyyyMMdd}/{2:000}", cn.Code, DateTime.Today, nextSequentialNumber),
                 UserCreated = loggedInUser.Ma,
+                TrangThai = (int)TrangThaiChungTu.LapPhieu,
                 CreatedDate = DateTime.Now,
             };
 
