@@ -140,7 +140,7 @@ function loadDanhSach() {
             });
         });
         $('#TableChiTietNhanVien tbody tr').each(function () {
-            var cotMaNhanVien = parseFloat($(this).find('td:nth-child(1)').text()) || 0;
+            var cotMaNhanVien = $(this).find('td:nth-child(1)').text();
             var cotTenNhanVien = $(this).find('td:nth-child(2)').text() || "";
             var cotSoTien = $(this).find('td:nth-child(3)').text() || 0;
 
@@ -372,7 +372,7 @@ function ChiTietNhanVien() {
             result.forEach(function (item) {
                 if (item.ma == maNhanVien) {
                     let rowContent = [
-                        item.msnv,
+                        item.ma,
                         item.fullName,
                         sotien,
                     ];

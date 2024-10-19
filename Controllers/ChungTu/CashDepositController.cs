@@ -195,11 +195,11 @@ namespace Finance_HD.Controllers.ChungTu
        string LyDo,
        int SoTien,
        string NguoiNhanTien,
-    List<FiaChiTietBangKeNopTien> DataChiTietBangKe, 
-    List<FiaChiTietBangKeNhanVien> DataNhanVien 
+    List<FiaChiTietBangKeNopTien> DataChiTietBangKe,
+    List<FiaChiTietBangKeNhanVien> DataNhanVien
    )
         {
-            
+
             SysBranch? cn = _dbContext.SysBranch.FirstOrDefault(t => t.Ma == MaChiNhanhNop.GetGuid());
             if (cn == null)
             {
@@ -247,9 +247,9 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 var listChiTietBangKe = new FiaChiTietBangKeNopTien
                 {
-                    Ma = chiTiet.Ma, 
+                    Ma = chiTiet.Ma,
                     MaBangKeNopTien = listBangKe.Ma,
-                    MaLoaiTien = chiTiet.MaLoaiTien, 
+                    MaLoaiTien = listBangKe.MaTienTe,
                     SoLuong = chiTiet.SoLuong,
                     ThanhTien = chiTiet.ThanhTien,
                     GhiChu = chiTiet.GhiChu,
@@ -263,12 +263,12 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 var listChiTietBangKe = new FiaChiTietBangKeNhanVien
                 {
-                    Ma = chiTiet.Ma, 
+                    Ma = chiTiet.Ma,
                     MaBangKe = listBangKe.Ma,
-                    MaNhanVien = chiTiet.MaNhanVien, 
-                    SoTien = chiTiet.SoTien, 
-                    UserCreated = loggedInUser.Ma, 
-                    CreatedDate = DateTime.Now 
+                    MaNhanVien = chiTiet.MaNhanVien,
+                    SoTien = chiTiet.SoTien,
+                    UserCreated = loggedInUser.Ma,
+                    CreatedDate = DateTime.Now
                 };
 
                 _dbContext.FiaChiTietBangKeNhanVien.Add(listChiTietBangKe);
