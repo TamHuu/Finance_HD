@@ -1,11 +1,22 @@
 ﻿let TableChiTietBangKe;
 let TableChiTietNhanVien;
+
 $(document).ready(function () {
     loadChiNhanh();
-    loadDanhSach();
     ConfigTable();
     loadChiTietBangKe();
     loadNhanVien();
+    loadDanhSach();
+    DrawChiTietBangKe();
+
+
+});
+$('#btnSaveChiTietNhanVien').on('click', function (e) {
+    e.preventDefault();
+    ChiTietNhanVien();
+});
+
+function DrawChiTietBangKe() {
     TableChiTietBangKe.on('draw', function () {
         // Thiết lập cho cột "Số lượng" có thể chỉnh sửa
         $('#TableChiTietBangKe tbody tr td:nth-child(3)')
@@ -28,27 +39,24 @@ $(document).ready(function () {
                 let columnSoLuong = parseFloat($(this).text()) || 0;
                 let columnThanhTien = columnLoaiTien * columnSoLuong;
                 currentRow.find('td:nth-child(4)').text(addCommas(columnThanhTien));
-                
+           
                 let totalSum = 0;
                 $('#TableChiTietBangKe tbody tr').each(function () {
                     let thanhTien = parseFloat($(this).find('td:nth-child(4)').text().replace(/,/g, '')) || 0;
                     totalSum += thanhTien;
                 });
-                let currenMoney = $("#TotalMoney").text(addCommas(totalSum)); 
-                $("#TotalMoney").val(addCommas(totalSum)); 
-                console.log("Tổng tiền:", addCommas(totalSum)); 
+                let currenMoney = $("#TotalMoney").text(addCommas(totalSum));
+                $("#TotalMoney").val(addCommas(totalSum));
             });
-            
+
         $('#TableChiTietBangKe tbody tr td:nth-child(5)')
             .attr('contenteditable', 'true')
             .addClass('editable')
             .on('input', function () {
-                let enteredText = $(this).text();
+              let  ghiChu = $(this).text();
             });
     });
-
-
-});
+}
 function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
         columnDefs: [
@@ -114,11 +122,36 @@ function ConfigTable() {
         }
     });
 }
-
 function loadDanhSach() {
     $('#btnSave').on('click', function (e) {
-        e.preventDefault();
+        var tableChiTietBangKe = []; 
+        var tableNhanVien = [];
+        $('#TableChiTietBangKe tbody tr').each(function () {
+            var cotLoaiTien = parseFloat($(this).find('td:nth-child(2)').text()) || 0;
+            var cotSoLuong = parseFloat($(this).find('td:nth-child(3)').text()) || 0;
+            var cotGhiChu = $(this).find('td:nth-child(5)').text()||"";
+            var cotThanhTien = cotLoaiTien * cotSoLuong;
+            
+            tableChiTietBangKe.push({
+                LoaiTien: cotLoaiTien,
+                SoLuong: cotSoLuong,
+                ThanhTien: cotThanhTien,
+                GhiChu: cotGhiChu
+            });
+        });
+        $('#TableChiTietNhanVien tbody tr').each(function () {
+            var cotMaNhanVien = parseFloat($(this).find('td:nth-child(1)').text()) || 0;
+            var cotTenNhanVien = $(this).find('td:nth-child(2)').text() || "";
+            var cotSoTien = $(this).find('td:nth-child(3)').text() || 0;
 
+            tableNhanVien.push({
+                MaNhanVien: cotMaNhanVien,
+                TenNhanVien: cotTenNhanVien,
+                SoTien: cotSoTien,
+            });
+        });
+        console.log("Bảng nhân viên",tableNhanVien);
+     
         var ma = $('#Ma').val();
         var ngayNopTien = $('#dtpNgayNopTien').val();
         var ngayLap = $('#dtpNgayLap').val();
@@ -151,6 +184,8 @@ function loadDanhSach() {
             MaNoiDung: noiDung,
             GhiChu: ghiChu,
             DiaChi: diaChi,
+            DataChiTietBangKe: tableChiTietBangKe,
+            DataNhanVien: tableNhanVien,
         };
         console.log("14 mục", formdata)
         $.ajax({
@@ -185,7 +220,6 @@ function loadDanhSach() {
         });
     });
 }
-
 function loadChiNhanh() {
     $.ajax({
         url: "/Branch/getListBranch",
@@ -205,7 +239,6 @@ function loadChiNhanh() {
         }
     });
 }
-
 function DonViNop(data) {
     var branchSelect = $('#DonViNop');
     branchSelect.empty();
@@ -225,7 +258,6 @@ function DonViNop(data) {
     loadBan(selectedBranch, '#BoPhanNop', MaBoPhanNop);
     changeSelectBranch(branchSelect, '#BoPhanNop');
 }
-
 function DonViNhan(data) {
     var branchSelect = $('#DonViNhan');
     branchSelect.empty();
@@ -245,14 +277,12 @@ function DonViNhan(data) {
     loadBan(selectedBranch, '#BoPhanNhan', MaBoPhanNhan);
     changeSelectBranch(branchSelect, '#BoPhanNhan');
 }
-
 function changeSelectBranch(branchSelect, DepartmentSelectId) {
     branchSelect.on('change', function () {
         var selectedBranch = $(this).val();
         loadBan(selectedBranch, DepartmentSelectId);
     });
 }
-
 function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
     $.ajax({
         url: "/Department/getListDepartment",
@@ -311,7 +341,6 @@ function loadChiTietBangKe() {
         }
     });
 }
-
 function ChiTietBangKe(data) {
     TableChiTietBangKe.clear();
     data.forEach(function (item) {
@@ -328,11 +357,6 @@ function ChiTietBangKe(data) {
 
     TableChiTietBangKe.draw();
 }
-$('#btnSaveChiTietNhanVien').on('click', function (e) {
-    e.preventDefault();
-    ChiTietNhanVien();
-});
-
 function ChiTietNhanVien() {
     TableChiTietNhanVien.clear();
     var maNhanVien = $("#MaNhanVien").val();
@@ -407,15 +431,12 @@ function selectNhanVien(data) {
         branchSelect.append(select);
     });
 }
-
-
 function addCommas(amount) {
     if (amount == null || isNaN(amount)) {
         return '';
     }
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
 function formatCurrencyInput(input) {
     let inputValue = input.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
     
@@ -432,7 +453,6 @@ function formatCurrencyInput(input) {
 
 document.addEventListener('DOMContentLoaded', function () {
     const moneyInput = document.getElementById('SoTienNhanVien');
-    
     moneyInput.value = addCommas(parseFloat(moneyInput.value));
 });
 

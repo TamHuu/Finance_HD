@@ -17,24 +17,25 @@ namespace Finance_HD.Helpers
 
         public static Guid GetGuid(this string? str)
         {
-            if (str.IsEmpty()) // Nếu chuỗi rỗng hoặc null
+            // Check if the string is null or empty
+            if (string.IsNullOrEmpty(str))
             {
-                return Guid.Empty; // Trả về Guid.Empty nếu phòng ban không có
+                return Guid.Empty; // Return Guid.Empty if the input string is null or empty
             }
 
             try
             {
-                return Guid.Parse(str); // Cố gắng chuyển đổi chuỗi thành GUID
+                // Attempt to parse the string into a GUID
+                return Guid.Parse(str);
             }
-            catch (FormatException) // Xử lý lỗi định dạng không hợp lệ
+            catch (FormatException)
             {
-                return Guid.Empty; // Trả về Guid.Empty khi lỗi xảy ra
+                // Return Guid.Empty if the format is invalid
+                return Guid.Empty;
             }
-            catch (Exception) // Xử lý các lỗi khác
-            {
-                return Guid.Empty; // Trả về Guid.Empty cho bất kỳ lỗi nào
-            }
+            // Consider removing the catch for general exceptions unless you have a specific reason for it
         }
+
 
         public static Guid? GetGuidNull(this string? str)
         {
