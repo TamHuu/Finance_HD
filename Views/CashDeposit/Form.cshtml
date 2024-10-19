@@ -136,6 +136,7 @@
                     </thead>
                     <tbody>
                     </tbody>
+                    <tfoot></tfoot>
                 </table>
             </div>
         </div>
@@ -148,15 +149,13 @@
                     <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
                         <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
                         <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
-                            @foreach (var nhanvien in listNhanVien)
-                            {
-                                <!option value="@nhanvien.Ma" @(Model.NguoiNhanTien == nhanvien.Ma ? "selected" : "")>@nhanvien.FullName</!option>
-                            }
+          
                         </select>
                     </div>
                     <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
                         <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
-                        <input type="number" placeholder="Nhập số tiền" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" value="@Model.SoTien" />
+                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" value="@Model.SoTien" oninput="formatCurrencyInput(this)" />
+
                         <button class="btn-custom" id="btnSaveChiTietNhanVien">
                             <i class="fa fa-check-circle fa-lg"></i>
                         </button>

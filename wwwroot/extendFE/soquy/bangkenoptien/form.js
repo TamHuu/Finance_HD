@@ -5,6 +5,7 @@ $(document).ready(function () {
     loadDanhSach();
     ConfigTable();
     loadChiTietBangKe();
+    loadNhanVien();
     TableChiTietBangKe.on('draw', function () {
         $('#TableChiTietBangKe tbody tr td:nth-child(3)')
             .attr('contenteditable', 'true')
@@ -321,6 +322,7 @@ $('#btnSaveChiTietNhanVien').on('click', function (e) {
     e.preventDefault();
     ChiTietNhanVien();
 });
+
 function ChiTietNhanVien() {
     TableChiTietNhanVien.clear();
     var maNhanVien = $("#MaNhanVien").val();
@@ -338,14 +340,17 @@ function ChiTietNhanVien() {
                     let rowContent = [
                         item.ma,
                         item.fullName,
-                        addCommas(sotien),
-
+                        sotien,
                     ];
                     TableChiTietNhanVien.row.add(rowContent);
                 }
             });
 
             TableChiTietNhanVien.draw();
+
+            // Đặt lại giá trị về giá trị ban đầu
+            $("#MaNhanVien").val('');
+            $("#SoTienNhanVien").val('');
         },
         error: function (xhr, status, error) {
             swal.fire({
@@ -357,13 +362,67 @@ function ChiTietNhanVien() {
         }
     });
 }
+function loadNhanVien() {
+    $.ajax({
+        url: "/User/getListUser",
+        type: 'GET',
+        success: function (response) {
+            var result = response.data;
+            selectNhanVien(result);
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+function selectNhanVien(data) {
+    var branchSelect = $('#MaNhanVien');
+    branchSelect.empty();
+    branchSelect.append($('<option>', {
+        value: '',
+        text: 'Chọn...',
+        selected: true
+    }));
+    data.forEach(function (branch) {
+        let select = $('<option>', {
+            value: branch.ma,
+            text: branch.fullName
+        });
 
+        branchSelect.append(select);
+    });
+}
 
 
 function addCommas(amount) {
     if (amount == null || isNaN(amount)) {
-        return '0';
+        return '';
     }
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
+function formatCurrencyInput(input) {
+    let inputValue = input.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+    
+    if (inputValue === '') {
+        input.value = '';
+        return;
+    }
+    
+    const numericValue = parseFloat(inputValue);
+    const formattedValue = addCommas(numericValue);
+    
+    input.value = formattedValue;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const moneyInput = document.getElementById('SoTienNhanVien');
+    
+    moneyInput.value = addCommas(parseFloat(moneyInput.value));
+});
 

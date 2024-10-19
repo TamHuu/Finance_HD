@@ -93,7 +93,6 @@ namespace Finance_HD.Controllers.ChungTu
             return Json(new { success = true, Data = listBangKe });
         }
 
-
         [HttpPost]
         public JsonResult getChiTietBangKe(string Ma)
         {
@@ -143,7 +142,6 @@ namespace Finance_HD.Controllers.ChungTu
         [HttpGet]
         public IActionResult Add()
         {
-            // Lọc danh sách để chỉ lấy các bản ghi chưa bị xóa
             ViewData["listTienTe"] = _dbContext.FiaTienTe.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
