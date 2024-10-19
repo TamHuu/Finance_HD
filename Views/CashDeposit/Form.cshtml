@@ -127,7 +127,7 @@
                 <table id="TableChiTietBangKe" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th hidden>Mã</th>
+                            <th>Mã</th>
                             <th>Loại tiền</th>
                             <th>Số lượng</th>
                             <th>Thành tiền</th>
@@ -136,8 +136,16 @@
                     </thead>
                     <tbody>
                     </tbody>
-                    <tfoot></tfoot>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th colspan="2">Tổng Tiền(VNĐ)</th>
+                            <th style="text-align:right" id="TotalMoney">2222220</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
                 </table>
+
             </div>
         </div>
     </div>
@@ -201,7 +209,7 @@
     <script defer src="/extendFE/soquy/bangkenoptien/form.js"></script>
     <style>
         .table thead th {
-            font-size: 10px;
+            font-size: 14px;
             font-weight: bold;
             background-color: #007bff;
             color: white;
@@ -230,8 +238,6 @@
         .d-flex > input {
             margin-right: 5px; 
         }
-
-            /* Hiệu ứng hover */
             .btn-custom:hover {
                 background-color: #218838;
                 transform: scale(1.05);
@@ -239,6 +245,16 @@
 
             .btn-custom:active {
                 transform: scale(0.95);
+            }
+        #TableChiTietBangKe tfoot {
+            background-color: #007bff;
+            font-weight: bold; 
+            color: white;
+        }
+
+            #TableChiTietBangKe tfoot th {
+                border-top: 2px solid #dee2e6;
+                padding: 10px;
             }
 
     </style>

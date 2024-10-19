@@ -7,15 +7,17 @@ $(document).ready(function () {
     loadChiTietBangKe();
     loadNhanVien();
     TableChiTietBangKe.on('draw', function () {
+        // Thiết lập cho cột "Số lượng" có thể chỉnh sửa
         $('#TableChiTietBangKe tbody tr td:nth-child(3)')
             .attr('contenteditable', 'true')
             .addClass('editable')
             .on('keypress', function (e) {
                 let charCode = e.which ? e.which : e.keyCode;
+                // Cho phép backspace, tab, delete
                 if (charCode === 8 || charCode === 9 || charCode === 46) {
                     return true;
                 }
-
+                // Chỉ cho phép nhập số
                 if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                     return false;
                 }
@@ -25,18 +27,26 @@ $(document).ready(function () {
                 let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(2)').text()) || 0;
                 let columnSoLuong = parseFloat($(this).text()) || 0;
                 let columnThanhTien = columnLoaiTien * columnSoLuong;
-
                 currentRow.find('td:nth-child(4)').text(addCommas(columnThanhTien));
+                
+                let totalSum = 0;
+                $('#TableChiTietBangKe tbody tr').each(function () {
+                    let thanhTien = parseFloat($(this).find('td:nth-child(4)').text().replace(/,/g, '')) || 0;
+                    totalSum += thanhTien;
+                });
+                let currenMoney = $("#TotalMoney").text(addCommas(totalSum)); 
+                $("#TotalMoney").val(addCommas(totalSum)); 
+                console.log("Tổng tiền:", addCommas(totalSum)); 
             });
-
+            
         $('#TableChiTietBangKe tbody tr td:nth-child(5)')
             .attr('contenteditable', 'true')
             .addClass('editable')
             .on('input', function () {
                 let enteredText = $(this).text();
-                console.log('Giá trị ô thứ 5:', enteredText);
             });
     });
+
 
 });
 function ConfigTable() {
@@ -74,8 +84,8 @@ function ConfigTable() {
 
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
-            { width: '250px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
-            { width: '150px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
+            { width: '100px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
             { width: '100px', className: 'dt-right dt-head-center', targets: [2], orderable: false },
         ],
         searching: false,
@@ -338,7 +348,7 @@ function ChiTietNhanVien() {
             result.forEach(function (item) {
                 if (item.ma == maNhanVien) {
                     let rowContent = [
-                        item.ma,
+                        item.msnv,
                         item.fullName,
                         sotien,
                     ];
