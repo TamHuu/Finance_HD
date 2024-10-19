@@ -71,16 +71,19 @@ namespace Finance_HD.Controllers.ChungTu
                               on bangkenoptien.MaTienTe equals tiente.Ma
 
                               join noidung in _dbContext.CatNoiDungThuChi
-                              on bangkenoptien.MaNoiDung equals noidung.Ma
+                              on bangkenoptien.MaNoiDung equals noidung.Ma into NoiDungGroup
+                              from noidung in NoiDungGroup.DefaultIfEmpty()
 
                               join hinhthuc in _dbContext.TblHinhThucThuChi
-                              on bangkenoptien.MaHinhThuc equals hinhthuc.Ma
+                              on bangkenoptien.MaHinhThuc equals hinhthuc.Ma into HinhThucGroup
+                              from hinhthuc in HinhThucGroup.DefaultIfEmpty()
 
                               join nguoinoptien in _dbContext.SysUser
                               on bangkenoptien.NguoiNopTien equals nguoinoptien.Ma
 
-                              join nguoinhantien in _dbContext.SysUser
-                              on bangkenoptien.NguoiNhanTien equals nguoinhantien.Ma
+                              join nguoinhantien in _dbContext.SysUser 
+                              on bangkenoptien.NguoiNhanTien equals nguoinhantien.Ma into NguoiNhanTienGroup
+                              from nguoinhantien in NguoiNhanTienGroup.DefaultIfEmpty()
 
                               where !(bangkenoptien.Deleted ?? false) &&
                                              (string.IsNullOrEmpty(DonViNop) ||
@@ -107,9 +110,9 @@ namespace Finance_HD.Controllers.ChungTu
                                   GhiChu = bangkenoptien.GhiChu + "",
                                   NguoiNhanTien = nguoinhantien.FullName + "",
                                   NoiDung = noidung.Ten + "",
-                                  TrangThai = bangkenoptien.TrangThai + "",
+                                  TrangThai = bangkenoptien.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : bangkenoptien.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : bangkenoptien.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : bangkenoptien.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
                                   CreatedDate = DateTime.Now,
-                                  HinhThuc = hinhthuc.Ten + "",
+                                  HinhThuc = bangkenoptien.MaHinhThuc == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : bangkenoptien.MaHinhThuc == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : bangkenoptien.MaHinhThuc == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
                               }).ToList();
             return Json(new { success = true, Data = listBangKe });
         }
@@ -188,7 +191,6 @@ namespace Finance_HD.Controllers.ChungTu
        string MaTienTe,
        decimal TyGia,
        string NguoiNopTien,
-       string TenNguoiNopTien,
        string MaNoiDung,
        string GhiChu,
        string DiaChi,
@@ -216,7 +218,7 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Không được thêm bảng kê từ chi nhánh khác!" });
             }
-
+            var TenNguoiNopTien = _dbContext.SysUser.FirstOrDefault(x => x.Ma == NguoiNopTien.GetGuid());
             var listBangKe = new FiaBangKeNopTien
             {
                 Ma = Ma.GetGuid(),
@@ -227,7 +229,7 @@ namespace Finance_HD.Controllers.ChungTu
                 NgayLap = NgayLap,
                 NgayNopTien = NgayNopTien,
                 NguoiNopTien = NguoiNopTien.GetGuid(),
-                TenNguoiNopTien = TenNguoiNopTien,
+                TenNguoiNopTien = TenNguoiNopTien.FullName,
                 DiaChi = DiaChi,
                 LyDo = LyDo,
                 MaTienTe = MaTienTe.GetGuid(),
@@ -242,7 +244,8 @@ namespace Finance_HD.Controllers.ChungTu
                 TrangThai = (int)TrangThaiChungTu.LapPhieu,
                 CreatedDate = DateTime.Now
             };
-
+            _dbContext.FiaBangKeNopTien.Add(listBangKe);
+            _dbContext.SaveChanges();
             foreach (var chiTiet in DataChiTietBangKe)
             {
                 var listChiTietBangKe = new FiaChiTietBangKeNopTien
@@ -273,7 +276,7 @@ namespace Finance_HD.Controllers.ChungTu
 
                 _dbContext.FiaChiTietBangKeNhanVien.Add(listChiTietBangKe);
             }
-            _dbContext.FiaBangKeNopTien.Add(listBangKe);
+        
             _dbContext.SaveChanges();
 
 

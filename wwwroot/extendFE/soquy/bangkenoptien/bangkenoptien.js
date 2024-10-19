@@ -14,9 +14,9 @@ function ConfigTable() {
     TableDanhSachBangKe = $('#TableDanhSachBangKe').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 15, 16, 17], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 16, 17,8], orderable: false },
             { width: '100px', className: 'text-center', targets: [10], orderable: false },
-            { width: '200px', className: 'dt-right dt-head-center', targets: [8], orderable: false },
+            { width: '200px', className: 'dt-right dt-head-center', targets: [15], orderable: false },
         ],
         lengthChange: false,
         scrollX: true,
@@ -304,26 +304,25 @@ function ExportDataPDF(fileType) {
 
 function DanhSachBangKe(data) {
     TableDanhSachBangKe.clear().draw();
-    console.table(data)
     data.forEach(function (item) {
         let rowContent = [
             `<td>${item.ma}</td>`,
+            `<td>${item.soPhieu}</td>`,
+            `<td>${item.tenChiNhanhNop}</td>`,
+            `<td>${item.tenChiNhanhNhan}</td>`,
+            `<td>${item.tenPhongBanNhan}</td>`,
             `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
-            `<td>${formatDate(item.ngayLap)}</td>`,
+            `<td>${formatDate(item.ngayNopTien)}</td>`,
+            `<td>${item.tenNguoiNopTien}</td>`,
+            `<td>${item.diaChi}</td>`,
+            `<td>${item.noiDung}</td>`,
+            `<td>${item.nguoiNhanTien}</td>`,
+            `<td>${item.ghiChu}</td>`,
+            `<td>${item.tenTienTe}</td>`,
+            `<td>${item.tyGia}</td>`,
+            `<td>${item.hinhThuc}</td>`,
+            `<td>${addCommas(item.soTien)}</td>`,
+            `<td>${item.trangThai}</td>`,
             `
     <td>
         ${item.tenTrangThai === "Lập phiếu"

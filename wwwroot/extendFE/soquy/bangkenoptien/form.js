@@ -126,17 +126,19 @@ function loadDanhSach() {
     $('#btnSave').on('click', function (e) {
         var tableChiTietBangKe = []; 
         var tableNhanVien = [];
+            let totalSum = 0;
         $('#TableChiTietBangKe tbody tr').each(function () {
             var cotLoaiTien = parseFloat($(this).find('td:nth-child(2)').text()) || 0;
             var cotSoLuong = parseFloat($(this).find('td:nth-child(3)').text()) || 0;
             var cotGhiChu = $(this).find('td:nth-child(5)').text()||"";
             var cotThanhTien = cotLoaiTien * cotSoLuong;
-            
+            let TongTien = parseFloat($(this).find('td:nth-child(4)').text().replace(/,/g, '')) || 0;
+            totalSum += TongTien;
             tableChiTietBangKe.push({
                 LoaiTien: cotLoaiTien,
                 SoLuong: cotSoLuong,
                 ThanhTien: cotThanhTien,
-                GhiChu: cotGhiChu
+                GhiChu: cotGhiChu,
             });
         });
         $('#TableChiTietNhanVien tbody tr').each(function () {
@@ -167,6 +169,7 @@ function loadDanhSach() {
         var noiDung = $('#NoiDung').val();
         var ghiChu = $('#GhiChu').val();
         var diaChi = $('#DiaChi').val();
+        var SoTien = totalSum;
         var url = ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
         let formdata = {
             ma: ma,
@@ -184,6 +187,7 @@ function loadDanhSach() {
             MaNoiDung: noiDung,
             GhiChu: ghiChu,
             DiaChi: diaChi,
+            SoTien: SoTien,
             DataChiTietBangKe: tableChiTietBangKe,
             DataNhanVien: tableNhanVien,
         };
