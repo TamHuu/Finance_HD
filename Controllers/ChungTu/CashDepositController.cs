@@ -81,7 +81,7 @@ namespace Finance_HD.Controllers.ChungTu
                               join nguoinoptien in _dbContext.SysUser
                               on bangkenoptien.NguoiNopTien equals nguoinoptien.Ma
 
-                              join nguoinhantien in _dbContext.SysUser 
+                              join nguoinhantien in _dbContext.SysUser
                               on bangkenoptien.NguoiNhanTien equals nguoinhantien.Ma into NguoiNhanTienGroup
                               from nguoinhantien in NguoiNhanTienGroup.DefaultIfEmpty()
 
@@ -122,18 +122,21 @@ namespace Finance_HD.Controllers.ChungTu
         {
             var listChiTietBangKe = (from chitietbangke in _dbContext.FiaChiTietBangKeNopTien
                                      join loaitien in _dbContext.FaLoaiTien
-                                     on chitietbangke.MaLoaiTien equals loaitien.Ma
+                                     on chitietbangke.MaLoaiTien equals loaitien.Ma into loaitienGroup
+                                     from loaitien in loaitienGroup.DefaultIfEmpty()
 
-                                     join bangkenoptien in _dbContext.FiaChiTietBangKeNopTien
-                                     on chitietbangke.MaBangKeNopTien equals bangkenoptien.Ma
+                                     join bangkenoptien in _dbContext.FiaBangKeNopTien
+                                     on chitietbangke.MaBangKeNopTien equals bangkenoptien.Ma into bangkeGroup
+                                     from bangkenoptien in bangkeGroup.DefaultIfEmpty()
+
 
                                      where chitietbangke.MaBangKeNopTien == Ma.GetGuid()
                            && !(chitietbangke.Deleted ?? false)
                                      select new
                                      {
                                          Ma = chitietbangke.Ma + "",
-                                         TenBangKe = bangkenoptien.Ma + "",
                                          MaLoaiTien = loaitien.Ma + "",
+                                         TenLoaiTien = loaitien.GiaTri ?? 0,
                                          SoLuong = chitietbangke.SoLuong ?? 0,
                                          ThanhTien = chitietbangke.ThanhTien ?? 0,
                                          GhiChu = chitietbangke.GhiChu + "",
@@ -276,7 +279,7 @@ namespace Finance_HD.Controllers.ChungTu
 
                 _dbContext.FiaChiTietBangKeNhanVien.Add(listChiTietBangKe);
             }
-        
+
             _dbContext.SaveChanges();
 
 
@@ -284,6 +287,154 @@ namespace Finance_HD.Controllers.ChungTu
             return Json(new { success = true, message = "Thêm thành công!" });
         }
 
+        [HttpGet]
+        public IActionResult Edit(string Ma)
+        {
+            ViewData["listTienTe"] = _dbContext.FiaTienTe.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
+            var BangKe = _dbContext.FiaBangKeNopTien.FirstOrDefault(c => c.Ma == Ma.GetGuid());
+            if (BangKe == null)
+            {
+                return NotFound();
+            }
+            return View("Form", BangKe);
+        }
+        [HttpPost]
+        public JsonResult Edit(
+       string Ma,
+       string MaChiNhanhNhan,
+       string MaChiNhanhNop,
+       string MaPhongBanNhan,
+       string MaPhongBanNop,
+       DateTime NgayNopTien,
+       DateTime NgayLap,
+       int MaHinhThuc,
+       string MaTienTe,
+       decimal TyGia,
+       string NguoiNopTien,
+       string MaNoiDung,
+       string GhiChu,
+       string DiaChi,
+       string LyDo,
+       int SoTien,
+       string NguoiNhanTien,
+    List<FiaChiTietBangKeNopTien> DataChiTietBangKe,
+    List<FiaChiTietBangKeNhanVien> DataNhanVien
+   )
+        {
+
+            SysBranch? cn = _dbContext.SysBranch.FirstOrDefault(t => t.Ma == MaChiNhanhNop.GetGuid());
+            if (cn == null)
+            {
+                return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
+            }
+
+            int nextSequentialNumber = GetNextSequentialNumber(cn.Code);
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+
+            var existingListDocumentType = _dbContext.FiaBangKeNopTien.FirstOrDefault(x => x.MaChiNhanhNop == loggedInUser.Ma);
+            if (existingListDocumentType != null)
+            {
+                return Json(new { success = false, message = "Không được thêm bảng kê từ chi nhánh khác!" });
+            }
+            var TenNguoiNopTien = _dbContext.SysUser.FirstOrDefault(x => x.Ma == NguoiNopTien.GetGuid());
+            var listBangKe = new FiaBangKeNopTien
+            {
+                Ma = Ma.GetGuid(),
+                MaChiNhanhNhan = MaChiNhanhNhan.GetGuid(),
+                MaChiNhanhNop = MaChiNhanhNop.GetGuid(),
+                MaPhongBanNhan = MaPhongBanNhan.GetGuid(),
+                MaPhongBanNop = MaPhongBanNop.GetGuid(),
+                NgayLap = NgayLap,
+                NgayNopTien = NgayNopTien,
+                NguoiNopTien = NguoiNopTien.GetGuid(),
+                TenNguoiNopTien = TenNguoiNopTien.FullName,
+                DiaChi = DiaChi,
+                LyDo = LyDo,
+                MaTienTe = MaTienTe.GetGuid(),
+                TyGia = TyGia,
+                SoTien = SoTien,
+                GhiChu = GhiChu,
+                NguoiNhanTien = NguoiNhanTien.GetGuid(),
+                MaNoiDung = MaNoiDung.GetGuid(),
+                MaHinhThuc = MaHinhThuc,
+                SoPhieu = string.Format("BK/{0}/{1:yyyyMMdd}/{2:000}", cn.Code, DateTime.Today, nextSequentialNumber),
+                UserModified = loggedInUser.Ma,
+                CreatedDate = DateTime.Now,
+                UserCreated = loggedInUser.Ma,
+                TrangThai = (int)TrangThaiChungTu.LapPhieu,
+                ModifiedDate = DateTime.Now
+            };
+            _dbContext.FiaBangKeNopTien.Update(listBangKe);
+            _dbContext.SaveChanges();
+            foreach (var chiTiet in DataChiTietBangKe)
+            {
+                var listChiTietBangKe = new FiaChiTietBangKeNopTien
+                {
+                    Ma = chiTiet.Ma,
+                    MaBangKeNopTien = listBangKe.Ma,
+                    MaLoaiTien = listBangKe.MaTienTe,
+                    SoLuong = chiTiet.SoLuong,
+                    ThanhTien = chiTiet.ThanhTien,
+                    GhiChu = chiTiet.GhiChu,
+                    CreatedDate = DateTime.Now,
+                    UserCreated = loggedInUser.Ma,
+                    UserModified = loggedInUser.Ma,
+                    ModifiedDate = DateTime.Now
+                };
+
+                _dbContext.FiaChiTietBangKeNopTien.Update(listChiTietBangKe);
+            }
+            foreach (var chiTiet in DataNhanVien)
+            {
+                var listChiTietBangKe = new FiaChiTietBangKeNhanVien
+                {
+                    Ma = chiTiet.Ma,
+                    MaBangKe = listBangKe.Ma,
+                    MaNhanVien = chiTiet.MaNhanVien,
+                    SoTien = chiTiet.SoTien,
+                    CreatedDate = DateTime.Now,
+                    UserCreated = loggedInUser.Ma,
+                    UserModified = loggedInUser.Ma,
+                    ModifiedDate = DateTime.Now
+                };
+
+                _dbContext.FiaChiTietBangKeNhanVien.Update(listChiTietBangKe);
+            }
+
+            _dbContext.SaveChanges();
+
+
+            // Trả về kết quả thành công
+            return Json(new { success = true, message = "Thêm thành công!" });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(string Id)
+        {
+            var CashDeposit = _dbContext.FiaBangKeNopTien.FirstOrDefault(x => x.Ma == Id.GetGuid());
+            if (CashDeposit == null)
+            {
+                return Json(new { success = false, message = "Bảng kê không tồn tại!" });
+            }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
+            // Kích hoạt soft delete
+            CashDeposit.Deleted = true;  // Đánh dấu đã bị xoá
+            CashDeposit.DeletedDate = DateTime.Now;  // Lưu thời gian xoá
+            CashDeposit.UserDeleted = loggedInUser.Ma;
+            _dbContext.FiaBangKeNopTien.Update(CashDeposit);  // Cập nhật vào CSDL
+            _dbContext.SaveChanges();
+
+            return Json(new { success = true, message = "Xoá thành công!" });
+        }
     }
 
 }

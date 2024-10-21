@@ -6,15 +6,17 @@ $(document).ready(function () {
     DefaultDate()
     loadChiNhanhDeNghi();
     setupEventHandlers();
-    loadCashDepositData();
+    loadDanhSachBangKe();
+    loadChiTietBangKe();
 });
-
-
 function ConfigTable() {
     TableDanhSachBangKe = $('#TableDanhSachBangKe').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 16, 17,8], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1, 2, 3, 4, 5, 6, 7, 9, 11, 8], orderable: false },
+            { width: '100px', className: 'text-center', targets: [13,], orderable: false },
+            { width: '100px', className: 'dt-left dt-head-center', targets: [12,14,16], orderable: false },
+            { width: '100px', className: 'text-center', targets: [17], orderable: false },
             { width: '100px', className: 'text-center', targets: [10], orderable: false },
             { width: '200px', className: 'dt-right dt-head-center', targets: [15], orderable: false },
         ],
@@ -95,7 +97,6 @@ function ConfigTable() {
         }
     });
 }
-
 function Edit(row) {
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
     window.open('/CashDeposit/Edit?ma=' + firstCellValue, '_blank');
@@ -114,29 +115,23 @@ function DefaultDate() {
     var today = new Date();
     var sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(today.getDate() - 7);
-
-    // Lấy giá trị của "Từ ngày" và "Đến ngày"
+    
     let TuNgay = $("#TuNgay").val();
     let DenNgay = $("#DenNgay").val();
-
-    // Nếu "Từ ngày" và "Đến ngày" chưa được nhập, đặt giá trị mặc định
+    
     if (!TuNgay) {
-        $("#TuNgay").val(sevenDaysAgo.toISOString().slice(0, 16)); // 7 ngày trước
-        TuNgay = sevenDaysAgo.toISOString().slice(0, 16); // Cập nhật giá trị mới
+        $("#TuNgay").val(sevenDaysAgo.toISOString().slice(0, 16)); 
+        TuNgay = sevenDaysAgo.toISOString().slice(0, 16); 
     }
     if (!DenNgay) {
-        $("#DenNgay").val(today.toISOString().slice(0, 16)); // Ngày hôm nay
-        DenNgay = today.toISOString().slice(0, 16); // Cập nhật giá trị mới
+        $("#DenNgay").val(today.toISOString().slice(0, 16)); 
+        DenNgay = today.toISOString().slice(0, 16); 
     }
-
-    // Chuyển "Từ ngày" và "Đến ngày" thành đối tượng Date để so sánh
     let TuNgayDate = new Date(TuNgay);
     let DenNgayDate = new Date(DenNgay);
-
-    // Kiểm tra nếu "Từ ngày" lớn hơn "Đến ngày"
     if (TuNgayDate > DenNgayDate) {
         alert("Số ngày 'Từ ngày' không được lớn hơn 'Đến ngày'");
-        return; // Kết thúc hàm nếu điều kiện không hợp lệ
+        return; 
     }
 }
 
@@ -184,7 +179,7 @@ function setupEventHandlers() {
     });
 
 }
-function loadCashDepositData() {
+function loadDanhSachBangKe() {
     let TuNgay = $("#TuNgay").val();
     let DenNgay = $("#DenNgay").val();
     var Branch = $('#Branch').val();
@@ -193,15 +188,51 @@ function loadCashDepositData() {
         DenNgay: DenNgay,
         DonViNop: Branch,
     };
-    console.table(formdata);
-
     $.ajax({
         url: "CashDeposit/getDanhSachBangKe",
         type: 'POST',
         data: formdata,  
         success: function (response) {
             var result = response.data;
-            DanhSachBangKe(result);
+            TableBangKe(result);
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+function loadChiTietBangKe(Ma) {
+    $.ajax({
+        url: "CashDeposit/getChiTietBangKe",
+        type: 'POST',
+        data: { Ma: Ma },
+        success: function (response) {
+            var result = response.data;
+            TableDetailBangKe(result);
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+function loadChiTietNhanVien(Ma) {
+    $.ajax({
+        url: "CashDeposit/getChiTietNhanVien",
+        type: 'POST',
+        data: { Ma: Ma },
+        success: function (response) {
+            var result = response.data;
+            TableNhanVien(result);
         },
         error: function (xhr, status, error) {
             swal.fire({
@@ -223,7 +254,6 @@ function ExportData(fileType) {
         ChiNhanhDeNghi: branch,
         fileType: fileType
     };
-    console.table(formdata);
 
     $.ajax({
         url: "CashDeposit/ExportToExcel",
@@ -266,7 +296,6 @@ function ExportDataPDF(fileType) {
         ChiNhanhDeNghi: branch,
         fileType: fileType
     };
-    console.table(formdata);
 
     $.ajax({
         url: "CashDeposit/ExportToPdf",
@@ -302,7 +331,7 @@ function ExportDataPDF(fileType) {
     });
 }
 
-function DanhSachBangKe(data) {
+function TableBangKe(data) {
     TableDanhSachBangKe.clear().draw();
     data.forEach(function (item) {
         let rowContent = [
@@ -325,14 +354,7 @@ function DanhSachBangKe(data) {
             `<td>${item.trangThai}</td>`,
             `
     <td>
-        ${item.tenTrangThai === "Lập phiếu"
-                ? `<button class="btn btn-success btn-sm btnApprove" data-id="${item.ma}" title="Duyệt">
-                    <i class="fas fa-check"></i>
-                </button>`
-                : `<button class="btn btn-danger btn-sm btnRemoveApprove" data-id="${item.ma}" title="Bỏ duyệt">
-                    <i class="fas fa-times"></i>
-                </button>`}
-        <span>|</span>
+     
         <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
             <i class="fas fa-edit"></i>
         </button>
@@ -348,24 +370,54 @@ function DanhSachBangKe(data) {
         TableDanhSachBangKe.row.add(rowContent).draw();
     });
 }
-$('#Table').on('click', '.btnDelete', function (e) {
+function TableDetailBangKe(data) {
+    TableChiTietBangKe.clear().draw();
+    console.log("Chi tiết bảng kê",data)
+    data.forEach(function (item) {
+        let rowContent = [
+            `<td>${item.ma}</td>`,
+            `<td>${item.TenLoaiTien}</td>`,
+            `<td>${addCommas(item.soLuong)}</td>`,
+            `<td>${addCommas(item.thanhTien)}</td>`,
+            `<td>${item.ghiChu}</td>`,
+      
+        ];
+
+
+        TableChiTietBangKe.row.add(rowContent).draw();
+    });
+}
+function TableNhanVien(data) {
+    TableChiTietNhanVien.clear().draw();
+    data.forEach(function (item) {
+        let rowContent = [
+            `<td>${item.ma}</td>`,
+            `<td>${item.tenNhanVien}</td>`,
+            `<td>${addCommas(item.soLuong)}</td>`,
+        ];
+
+
+        TableChiTietNhanVien.row.add(rowContent).draw();
+    });
+}
+$('#TableDanhSachBangKe').on('click', '.btnDelete', function (e) {
     e.preventDefault();
-    console.log("mã của delete", )
     var Id = $(this).data('id');
     handleDelete(Id);
 });
-$('#Table').on('click', '.btnApprove', function (e) {
+
+// Sử dụng event delegation
+$('#TableDanhSachBangKe').on('click', 'tr', function (e) {
     e.preventDefault();
-    var Id = $(this).data('id');
-    handleApprove(Id);
+
+    // Lấy giá trị của ô đầu tiên (thứ 0) trong hàng được click
+    var firstCellValue = $(this).find('td:eq(0)').text(); // Hoặc $(this).children('td').eq(0).text();
+    loadChiTietBangKe(firstCellValue);
+    loadChiTietNhanVien(firstCellValue);
 });
-$('#Table').on('click', '.btnRemoveApprove', function (e) {
-    e.preventDefault();
-    var Id = $(this).data('id');
-    handleRemoveApprove(Id);
-});
+
+
 function handleDelete(Id) {
-    console.log("id", Id);
     if (!Id || Id === "0") {
         Swal.fire({
             title: 'Lỗi!',
@@ -396,110 +448,6 @@ function handleDelete(Id) {
                             icon: 'success'
                         }).then(() => {
                             loadCashDepositData(); // Tải lại danh sách sau khi xóa thành công
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Thất bại!',
-                            text: response.message,
-                            icon: 'error'
-                        });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: 'Đã xảy ra lỗi!',
-                        text: 'Vui lòng thử lại.',
-                        icon: 'error'
-                    });
-                }
-            });
-        }
-    });
-}
-function handleApprove(Id) {
-    console.log("id", Id);
-    if (!Id || Id === "0") {
-        Swal.fire({
-            title: 'Lỗi!',
-            text: 'Không có danh mục để duyệt.',
-            icon: 'error'
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: 'Xác nhận Duyệt phiếu',
-        text: 'Bạn có chắc chắn muốn duyệt phiếu này?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Có, Duyệt!',
-        cancelButtonText: 'Không, Huỷ!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/CashDeposit/DuyetPhieuDeNghiChi',
-                type: 'POST',
-                data: { Id: Id },
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: 'Đã xoá!',
-                            text: response.message,
-                            icon: 'success'
-                        }).then(() => {
-                            loadCashDepositData(); 
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Thất bại!',
-                            text: response.message,
-                            icon: 'error'
-                        });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: 'Đã xảy ra lỗi!',
-                        text: 'Vui lòng thử lại.',
-                        icon: 'error'
-                    });
-                }
-            });
-        }
-    });
-}
-function handleRemoveApprove(Id) {
-    console.log("id", Id);
-    if (!Id || Id === "0") {
-        Swal.fire({
-            title: 'Lỗi!',
-            text: 'Không có danh mục để duyệt.',
-            icon: 'error'
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: 'Xác nhận bỏ duyệt phiếu',
-        text: 'Bạn có chắc chắn muốn bỏ duyệt phiếu này?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Có!',
-        cancelButtonText: 'Không, Huỷ!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/CashDeposit/BoDuyetPhieuDeNghiChi',
-                type: 'POST',
-                data: { Id: Id },
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: 'Đã bỏ duyệt!',
-                            text: response.message,
-                            icon: 'success'
-                        }).then(() => {
-                            loadCashDepositData();
                         });
                     } else {
                         Swal.fire({
