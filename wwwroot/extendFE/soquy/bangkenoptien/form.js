@@ -82,7 +82,6 @@ function ConfigTable() {
 }
 function DrawChiTietBangKe() {
     TableChiTietBangKe.on('draw', function () {
-        // Thiết lập cho cột "Số lượng" có thể chỉnh sửa
         $('#TableChiTietBangKe tbody tr td:nth-child(4)')
             .attr('contenteditable', 'true')
             .addClass('editable')
@@ -100,19 +99,24 @@ function DrawChiTietBangKe() {
             .on('input', function () {
                 let currentRow = $(this).closest('tr'); 
                 let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(3)').text()) || 0;
-
                 let columnSoLuong = parseFloat($(this).text()) || 0; 
-
                 let columnThanhTien = columnLoaiTien * columnSoLuong; 
-
+                let totalSum = 0; 
+           
                 currentRow.find('td:nth-child(5)').text(addCommas(columnThanhTien));
 
-                let totalSum = 0; 
                 $('#TableChiTietBangKe tbody tr').each(function () {
                     let thanhTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0; 
                     totalSum += thanhTien;
                 });
+                var TienBac = {
+                    columnLoaiTien,
+                    columnSoLuong,
+                    columnThanhTien,
+                    totalSum
 
+                }
+                console.table(TienBac)
                 $("#TotalMoney").text(addCommas(totalSum));
                 $("#TotalMoney").val(addCommas(totalSum)); 
             });
@@ -122,7 +126,8 @@ function DrawChiTietBangKe() {
             .attr('contenteditable', 'true')
             .addClass('editable')
             .on('input', function () {
-              let  ghiChu = $(this).text();
+                let ghiChu = $(this).text();
+                console.log("ghi chú", ghiChu)
             });
     });
 }
@@ -133,11 +138,11 @@ function loadDanhSach() {
         var tableNhanVien = [];
             let totalSum = 0;
         $('#TableChiTietBangKe tbody tr').each(function () {
-            var cotLoaiTien = parseFloat($(this).find('td:nth-child(2)').text()) || 0;
-            var cotSoLuong = parseFloat($(this).find('td:nth-child(3)').text()) || 0;
-            var cotGhiChu = $(this).find('td:nth-child(5)').text()||"";
+            var cotLoaiTien = $(this).find('td:nth-child(3)').text() || 0;
+            var cotSoLuong = $(this).find('td:nth-child(4)').text() || 0;
+            var cotGhiChu = $(this).find('td:nth-child(6)').text()||"";
             var cotThanhTien = cotLoaiTien * cotSoLuong;
-            let TongTien = parseFloat($(this).find('td:nth-child(4)').text().replace(/,/g, '')) || 0;
+            let TongTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0;
             totalSum += TongTien;
             tableChiTietBangKe.push({
                 LoaiTien: cotLoaiTien,
@@ -157,7 +162,6 @@ function loadDanhSach() {
                 SoTien: cotSoTien,
             });
         });
-        console.log("Bảng nhân viên",tableNhanVien);
      
         var ma = $('#Ma').val();
         var ngayNopTien = $('#dtpNgayNopTien').val();
@@ -196,7 +200,6 @@ function loadDanhSach() {
             DataChiTietBangKe: tableChiTietBangKe,
             DataNhanVien: tableNhanVien,
         };
-        console.log("14 mục", formdata)
         $.ajax({
             url: url,
             type: 'post',
