@@ -13,7 +13,10 @@ $(document).ready(function () {
     loadTienTe(); 
     $("#TienTe").on('change', function () {
         var selectedValue = $(this).val();
-        filterTableByCurrency(selectedValue);
+        console.log("giá trị khi chang seleceted", selectedValue)
+        var selectedText = $(this).find('option:selected').text();
+        console.log("Giá trị text khi change", selectedText)
+        filterTableByCurrency(selectedValue, selectedText);
     });
    
 });
@@ -94,11 +97,9 @@ function DrawChiTietBangKe() {
             .addClass('editable')
             .on('keypress', function (e) {
                 let charCode = e.which ? e.which : e.keyCode;
-                // Cho phép backspace, tab, delete
                 if (charCode === 8 || charCode === 9 || charCode === 46) {
                     return true;
                 }
-                // Chỉ cho phép nhập số
                 if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                     return false;
                 }
@@ -492,11 +493,14 @@ function selectTienTe(data) {
         });
 
         branchSelect.append(select);
+        var selectedText = branchSelect.find('option:selected').text();
         var selectedValue = branchSelect.val();
-        filterTableByCurrency(selectedValue)
+        filterTableByCurrency(selectedValue, selectedText)
     });
 }
-function filterTableByCurrency(selectedValue) {
+function filterTableByCurrency(selectedValue, selectedText) {
+    let TenDonVi = $('#DonViTienTe').text(selectedText);
+    console.log("Ten đơn vị", TenDonVi)
     $('#TableChiTietBangKe tbody tr').each(function () {
         var maTienTe = $(this).find('td:eq(1)').text(); 
         if (maTienTe === selectedValue) {
@@ -506,6 +510,7 @@ function filterTableByCurrency(selectedValue) {
         }
     });
 }
+
 
 
 filterTableByCurrency();
