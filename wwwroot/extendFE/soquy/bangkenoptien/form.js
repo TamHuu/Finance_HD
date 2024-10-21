@@ -15,54 +15,12 @@ $('#btnSaveChiTietNhanVien').on('click', function (e) {
     e.preventDefault();
     ChiTietNhanVien();
 });
-
-function DrawChiTietBangKe() {
-    TableChiTietBangKe.on('draw', function () {
-        // Thiết lập cho cột "Số lượng" có thể chỉnh sửa
-        $('#TableChiTietBangKe tbody tr td:nth-child(3)')
-            .attr('contenteditable', 'true')
-            .addClass('editable')
-            .on('keypress', function (e) {
-                let charCode = e.which ? e.which : e.keyCode;
-                // Cho phép backspace, tab, delete
-                if (charCode === 8 || charCode === 9 || charCode === 46) {
-                    return true;
-                }
-                // Chỉ cho phép nhập số
-                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                    return false;
-                }
-            })
-            .on('input', function () {
-                let currentRow = $(this).closest('tr');
-                let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(2)').text()) || 0;
-                let columnSoLuong = parseFloat($(this).text()) || 0;
-                let columnThanhTien = columnLoaiTien * columnSoLuong;
-                currentRow.find('td:nth-child(4)').text(addCommas(columnThanhTien));
-           
-                let totalSum = 0;
-                $('#TableChiTietBangKe tbody tr').each(function () {
-                    let thanhTien = parseFloat($(this).find('td:nth-child(4)').text().replace(/,/g, '')) || 0;
-                    totalSum += thanhTien;
-                });
-                let currenMoney = $("#TotalMoney").text(addCommas(totalSum));
-                $("#TotalMoney").val(addCommas(totalSum));
-            });
-
-        $('#TableChiTietBangKe tbody tr td:nth-child(5)')
-            .attr('contenteditable', 'true')
-            .addClass('editable')
-            .on('input', function () {
-              let  ghiChu = $(this).text();
-            });
-    });
-}
 function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
         columnDefs: [
-            { className: "d-none", targets: 0, orderable: false },
-            { width: '170px', className: 'dt-right dt-head-center', targets: [1, 2, 3], orderable: false },
-            { width: '170px', className: 'dt-left dt-head-center', targets: [4], orderable: false },
+            { className: "d-none", targets: [0, 1], orderable: false },
+            { width: '170px', className: 'dt-right dt-head-center', targets: [2, 3, 4], orderable: false },
+            { width: '170px', className: 'dt-left dt-head-center', targets: [5], orderable: false },
         ],
         searching: false,
         sort: false,
@@ -122,6 +80,53 @@ function ConfigTable() {
         }
     });
 }
+function DrawChiTietBangKe() {
+    TableChiTietBangKe.on('draw', function () {
+        // Thiết lập cho cột "Số lượng" có thể chỉnh sửa
+        $('#TableChiTietBangKe tbody tr td:nth-child(4)')
+            .attr('contenteditable', 'true')
+            .addClass('editable')
+            .on('keypress', function (e) {
+                let charCode = e.which ? e.which : e.keyCode;
+                // Cho phép backspace, tab, delete
+                if (charCode === 8 || charCode === 9 || charCode === 46) {
+                    return true;
+                }
+                // Chỉ cho phép nhập số
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+            })
+            .on('input', function () {
+                let currentRow = $(this).closest('tr'); 
+                let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(3)').text()) || 0;
+
+                let columnSoLuong = parseFloat($(this).text()) || 0; 
+
+                let columnThanhTien = columnLoaiTien * columnSoLuong; 
+
+                currentRow.find('td:nth-child(5)').text(addCommas(columnThanhTien));
+
+                let totalSum = 0; 
+                $('#TableChiTietBangKe tbody tr').each(function () {
+                    let thanhTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0; 
+                    totalSum += thanhTien;
+                });
+
+                $("#TotalMoney").text(addCommas(totalSum));
+                $("#TotalMoney").val(addCommas(totalSum)); 
+            });
+
+
+        $('#TableChiTietBangKe tbody tr td:nth-child(6)')
+            .attr('contenteditable', 'true')
+            .addClass('editable')
+            .on('input', function () {
+              let  ghiChu = $(this).text();
+            });
+    });
+}
+
 function loadDanhSach() {
     $('#btnSave').on('click', function (e) {
         var tableChiTietBangKe = []; 
@@ -350,6 +355,7 @@ function ChiTietBangKe(data) {
     data.forEach(function (item) {
         let rowContent = [
             item.ma,
+            item.maTienTe,
             item.giaTri,
             '0',
             '0',
