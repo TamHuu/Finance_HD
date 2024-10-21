@@ -140,7 +140,7 @@ namespace Finance_HD.Controllers.ChungTu
                                          ThanhTien = chitietbangke.ThanhTien ?? 0,
                                          GhiChu = chitietbangke.GhiChu + "",
                                          CreatedDate = DateTime.Now,
-                                     }).OrderByDescending(x => x.CreatedDate).ToList();
+                                     }).OrderByDescending(x => x.TenLoaiTien).ToList();
             return Json(new { success = true, Data = listChiTietBangKe });
         }
         [HttpPost]
@@ -254,7 +254,7 @@ namespace Finance_HD.Controllers.ChungTu
                 {
                     Ma = chiTiet.Ma,
                     MaBangKeNopTien = listBangKe.Ma,
-                    MaLoaiTien = listBangKe.MaTienTe,
+                    MaLoaiTien = chiTiet.MaLoaiTien,
                     SoLuong = chiTiet.SoLuong,
                     ThanhTien = chiTiet.ThanhTien,
                     GhiChu = chiTiet.GhiChu,
@@ -266,7 +266,7 @@ namespace Finance_HD.Controllers.ChungTu
             }
             foreach (var chiTiet in DataNhanVien)
             {
-                var listChiTietBangKe = new FiaChiTietBangKeNhanVien
+                var BangKeNhanVien = new FiaChiTietBangKeNhanVien
                 {
                     Ma = chiTiet.Ma,
                     MaBangKe = listBangKe.Ma,
@@ -276,7 +276,7 @@ namespace Finance_HD.Controllers.ChungTu
                     CreatedDate = DateTime.Now
                 };
 
-                _dbContext.FiaChiTietBangKeNhanVien.Add(listChiTietBangKe);
+                _dbContext.FiaChiTietBangKeNhanVien.Add(BangKeNhanVien);
             }
 
             _dbContext.SaveChanges();

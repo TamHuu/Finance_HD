@@ -14,7 +14,7 @@ $(document).ready(function () {
     $("#TienTe").on('change', function () {
         var selectedValue = $(this).val();
         console.log("giá trị khi chang seleceted", selectedValue)
-        var selectedText = $(this).find('option:selected').text();
+var selectedText = $(this).find('option:selected').text();
         console.log("Giá trị text khi change", selectedText)
         filterTableByCurrency(selectedValue, selectedText);
     });
@@ -146,6 +146,7 @@ function loadDanhSach() {
         var tableNhanVien = [];
             let totalSum = 0;
         $('#TableChiTietBangKe tbody tr').each(function () {
+            var maLoaiTien = $(this).find('td:nth-child(1)').text() || 0;
             var cotLoaiTien = $(this).find('td:nth-child(3)').text() || 0;
             var cotSoLuong = $(this).find('td:nth-child(4)').text() || 0;
             var cotGhiChu = $(this).find('td:nth-child(6)').text()||"";
@@ -153,6 +154,7 @@ function loadDanhSach() {
             let TongTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0;
             totalSum += TongTien;
             tableChiTietBangKe.push({
+                MaLoaiTien: maLoaiTien,
                 LoaiTien: cotLoaiTien,
                 SoLuong: cotSoLuong,
                 ThanhTien: cotThanhTien,
@@ -187,6 +189,7 @@ function loadDanhSach() {
         var ghiChu = $('#GhiChu').val();
         var diaChi = $('#DiaChi').val();
         var SoTien = totalSum;
+
         var url = ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
         let formdata = {
             ma: ma,

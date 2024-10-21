@@ -48,6 +48,7 @@ function ConfigTable() {
             { className: "d-none", targets: 0, orderable: false },
             { width: '170px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4], orderable: false },
         ],
+        ordering:false,
         lengthChange: false,
         language: {
             "decimal": "",
@@ -372,11 +373,11 @@ function TableBangKe(data) {
 }
 function TableDetailBangKe(data) {
     TableChiTietBangKe.clear().draw();
-    console.log("Chi tiết bảng kê",data)
+    console.table(data)
     data.forEach(function (item) {
         let rowContent = [
             `<td>${item.ma}</td>`,
-            `<td>${item.TenLoaiTien}</td>`,
+            `<td>${item.tenLoaiTien}</td>`,
             `<td>${addCommas(item.soLuong)}</td>`,
             `<td>${addCommas(item.thanhTien)}</td>`,
             `<td>${item.ghiChu}</td>`,
