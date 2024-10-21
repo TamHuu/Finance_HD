@@ -2,15 +2,22 @@
 let TableChiTietNhanVien;
 
 $(document).ready(function () {
+    // Gọi các hàm cần thiết khi trang được tải
     loadChiNhanh();
+    loadTienTe();
     ConfigTable();
     loadChiTietBangKe();
     loadNhanVien();
     loadDanhSach();
     DrawChiTietBangKe();
-
-
+    loadTienTe(); 
+    $("#TienTe").on('change', function () {
+        var selectedValue = $(this).val();
+        filterTableByCurrency(selectedValue);
+    });
+   
 });
+
 $('#btnSaveChiTietNhanVien').on('click', function (e) {
     e.preventDefault();
     ChiTietNhanVien();
@@ -409,6 +416,16 @@ function ChiTietNhanVien() {
         }
     });
 }
+
+function addCommas(amount) {
+    if (amount == null || isNaN(amount)) {
+        return '';
+    }
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+
+
 function loadNhanVien() {
     $.ajax({
         url: "/User/getListUser",
@@ -444,12 +461,56 @@ function selectNhanVien(data) {
         branchSelect.append(select);
     });
 }
-function addCommas(amount) {
-    if (amount == null || isNaN(amount)) {
-        return '';
-    }
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+function loadTienTe() {
+    $.ajax({
+        url: "/Monetary/getListMonetary",
+        type: 'GET',
+        success: function (response) {
+            var result = response.data;
+            selectTienTe(result);
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
 }
+function selectTienTe(data) {
+    var branchSelect = $('#TienTe');
+    branchSelect.empty();
+
+    data.forEach(function (branch) {
+        let select = $('<option>', {
+            value: branch.ma,
+            text: branch.ten,
+            selected: branch.ma === '0febf710-436d-40cc-95e5-e457605cd104' 
+        });
+
+        branchSelect.append(select);
+        var selectedValue = branchSelect.val();
+        filterTableByCurrency(selectedValue)
+    });
+}
+function filterTableByCurrency(selectedValue) {
+    $('#TableChiTietBangKe tbody tr').each(function () {
+        var maTienTe = $(this).find('td:eq(1)').text(); 
+        if (maTienTe === selectedValue) {
+            $(this).show(); 
+        } else {
+            $(this).hide(); 
+        }
+    });
+}
+
+
+filterTableByCurrency();
+
+
 function formatCurrencyInput(input) {
     let inputValue = input.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
     

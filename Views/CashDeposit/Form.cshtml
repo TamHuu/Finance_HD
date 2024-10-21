@@ -45,10 +45,6 @@
                         <div class="form-group col-md-2">
                             <label for="TienTe">Tiền tệ:</label>
                             <select class="form-control form-control-sm" id="TienTe" name="TienTe">
-                                @foreach (var tt in listTienTe)
-                                {
-                                    <!option value="@tt.Ma" @(Model.MaTienTe == tt.Ma ? "selected" : "")>@tt.Ten</!option>
-                                }
                             </select>
                         </div>
                         <div class="form-group col-md-2">

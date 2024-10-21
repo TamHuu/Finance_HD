@@ -129,7 +129,6 @@ namespace Finance_HD.Controllers.ChungTu
                                      on chitietbangke.MaBangKeNopTien equals bangkenoptien.Ma into bangkeGroup
                                      from bangkenoptien in bangkeGroup.DefaultIfEmpty()
 
-
                                      where chitietbangke.MaBangKeNopTien == Ma.GetGuid()
                            && !(chitietbangke.Deleted ?? false)
                                      select new
