@@ -48,6 +48,7 @@ function ConfigTable() {
             { className: "d-none", targets: 0, orderable: false },
             { width: '170px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4], orderable: false },
         ],
+        searching:false,
         ordering:false,
         lengthChange: false,
         language: {
@@ -78,6 +79,7 @@ function ConfigTable() {
             { width: '100px', className: 'dt-left dt-head-center', targets: [2, 3], orderable: false },
             { width: '100px', className: 'dt-right dt-head-center', targets: [3], orderable: false },
         ],
+        searching: false,
         lengthChange: false,
         language: {
             "decimal": "",

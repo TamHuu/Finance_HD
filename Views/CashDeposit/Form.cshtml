@@ -1,16 +1,23 @@
-﻿@model Finance_HD.Models.FiaBangKeNopTien
+﻿@using System.Text.Json
+@model Finance_HD.Models.FiaBangKeNopTien
 
 @{
+    var dataChiTietBangKe = ViewBag.DataChiTietBangKe as List<Finance_HD.Models.FiaChiTietBangKeNopTien>;
+    var dataNhanVien = ViewBag.DataNhanVien as List<Finance_HD.Models.FiaChiTietBangKeNhanVien>;
     bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
     ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
     var listTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
+    var listLoaiTien = ViewData["listLoaiTien"] as List<Finance_HD.Models.FaLoaiTien>;
     var listNoiDung = ViewData["listNoiDung"] as List<Finance_HD.Models.CatNoiDungThuChi>;
     var listNguoiNopTien = ViewData["listNguoiNopTien"] as List<Finance_HD.Models.SysUser>;
     var listNhanVien = ViewData["listNhanVien"] as List<Finance_HD.Models.SysUser>;
 
-}
+    var selectedCurrencyId = Model.MaTienTe;
+    var selectedCurrency = listTienTe.FirstOrDefault(x => x.Ma == selectedCurrencyId);
+    var currencyName = selectedCurrency != null ? selectedCurrency.Ten : "Không xác định";
+    }
 <div class="row">
     <div class="col-md-12 mb-3">
         <div class="card">
@@ -120,8 +127,8 @@
                 <table id="TableChiTietBangKe" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>Mã</th>
-                            <th>Mã Loại tiền</th>
+                            <th hidden>Mã</th>
+                            <th hidden>Mã Loại tiền</th>
                             <th>Loại tiền</th>
                             <th>Số lượng</th>
                             <th>Thành tiền</th>
@@ -129,16 +136,42 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (dataChiTietBangKe != null)
+                        {
+                            foreach (var item in dataChiTietBangKe)
+                            {
+                                var loaitien = listLoaiTien.FirstOrDefault(x => x.Ma == item.MaLoaiTien);
+                                var tenLoaiTien = loaitien?.GiaTri; // Using null-conditional operator
+                                
+                                <tr>
+                                    <td hidden>@item.Ma</td>
+                                    <td hidden>@item.MaLoaiTien</td>
+                                    <td>@(tenLoaiTien.HasValue ? tenLoaiTien.Value.ToString("N0") : "0")</td> <!-- Fixed to use tenLoaiTien correctly -->
+                                    <td>
+                                        @(item.SoLuong.HasValue ? item.SoLuong.Value.ToString("N0") : "0")
+                                    </td>
+                                    <td>
+                                        @(item.ThanhTien.HasValue ? item.ThanhTien.Value.ToString("N0") : "0")
+                                    </td>
+                                    <td>@item.GhiChu</td>
+                                </tr>
+                            }
+                        }
+
                     </tbody>
                     <tfoot>
                         <tr>
                             <th></th>
                             <th></th>
-                            <th colspan="2" id="DonViTienTe"></th>
-                            <th style="text-align:right" id="TotalMoney" >0</th>
+                            <th colspan="2" id="DonViTienTe">@currencyName</th> 
+                            <th style="text-align:right" id="TotalMoney">
+                                @(Model.SoTien.HasValue ? Model.SoTien.Value.ToString("N0") : "0")
+                            </th>
                             <th></th>
                         </tr>
                     </tfoot>
+
+
                 </table>
 
             </div>
@@ -155,7 +188,7 @@
                     </div>
                     <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
                         <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
-                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" value="@Model.SoTien" oninput="formatCurrencyInput(this)" />
+                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" oninput="formatCurrencyInput(this)" />
 
                         <button class="btn-custom" id="btnSaveChiTietNhanVien">
                             <i class="fa fa-check-circle fa-lg"></i>
@@ -177,6 +210,20 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (dataNhanVien != null)
+                        {
+                            foreach (var item in dataNhanVien)
+                            {
+                                var employee = listNguoiNopTien.FirstOrDefault(x => x.Ma == item.MaNhanVien);
+                                var employeeName = employee != null ? employee.FullName : "Không tìm thấy";
+
+                                <tr>
+                                    <td>@item.MaNhanVien</td>
+                                    <td>@employeeName</td>
+                                    <td>@(item.SoTien.HasValue ? item.SoTien.Value.ToString("N0") : "0") </td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
@@ -222,23 +269,25 @@
         }
 
         .d-flex > h6 {
-            margin-right: 5px; 
+            margin-right: 5px;
         }
 
         .d-flex > input {
-            margin-right: 5px; 
+            margin-right: 5px;
         }
-            .btn-custom:hover {
-                background-color: #218838;
-                transform: scale(1.05);
-            }
 
-            .btn-custom:active {
-                transform: scale(0.95);
-            }
+        .btn-custom:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .btn-custom:active {
+            transform: scale(0.95);
+        }
+
         #TableChiTietBangKe tfoot {
             background-color: #007bff;
-            font-weight: bold; 
+            font-weight: bold;
             color: white;
         }
 
@@ -249,12 +298,17 @@
 
     </style>
     <script>
+        // console.log("Model:", @Html.Raw(JsonSerializer.Serialize(Model)));
+        // console.log("ListTienTe:", @Html.Raw(JsonSerializer.Serialize(listTienTe)));
+        // console.log("ListNoiDung:", @Html.Raw(JsonSerializer.Serialize(listNoiDung)));
+        // console.log("ListNguoiNopTien:", @Html.Raw(JsonSerializer.Serialize(listNguoiNopTien)));
+        // console.log("ListNhanVien:", @Html.Raw(JsonSerializer.Serialize(listNhanVien)));
+
         var defaultUID = '@defaultUID';
-        // Pass the isEdit variable to JavaScript
-        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var isEdit = @Html.Raw(JsonSerializer.Serialize(isEdit));
         var MaDonViNop = '@Model.MaChiNhanhNop';
         var MaBoPhanNop = '@Model.MaPhongBanNop';
         var MaDonViNhan = '@Model.MaChiNhanhNhan';
-        var MaBoPhanNhan = '@Model.MaPhongBanNhan'
+        var MaBoPhanNhan = '@Model.MaPhongBanNhan';
     </script>
 }

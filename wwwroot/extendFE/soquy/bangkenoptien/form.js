@@ -12,13 +12,16 @@ $(document).ready(function () {
     // Tải danh sách tiền tệ và sau đó trigger change
     loadTienTe().then(function () {
         if (DataTienTe && DataTienTe.length > 0) {
-            var selectedValue = $('#TienTe').val();
-            console.log("Data tiền tệ", DataTienTe)
+            if (!isEdit) {
+
             $('#TienTe').trigger('change');
+            }
+
         } else {
-            console.error("No data in  after loading from API.");
+            console.error("No data in DataTienTe after loading from API.");
         }
     });
+
 
 
     // Sự kiện khi chọn Tiền Tệ
@@ -28,9 +31,9 @@ $(document).ready(function () {
 
         if (DataTienTe && DataTienTe.length > 0) {
             let filteredDataTienTe = DataTienTe.filter(x => x.maTienTe === selectedValue);
-            
+
             console.log("Filtered Data:", filteredDataTienTe);
-            ChiTietBangKe(filteredDataTienTe); 
+            ChiTietBangKe(filteredDataTienTe);
             $('#DonViTienTe').text(selectedText);
         } else {
             console.error("DataTienTe is empty or undefined.");
@@ -46,7 +49,7 @@ function loadTienTe() {
         success: function (response) {
             if (response.data && response.data.length > 0) {
                 DataTienTe = response.data;
-                selectTienTe(DataTienTe); 
+                selectTienTe(DataTienTe);
             } else {
                 $('#TienTe').empty().append('<option disabled>No currency data available</option>');
             }
@@ -71,12 +74,12 @@ function selectTienTe(data) {
         const option = $('<option>', {
             value: branch.ma,
             text: branch.ten,
-            selected: branch.ma === '0febf710-436d-40cc-95e5-e457605cd104' 
+            selected: branch.ma === '0febf710-436d-40cc-95e5-e457605cd104'
         });
         branchSelect.append(option);
     });
 
-    loadChiTietBangKe(); 
+    loadChiTietBangKe();
 }
 
 // Hàm khởi tạo các table
@@ -87,6 +90,7 @@ function ConfigTable() {
             { width: '170px', className: 'dt-right dt-head-center', targets: [2, 3, 4], orderable: false },
             { width: '170px', className: 'dt-left dt-head-center', targets: [5], orderable: false },
         ],
+        ordering: false,
         searching: false,
         sort: false,
         paging: false,
@@ -115,13 +119,14 @@ function ConfigTable() {
 
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
-            { width: '100px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
+            { width: '100px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
             { width: '100px', className: 'dt-right dt-head-center', targets: [2], orderable: false },
         ],
+        ordering:false,
         searching: false,
         lengthChange: false,
-        sort: false,
+        sorting: false,
         paging: false,
         info: false,
         language: {
@@ -281,7 +286,7 @@ function ChiTietNhanVien() {
     TableChiTietNhanVien.clear();
     var maNhanVien = $("#MaNhanVien").val();
     var sotien = $("#SoTienNhanVien").val();
-
+    console.log("số tièn", sotien)
     $.ajax({
         url: "/User/getListUser",
         type: 'GET',
@@ -324,7 +329,10 @@ function loadChiTietBangKe() {
         type: 'GET',
         success: function (response) {
             DataTienTe = response.data;
-            ChiTietBangKe(DataTienTe);
+            if (!isEdit) {
+
+                ChiTietBangKe(DataTienTe);
+            }
         },
         error: function (xhr, status, error) {
             swal.fire({

@@ -293,6 +293,7 @@ namespace Finance_HD.Controllers.ChungTu
         public IActionResult Edit(string Ma)
         {
             ViewData["listTienTe"] = _dbContext.FiaTienTe.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listLoaiTien"] = _dbContext.FaLoaiTien.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
             var BangKe = _dbContext.FiaBangKeNopTien.FirstOrDefault(c => c.Ma == Ma.GetGuid());
@@ -300,6 +301,12 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return NotFound();
             }
+            var DataChiTietBangKe = _dbContext.FiaChiTietBangKeNopTien.Where(x => x.MaBangKeNopTien == BangKe.Ma).ToList();
+            var DataNhanVien = _dbContext.FiaChiTietBangKeNhanVien.Where(x => x.MaBangKe == BangKe.Ma).ToList();
+
+            // Passing data to the view
+            ViewBag.DataChiTietBangKe = DataChiTietBangKe;
+            ViewBag.DataNhanVien = DataNhanVien;
             return View("Form", BangKe);
         }
         [HttpPost]
