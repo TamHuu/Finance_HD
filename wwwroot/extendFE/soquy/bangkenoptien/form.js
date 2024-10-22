@@ -89,10 +89,10 @@ function ConfigTable() {
             { className: "d-none", targets: [0, 1], orderable: false },
             { width: '170px', className: 'dt-right dt-head-center', targets: [2, 3, 4], orderable: false },
             { width: '170px', className: 'dt-left dt-head-center', targets: [5], orderable: false },
+            { targets: [ 3,5], createdCell: function (td) { $(td).attr('contenteditable', true); } } 
         ],
         ordering: false,
         searching: false,
-        sort: false,
         paging: false,
         lengthChange: false,
         info: false,
@@ -122,8 +122,9 @@ function ConfigTable() {
             { width: '200px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
             { width: '100px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
             { width: '100px', className: 'dt-right dt-head-center', targets: [2], orderable: false },
+       
         ],
-        ordering:false,
+        ordering: false,
         searching: false,
         lengthChange: false,
         sorting: false,
@@ -150,6 +151,7 @@ function ConfigTable() {
         }
     });
 }
+
 
 // Hàm formmat số tiền 
 function addCommas(amount) {
@@ -364,52 +366,41 @@ function ChiTietBangKe(data) {
     TableChiTietBangKe.draw();
 }
 function DrawChiTietBangKe() {
-    TableChiTietBangKe.on('draw', function () {
-        $('#TableChiTietBangKe tbody tr td:nth-child(4)')
-            .attr('contenteditable', 'true')
-            .addClass('editable')
-            .on('keypress', function (e) {
-                let charCode = e.which ? e.which : e.keyCode;
-                if (charCode === 8 || charCode === 9 || charCode === 46) {
-                    return true;
-                }
-                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                    return false;
-                }
-            })
-            .on('input', function () {
-                let currentRow = $(this).closest('tr');
-                let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(3)').text()) || 0;
-                let columnSoLuong = parseFloat($(this).text()) || 0;
-                let columnThanhTien = columnLoaiTien * columnSoLuong;
-                let totalSum = 0;
+    // Make contenteditable and bind event handlers during initialization
+    $('#TableChiTietBangKe tbody tr td:nth-child(4), #TableChiTietBangKe tbody tr td:nth-child(6)')
+        .attr('contenteditable', 'true')
+        .addClass('editable');
 
-                currentRow.find('td:nth-child(5)').text(addCommas(columnThanhTien));
+    // Input validation for quantity (fourth column)
+    $('#TableChiTietBangKe tbody tr td:nth-child(4)').on('keypress', function (e) {
+        let charCode = e.which ? e.which : e.keyCode;
+        return (charCode === 8 || charCode === 9 || charCode === 46 || (charCode >= 48 && charCode <= 57));
+    });
 
-                $('#TableChiTietBangKe tbody tr').each(function () {
-                    let thanhTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0;
-                    totalSum += thanhTien;
-                });
-                var TienBac = {
-                    columnLoaiTien,
-                    columnSoLuong,
-                    columnThanhTien,
-                    totalSum
+    // Handle input events for quantity column
+    $('#TableChiTietBangKe tbody').on('input', 'td:nth-child(4)', function () {
+        let currentRow = $(this).closest('tr');
+        let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(3)').text()) || 0;
+        let columnSoLuong = parseFloat($(this).text()) || 0;
+        let columnThanhTien = columnLoaiTien * columnSoLuong;
 
-                }
-                console.table(TienBac)
-                $("#TotalMoney").text(addCommas(totalSum));
-                $("#TotalMoney").val(addCommas(totalSum));
-            });
+        // Update the total for the current row
+        currentRow.find('td:nth-child(5)').text(addCommas(columnThanhTien));
 
+        // Calculate the total sum for all rows
+        let totalSum = $('#TableChiTietBangKe tbody tr').toArray().reduce((sum, row) => {
+            return sum + (parseFloat($(row).find('td:nth-child(5)').text().replace(/,/g, '')) || 0);
+        }, 0);
 
-        $('#TableChiTietBangKe tbody tr td:nth-child(6)')
-            .attr('contenteditable', 'true')
-            .addClass('editable')
-            .on('input', function () {
-                let ghiChu = $(this).text();
-                console.log("ghi chú", ghiChu)
-            });
+        // Update the total money display
+        $("#TotalMoney").text(addCommas(totalSum));
+        $("#TotalMoney").val(addCommas(totalSum));
+    });
+
+    // Handle input events for notes column (sixth column)
+    $('#TableChiTietBangKe tbody').on('input', 'td:nth-child(6)', function () {
+        let ghiChu = $(this).text();
+        console.log("ghi chú", ghiChu);
     });
 }
 

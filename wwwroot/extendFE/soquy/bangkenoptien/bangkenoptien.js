@@ -455,7 +455,9 @@ function handleDelete(Id) {
                             text: response.message,
                             icon: 'success'
                         }).then(() => {
-                            loadCashDepositData(); // Tải lại danh sách sau khi xóa thành công
+                            loadDanhSachBangKe();
+                            loadChiTietBangKe();
+                            loadChiTietNhanVien();
                         });
                     } else {
                         Swal.fire({
