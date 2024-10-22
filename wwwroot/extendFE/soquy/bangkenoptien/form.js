@@ -1,30 +1,85 @@
 ﻿let TableChiTietBangKe;
 let TableChiTietNhanVien;
+let DataTienTe = []; // Khởi tạo biến toàn cục
 
 $(document).ready(function () {
-    // Gọi các hàm cần thiết khi trang được tải
     loadChiNhanh();
-    loadTienTe();
     ConfigTable();
-    loadChiTietBangKe();
     loadNhanVien();
-    loadDanhSach();
+    SendDataForm();
     DrawChiTietBangKe();
-    loadTienTe(); 
+
+    // Tải danh sách tiền tệ và sau đó trigger change
+    loadTienTe().then(function () {
+        if (DataTienTe && DataTienTe.length > 0) {
+            var selectedValue = $('#TienTe').val();
+            console.log("Data tiền tệ", DataTienTe)
+            $('#TienTe').trigger('change');
+        } else {
+            console.error("No data in  after loading from API.");
+        }
+    });
+
+
+    // Sự kiện khi chọn Tiền Tệ
     $("#TienTe").on('change', function () {
         var selectedValue = $(this).val();
-        console.log("giá trị khi chang seleceted", selectedValue)
-var selectedText = $(this).find('option:selected').text();
-        console.log("Giá trị text khi change", selectedText)
-        filterTableByCurrency(selectedValue, selectedText);
+        var selectedText = $(this).find('option:selected').text();
+
+        if (DataTienTe && DataTienTe.length > 0) {
+            let filteredDataTienTe = DataTienTe.filter(x => x.maTienTe === selectedValue);
+            
+            console.log("Filtered Data:", filteredDataTienTe);
+            ChiTietBangKe(filteredDataTienTe); 
+            $('#DonViTienTe').text(selectedText);
+        } else {
+            console.error("DataTienTe is empty or undefined.");
+        }
     });
-   
 });
 
-$('#btnSaveChiTietNhanVien').on('click', function (e) {
-    e.preventDefault();
-    ChiTietNhanVien();
-});
+// Hàm tải dữ liệu Tiền Tệ từ API
+function loadTienTe() {
+    return $.ajax({
+        url: "/Monetary/getListMonetary",
+        type: 'GET',
+        success: function (response) {
+            if (response.data && response.data.length > 0) {
+                DataTienTe = response.data;
+                selectTienTe(DataTienTe); 
+            } else {
+                $('#TienTe').empty().append('<option disabled>No currency data available</option>');
+            }
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại. ' + xhr.responseText,
+                icon: 'error'
+            });
+            console.error("Error loading data from API:", error);
+        }
+    });
+}
+
+// Hàm hiển thị danh sách tiền tệ vào dropdown
+function selectTienTe(data) {
+    const branchSelect = $('#TienTe');
+    branchSelect.empty(); // Xóa các option hiện tại
+
+    data.forEach(function (branch) {
+        const option = $('<option>', {
+            value: branch.ma,
+            text: branch.ten,
+            selected: branch.ma === '0febf710-436d-40cc-95e5-e457605cd104' 
+        });
+        branchSelect.append(option);
+    });
+
+    loadChiTietBangKe(); 
+}
+
+// Hàm khởi tạo các table
 function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
         columnDefs: [
@@ -90,66 +145,40 @@ function ConfigTable() {
         }
     });
 }
-function DrawChiTietBangKe() {
-    TableChiTietBangKe.on('draw', function () {
-        $('#TableChiTietBangKe tbody tr td:nth-child(4)')
-            .attr('contenteditable', 'true')
-            .addClass('editable')
-            .on('keypress', function (e) {
-                let charCode = e.which ? e.which : e.keyCode;
-                if (charCode === 8 || charCode === 9 || charCode === 46) {
-                    return true;
-                }
-                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                    return false;
-                }
-            })
-            .on('input', function () {
-                let currentRow = $(this).closest('tr'); 
-                let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(3)').text()) || 0;
-                let columnSoLuong = parseFloat($(this).text()) || 0; 
-                let columnThanhTien = columnLoaiTien * columnSoLuong; 
-                let totalSum = 0; 
-           
-                currentRow.find('td:nth-child(5)').text(addCommas(columnThanhTien));
 
-                $('#TableChiTietBangKe tbody tr').each(function () {
-                    let thanhTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0; 
-                    totalSum += thanhTien;
-                });
-                var TienBac = {
-                    columnLoaiTien,
-                    columnSoLuong,
-                    columnThanhTien,
-                    totalSum
-
-                }
-                console.table(TienBac)
-                $("#TotalMoney").text(addCommas(totalSum));
-                $("#TotalMoney").val(addCommas(totalSum)); 
-            });
-
-
-        $('#TableChiTietBangKe tbody tr td:nth-child(6)')
-            .attr('contenteditable', 'true')
-            .addClass('editable')
-            .on('input', function () {
-                let ghiChu = $(this).text();
-                console.log("ghi chú", ghiChu)
-            });
-    });
+// Hàm formmat số tiền 
+function addCommas(amount) {
+    if (amount == null || isNaN(amount)) {
+        return '';
+    }
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-function loadDanhSach() {
+// Hàm format số tiền ngay lúc nhập
+function formatCurrencyInput(input) {
+    let inputValue = input.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+
+    if (inputValue === '') {
+        input.value = '';
+        return;
+    }
+
+    const numericValue = parseFloat(inputValue);
+    const formattedValue = addCommas(numericValue);
+
+    input.value = formattedValue;
+}
+// Hàm gửi dữ liệu qua controller
+function SendDataForm() {
     $('#btnSave').on('click', function (e) {
-        var tableChiTietBangKe = []; 
+        var tableChiTietBangKe = [];
         var tableNhanVien = [];
-            let totalSum = 0;
+        let totalSum = 0;
         $('#TableChiTietBangKe tbody tr').each(function () {
             var maLoaiTien = $(this).find('td:nth-child(1)').text() || 0;
             var cotLoaiTien = $(this).find('td:nth-child(3)').text() || 0;
             var cotSoLuong = $(this).find('td:nth-child(4)').text() || 0;
-            var cotGhiChu = $(this).find('td:nth-child(6)').text()||"";
+            var cotGhiChu = $(this).find('td:nth-child(6)').text() || "";
             var cotThanhTien = cotLoaiTien * cotSoLuong;
             let TongTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0;
             totalSum += TongTien;
@@ -172,7 +201,7 @@ function loadDanhSach() {
                 SoTien: cotSoTien,
             });
         });
-     
+
         var ma = $('#Ma').val();
         var ngayNopTien = $('#dtpNgayNopTien').val();
         var ngayLap = $('#dtpNgayLap').val();
@@ -243,6 +272,142 @@ function loadDanhSach() {
         });
     });
 }
+document.addEventListener('DOMContentLoaded', function () {
+    const moneyInput = document.getElementById('SoTienNhanVien');
+    moneyInput.value = addCommas(parseFloat(moneyInput.value));
+});
+// Xử lý bảng chi tiết nhân viên
+function ChiTietNhanVien() {
+    TableChiTietNhanVien.clear();
+    var maNhanVien = $("#MaNhanVien").val();
+    var sotien = $("#SoTienNhanVien").val();
+
+    $.ajax({
+        url: "/User/getListUser",
+        type: 'GET',
+        success: function (response) {
+            var result = response.data;
+
+            result.forEach(function (item) {
+                if (item.ma == maNhanVien) {
+                    let rowContent = [
+                        item.ma,
+                        item.fullName,
+                        sotien,
+                    ];
+                    TableChiTietNhanVien.row.add(rowContent);
+                }
+            });
+
+            TableChiTietNhanVien.draw();
+            $("#MaNhanVien").val('');
+            $("#SoTienNhanVien").val('');
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+$('#btnSaveChiTietNhanVien').on('click', function (e) {
+    e.preventDefault();
+    ChiTietNhanVien();
+});
+// Xử lý bảng Chi tiết bảng kê
+function loadChiTietBangKe() {
+    $.ajax({
+        url: "/Currency/getListCurrency",
+        type: 'GET',
+        success: function (response) {
+            DataTienTe = response.data;
+            ChiTietBangKe(DataTienTe);
+        },
+        error: function (xhr, status, error) {
+            swal.fire({
+                title: 'Đã xảy ra lỗi!',
+                text: 'Vui lòng thử lại.',
+                icon: 'error'
+            });
+            console.error(error);
+        }
+    });
+}
+function ChiTietBangKe(data) {
+    var selectedValue = $('#TienTe').val();
+    var filteredData = data.filter(x => x.maTienTe == selectedValue);
+    TableChiTietBangKe.clear();
+    filteredData.forEach(function (item) {
+        let rowContent = [
+            item.ma,
+            item.maTienTe,
+            item.giaTri,
+            '0',
+            '0',
+            ''
+        ];
+
+        TableChiTietBangKe.row.add(rowContent);
+    });
+
+    TableChiTietBangKe.draw();
+}
+function DrawChiTietBangKe() {
+    TableChiTietBangKe.on('draw', function () {
+        $('#TableChiTietBangKe tbody tr td:nth-child(4)')
+            .attr('contenteditable', 'true')
+            .addClass('editable')
+            .on('keypress', function (e) {
+                let charCode = e.which ? e.which : e.keyCode;
+                if (charCode === 8 || charCode === 9 || charCode === 46) {
+                    return true;
+                }
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+            })
+            .on('input', function () {
+                let currentRow = $(this).closest('tr');
+                let columnLoaiTien = parseFloat(currentRow.find('td:nth-child(3)').text()) || 0;
+                let columnSoLuong = parseFloat($(this).text()) || 0;
+                let columnThanhTien = columnLoaiTien * columnSoLuong;
+                let totalSum = 0;
+
+                currentRow.find('td:nth-child(5)').text(addCommas(columnThanhTien));
+
+                $('#TableChiTietBangKe tbody tr').each(function () {
+                    let thanhTien = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0;
+                    totalSum += thanhTien;
+                });
+                var TienBac = {
+                    columnLoaiTien,
+                    columnSoLuong,
+                    columnThanhTien,
+                    totalSum
+
+                }
+                console.table(TienBac)
+                $("#TotalMoney").text(addCommas(totalSum));
+                $("#TotalMoney").val(addCommas(totalSum));
+            });
+
+
+        $('#TableChiTietBangKe tbody tr td:nth-child(6)')
+            .attr('contenteditable', 'true')
+            .addClass('editable')
+            .on('input', function () {
+                let ghiChu = $(this).text();
+                console.log("ghi chú", ghiChu)
+            });
+    });
+}
+
+// Xử  lý bảng nhân viên
+
+// Xử lý phần nhập liệu 
 function loadChiNhanh() {
     $.ajax({
         url: "/Branch/getListBranch",
@@ -346,90 +511,6 @@ function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
         }
     });
 }
-function loadChiTietBangKe() {
-    $.ajax({
-        url: "/Currency/getListCurrency",
-        type: 'GET',
-        success: function (response) {
-            var result = response.data;
-            ChiTietBangKe(result);
-        },
-        error: function (xhr, status, error) {
-            swal.fire({
-                title: 'Đã xảy ra lỗi!',
-                text: 'Vui lòng thử lại.',
-                icon: 'error'
-            });
-            console.error(error);
-        }
-    });
-}
-function ChiTietBangKe(data) {
-    TableChiTietBangKe.clear();
-    data.forEach(function (item) {
-        let rowContent = [
-            item.ma,
-            item.maTienTe,
-            item.giaTri,
-            '0',
-            '0',
-            ''
-        ];
-
-        TableChiTietBangKe.row.add(rowContent);
-    });
-
-    TableChiTietBangKe.draw();
-}
-function ChiTietNhanVien() {
-    TableChiTietNhanVien.clear();
-    var maNhanVien = $("#MaNhanVien").val();
-    var sotien = $("#SoTienNhanVien").val();
-
-    $.ajax({
-        url: "/User/getListUser",
-        type: 'GET',
-        success: function (response) {
-            var result = response.data;
-
-            // Kiểm tra từng item trong result
-            result.forEach(function (item) {
-                if (item.ma == maNhanVien) {
-                    let rowContent = [
-                        item.ma,
-                        item.fullName,
-                        sotien,
-                    ];
-                    TableChiTietNhanVien.row.add(rowContent);
-                }
-            });
-
-            TableChiTietNhanVien.draw();
-
-            // Đặt lại giá trị về giá trị ban đầu
-            $("#MaNhanVien").val('');
-            $("#SoTienNhanVien").val('');
-        },
-        error: function (xhr, status, error) {
-            swal.fire({
-                title: 'Đã xảy ra lỗi!',
-                text: 'Vui lòng thử lại.',
-                icon: 'error'
-            });
-            console.error(error);
-        }
-    });
-}
-
-function addCommas(amount) {
-    if (amount == null || isNaN(amount)) {
-        return '';
-    }
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-
-
 function loadNhanVien() {
     $.ajax({
         url: "/User/getListUser",
@@ -466,75 +547,4 @@ function selectNhanVien(data) {
     });
 }
 
-function loadTienTe() {
-    $.ajax({
-        url: "/Monetary/getListMonetary",
-        type: 'GET',
-        success: function (response) {
-            var result = response.data;
-            selectTienTe(result);
-        },
-        error: function (xhr, status, error) {
-            swal.fire({
-                title: 'Đã xảy ra lỗi!',
-                text: 'Vui lòng thử lại.',
-                icon: 'error'
-            });
-            console.error(error);
-        }
-    });
-}
-function selectTienTe(data) {
-    var branchSelect = $('#TienTe');
-    branchSelect.empty();
-
-    data.forEach(function (branch) {
-        let select = $('<option>', {
-            value: branch.ma,
-            text: branch.ten,
-            selected: branch.ma === '0febf710-436d-40cc-95e5-e457605cd104' 
-        });
-
-        branchSelect.append(select);
-        var selectedText = branchSelect.find('option:selected').text();
-        var selectedValue = branchSelect.val();
-        filterTableByCurrency(selectedValue, selectedText)
-    });
-}
-function filterTableByCurrency(selectedValue, selectedText) {
-    let TenDonVi = $('#DonViTienTe').text(selectedText);
-    console.log("Ten đơn vị", TenDonVi)
-    $('#TableChiTietBangKe tbody tr').each(function () {
-        var maTienTe = $(this).find('td:eq(1)').text(); 
-        if (maTienTe === selectedValue) {
-            $(this).show(); 
-        } else {
-            $(this).hide(); 
-        }
-    });
-}
-
-
-
-filterTableByCurrency();
-
-
-function formatCurrencyInput(input) {
-    let inputValue = input.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
-    
-    if (inputValue === '') {
-        input.value = '';
-        return;
-    }
-    
-    const numericValue = parseFloat(inputValue);
-    const formattedValue = addCommas(numericValue);
-    
-    input.value = formattedValue;
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const moneyInput = document.getElementById('SoTienNhanVien');
-    moneyInput.value = addCommas(parseFloat(moneyInput.value));
-});
 

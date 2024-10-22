@@ -74,7 +74,9 @@ function ConfigTable() {
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '100px', className: 'dt-left dt-head-center', targets: [1,2,3], orderable: false },
+            { width: '300px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
+            { width: '100px', className: 'dt-left dt-head-center', targets: [2, 3], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [3], orderable: false },
         ],
         lengthChange: false,
         language: {
@@ -227,6 +229,7 @@ function loadChiTietBangKe(Ma) {
     });
 }
 function loadChiTietNhanVien(Ma) {
+    console.log("Ma nhan vien")
     $.ajax({
         url: "CashDeposit/getChiTietNhanVien",
         type: 'POST',
@@ -389,12 +392,14 @@ function TableDetailBangKe(data) {
     });
 }
 function TableNhanVien(data) {
+    console.log("props nhan vien", data)
     TableChiTietNhanVien.clear().draw();
     data.forEach(function (item) {
         let rowContent = [
             `<td>${item.ma}</td>`,
+            `<td>${item.maNhanVien}</td>`,
             `<td>${item.tenNhanVien}</td>`,
-            `<td>${addCommas(item.soLuong)}</td>`,
+            `<td>${addCommas(item.soTien)}</td>`,
         ];
 
 

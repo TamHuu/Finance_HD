@@ -148,14 +148,17 @@ namespace Finance_HD.Controllers.ChungTu
         {
             var listChiTietNhanVien = (from bangkenhanvien in _dbContext.FiaChiTietBangKeNhanVien
                                        join nhanvien in _dbContext.SysUser
-                                       on bangkenhanvien.MaNhanVien equals nhanvien.Ma
+                                       on bangkenhanvien.MaNhanVien equals nhanvien.Ma into nhanVienGroup
+                                       from nhanvien in nhanVienGroup.DefaultIfEmpty() // Left Join
 
                                        join bangkenoptien in _dbContext.FiaChiTietBangKeNopTien
-                                       on bangkenhanvien.MaBangKe equals bangkenoptien.Ma
+                                       on bangkenhanvien.MaBangKe equals bangkenoptien.Ma into bangKeNopTienGroup
+                                       from bangkenoptien in bangKeNopTienGroup.DefaultIfEmpty() // Left Join
                                        where bangkenhanvien.MaBangKe == Ma.GetGuid()
                              && !(bangkenhanvien.Deleted ?? false)
                                        select new
                                        {
+                                           TenNhanVien = nhanvien.FullName+"",
                                            Ma = bangkenhanvien.Ma + "",
                                            MaBangKe = bangkenoptien.Ma + "",
                                            MaNhanVien = nhanvien.Ma + "",
@@ -264,14 +267,14 @@ namespace Finance_HD.Controllers.ChungTu
 
                 _dbContext.FiaChiTietBangKeNopTien.Add(listChiTietBangKe);
             }
-            foreach (var chiTiet in DataNhanVien)
+            foreach (var nhanVien in DataNhanVien)
             {
                 var BangKeNhanVien = new FiaChiTietBangKeNhanVien
                 {
-                    Ma = chiTiet.Ma,
+                    Ma = nhanVien.Ma,
                     MaBangKe = listBangKe.Ma,
-                    MaNhanVien = chiTiet.MaNhanVien,
-                    SoTien = chiTiet.SoTien,
+                    MaNhanVien = nhanVien.MaNhanVien,
+                    SoTien = nhanVien.SoTien,
                     UserCreated = loggedInUser.Ma,
                     CreatedDate = DateTime.Now
                 };
