@@ -28,12 +28,12 @@
                     <div class="form-row ">
                         <div class="form-group col-md-2">
                             <label for="NgayNopTien">Ngày Nộp Tiền<span style="color: red;">*</span></label>
-                            <input type="date" id="dtpNgayNopTien" class="form-control form-control-sm"
+                            <input type="date" id="NgayNopTien" class="form-control form-control-sm"
                                    value="@((Model.NgayNopTien.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayNopTien.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
                         </div>
                         <div class="form-group col-md-2">
                             <label for="NgayLap">Ngày Lập<span style="color: red;">*</span></label>
-                            <input type="date" id="dtpNgayLap" class="form-control form-control-sm"
+                            <input type="date" id="NgayLap" class="form-control form-control-sm"
                                    value="@((Model.NgayLap.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayLap.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
                         </div>
                         <div class="form-group col-md-2">
@@ -93,7 +93,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-2">
                             <label for="KhachHang">Khách hàng</label>
-                            <input placeholder="Nhập tên khách hàng" type="text" class="form-control form-control-sm" id="TenNguoiNopTien" name="TenNguoiNopTien" required value="@Model.TenNguoiNopTien" />
+                            <input placeholder="Nhập tên khách hàng" type="text" class="form-control form-control-sm" id="KhachHang" name="TenNguoiNopTien" required value="@Model.TenNguoiNopTien" />
                         </div>
                         <div class="form-group col-md-2">
                             <label for="NoiDung">Tên nội dung <span style="color: red;">*</span></label>
@@ -118,118 +118,76 @@
             </div>
         </div>
     </div>
-    @*     <div class="col-md-6 mb-3">
-    <div class="card shadow">
-    <div class="card-header bg-primary">
-    <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
-    </div>
-    <div class="card-body">
-    <table id="TableChiTietBangKe" class="table table-bordered table-hover">
-    <thead>
-    <tr>
-    <th hidden>Mã</th>
-    <th hidden>Mã Loại tiền</th>
-    <th>Loại tiền</th>
-    <th>Số lượng</th>
-    <th>Thành tiền</th>
-    <th>Ghi chú</th>
-    </tr>
-    </thead>
-    <tbody>
-    @if (dataChiTietBangKe != null)
-    {
-    foreach (var item in dataChiTietBangKe)
-    {
-    var loaitien = listLoaiTien.FirstOrDefault(x => x.Ma == item.MaLoaiTien);
-    var tenLoaiTien = loaitien?.GiaTri; // Using null-conditional operator
-
-    <tr>
-    <td hidden>@item.Ma</td>
-    <td hidden>@item.MaLoaiTien</td>
-    <td>@(tenLoaiTien.HasValue ? tenLoaiTien.Value.ToString("N0") : "0")</td> <!-- Fixed to use tenLoaiTien correctly -->
-    <td>
-    @(item.SoLuong.HasValue ? item.SoLuong.Value.ToString("N0") : "0")
-    </td>
-    <td>
-    @(item.ThanhTien.HasValue ? item.ThanhTien.Value.ToString("N0") : "0")
-    </td>
-    <td>@item.GhiChu</td>
-    </tr>
-    }
-    }
-
-    </tbody>
-    <tfoot>
-    <tr>
-    <th></th>
-    <th></th>
-    <th colspan="2" id="DonViTienTe">@currencyName</th>
-    <th style="text-align:right" id="TotalMoney">
-    @(Model.SoTien.HasValue ? Model.SoTien.Value.ToString("N0") : "0")
-    </th>
-    <th></th>
-    </tr>
-    </tfoot>
-
-
-    </table>
-
-    </div>
-    </div>
-    </div>
     <div class="col-md-6 mb-3">
-    <div class="card shadow">
-    <div class="card-header bg-primary">
-    <div class="row">
-    <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
-    <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
-    <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
-    </select>
+        <div class="card shadow">
+            <div class="card-header bg-primary">
+                <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
+            </div>
+            <div class="card-body">
+                <table id="TableChiTietBangKe" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th hidden>Mã Bảng Kê Chi Tiết</th>
+                            <th hidden>Mã Loại tiền</th>
+                            <th>Loại tiền</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                    <tfoot>
+                      
+                    </tfoot>
+
+
+                </table>
+
+            </div>
+        </div>
     </div>
-    <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
-    <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
-    <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" oninput="formatCurrencyInput(this)" />
+   @*  <div class="col-md-6 mb-3">
+        <div class="card shadow">
+            <div class="card-header bg-primary">
+                <div class="row">
+                    <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
+                        <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
+                        <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
+                        <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
+                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" oninput="formatCurrencyInput(this)" />
 
-    <button class="btn-custom" id="btnSaveChiTietNhanVien">
-    <i class="fa fa-check-circle fa-lg"></i>
-    </button>
+                        <button class="btn-custom" id="btnSaveChiTietNhanVien">
+                            <i class="fa fa-check-circle fa-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="card-body">
+
+                <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Mã nhân viên</th>
+                            <th>Tên nhân viên</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+ *@
     </div>
-    </div>
-
-
-    </div>
-
-    <div class="card-body">
-
-    <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
-    <thead>
-    <tr>
-    <th>Mã nhân viên</th>
-    <th>Tên nhân viên</th>
-    <th>Số tiền</th>
-    </tr>
-    </thead>
-    <tbody>
-    @if (dataNhanVien != null)
-    {
-    foreach (var item in dataNhanVien)
-    {
-    var employee = listNguoiNopTien.FirstOrDefault(x => x.Ma == item.MaNhanVien);
-    var employeeName = employee != null ? employee.FullName : "Không tìm thấy";
-
-    <tr>
-    <td>@item.MaNhanVien</td>
-    <td>@employeeName</td>
-    <td>@(item.SoTien.HasValue ? item.SoTien.Value.ToString("N0") : "0") </td>
-    </tr>
-    }
-    }
-    </tbody>
-    </table>
-    </div>
-    </div>
-
-    </div> *@
     <div class="col-md-12 mb-3">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">Chức năng</div>
@@ -244,7 +202,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/soquy/bangkenoptien/form.js"></script>
-    <script defer src="/extendFE/common/CallAPI.js"></script>
+    <script defer src="/extendFE/common/main.js"></script>
     <style>
         .table thead th {
             font-size: 14px;

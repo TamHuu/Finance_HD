@@ -177,6 +177,7 @@ namespace Finance_HD.Controllers.ChungTu
             ViewData["TaiKhoanDangNhap"]=loggedInUser;
             ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listNhanVien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
 
             return View("Form", new FiaBangKeNopTien());
         }
@@ -201,6 +202,7 @@ namespace Finance_HD.Controllers.ChungTu
        string LyDo,
        int SoTien,
        string NguoiNhanTien,
+       string KhachHang,
     List<FiaChiTietBangKeNopTien> DataChiTietBangKe,
     List<FiaChiTietBangKeNhanVien> DataNhanVien
    )
