@@ -57,8 +57,10 @@ namespace Finance_HD.Controllers.TaiChinh
                                       Status = phongban.Status,
                                   }).ToList();
 
-            return Json(new { Data = listDepartment });
+            return Json(new { success = true, Data = listDepartment });
         }
+
+       
         [HttpGet]
         public IActionResult Add()
         {

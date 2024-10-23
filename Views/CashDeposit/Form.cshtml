@@ -11,13 +11,11 @@
     var listTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
     var listLoaiTien = ViewData["listLoaiTien"] as List<Finance_HD.Models.FaLoaiTien>;
     var listNoiDung = ViewData["listNoiDung"] as List<Finance_HD.Models.CatNoiDungThuChi>;
+    var taikhoandangnhap = ViewData["TaiKhoanDangNhap"] as Finance_HD.Models.SysUser;
+    var branchID = taikhoandangnhap.BranchId; // Lấy branchID
+    var deparmentId = taikhoandangnhap.MaPhongBan; // Lấy mã phòng ban
     var listNguoiNopTien = ViewData["listNguoiNopTien"] as List<Finance_HD.Models.SysUser>;
-    var listNhanVien = ViewData["listNhanVien"] as List<Finance_HD.Models.SysUser>;
-
-    var selectedCurrencyId = Model.MaTienTe;
-    var selectedCurrency = listTienTe.FirstOrDefault(x => x.Ma == selectedCurrencyId);
-    var currencyName = selectedCurrency != null ? selectedCurrency.Ten : "Không xác định";
-    }
+}
 <div class="row">
     <div class="col-md-12 mb-3">
         <div class="card">
@@ -29,17 +27,17 @@
                     <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
                     <div class="form-row ">
                         <div class="form-group col-md-2">
-                            <label for="NgayNopTien">Ngày Nộp Tiền</label>
+                            <label for="NgayNopTien">Ngày Nộp Tiền<span style="color: red;">*</span></label>
                             <input type="date" id="dtpNgayNopTien" class="form-control form-control-sm"
                                    value="@((Model.NgayNopTien.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayNopTien.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="NgayLap">Ngày Lập</label>
+                            <label for="NgayLap">Ngày Lập<span style="color: red;">*</span></label>
                             <input type="date" id="dtpNgayLap" class="form-control form-control-sm"
                                    value="@((Model.NgayLap.HasValue) ? string.Format("{0:yyyy-MM-dd}", Model.NgayLap.Value) : DateTime.Today.ToString("yyyy-MM-dd"))" />
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="HinhThuc">Hình thức chi</label>
+                            <label for="HinhThuc">Hình thức chi<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
                                 <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)"
                                 @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
@@ -50,42 +48,44 @@
                             </select>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="TienTe">Tiền tệ:</label>
+                            <label for="TienTe">Tiền tệ<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="TienTe" name="TienTe">
                             </select>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="TyGia">Tỷ Giá</label>
+                            <label for="TyGia">Tỷ Giá<span style="color: red;">*</span></label>
                             <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" required
                                    value="@((Model.TyGia.HasValue) ? Model.TyGia.Value.ToString("F2") : "1")" />
                         </div>
 
                         <div class="form-group col-md-2">
-                            <label for="NguoiNopTien">Người nộp:</label>
+                            <label for="NguoiNopTien">Người nộp<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="NguoiNopTien" name="NguoiNopTien">
                                 @foreach (var tt in listNguoiNopTien)
                                 {
-                                    <!option value="@tt.Ma" @(Model.NguoiNopTien == tt.Ma ? "selected" : "")>@tt.FullName</!option>
+                                    <!option value="@tt.BranchId" @(branchID == tt.BranchId ? "selected" : "")>@tt.FullName</!option>
                                 }
                             </select>
+
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-2">
-                            <label for="DonViNop">Đơn vị nộp</label>
+                            <label for="DonViNop">Đơn vị nộp<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="DonViNop" name="DonViNop"></select>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="BoPhanNop">Bộ phận nộp</label>
+                            <label for="BoPhanNop">Bộ phận nộp<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="BoPhanNop" name="BoPhanNop"></select>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="DonViNhan">Đơn vị nhận</label>
+                            <label for="DonViNhan">Đơn vị nhận<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="DonViNhan" name="DonViNhan"></select>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="BoPhanNhan">Bộ phận nhận</label>
+                            <label for="BoPhanNhan">Bộ phận nhận <span style="color: red;">*</span></label>
+
                             <select class="form-control form-control-sm" id="BoPhanNhan" name="BoPhanNhan"></select>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                             <input placeholder="Nhập tên khách hàng" type="text" class="form-control form-control-sm" id="TenNguoiNopTien" name="TenNguoiNopTien" required value="@Model.TenNguoiNopTien" />
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="NoiDung">Tên nội dung:</label>
+                            <label for="NoiDung">Tên nội dung <span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="NoiDung" name="NoiDung">
                                 @foreach (var nd in listNoiDung)
                                 {
@@ -118,118 +118,118 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6 mb-3">
-        <div class="card shadow">
-            <div class="card-header bg-primary">
-                <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
-            </div>
-            <div class="card-body">
-                <table id="TableChiTietBangKe" class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th hidden>Mã</th>
-                            <th hidden>Mã Loại tiền</th>
-                            <th>Loại tiền</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                            <th>Ghi chú</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (dataChiTietBangKe != null)
-                        {
-                            foreach (var item in dataChiTietBangKe)
-                            {
-                                var loaitien = listLoaiTien.FirstOrDefault(x => x.Ma == item.MaLoaiTien);
-                                var tenLoaiTien = loaitien?.GiaTri; // Using null-conditional operator
-                                
-                                <tr>
-                                    <td hidden>@item.Ma</td>
-                                    <td hidden>@item.MaLoaiTien</td>
-                                    <td>@(tenLoaiTien.HasValue ? tenLoaiTien.Value.ToString("N0") : "0")</td> <!-- Fixed to use tenLoaiTien correctly -->
-                                    <td>
-                                        @(item.SoLuong.HasValue ? item.SoLuong.Value.ToString("N0") : "0")
-                                    </td>
-                                    <td>
-                                        @(item.ThanhTien.HasValue ? item.ThanhTien.Value.ToString("N0") : "0")
-                                    </td>
-                                    <td>@item.GhiChu</td>
-                                </tr>
-                            }
-                        }
-
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th colspan="2" id="DonViTienTe">@currencyName</th> 
-                            <th style="text-align:right" id="TotalMoney">
-                                @(Model.SoTien.HasValue ? Model.SoTien.Value.ToString("N0") : "0")
-                            </th>
-                            <th></th>
-                        </tr>
-                    </tfoot>
-
-
-                </table>
-
-            </div>
-        </div>
+    @*     <div class="col-md-6 mb-3">
+    <div class="card shadow">
+    <div class="card-header bg-primary">
+    <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
     </div>
-    <div class="col-md-6 mb-3">
-        <div class="card shadow">
-            <div class="card-header bg-primary">
-                <div class="row">
-                    <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
-                        <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
-                        <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
-                        </select>
-                    </div>
-                    <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
-                        <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
-                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" oninput="formatCurrencyInput(this)" />
+    <div class="card-body">
+    <table id="TableChiTietBangKe" class="table table-bordered table-hover">
+    <thead>
+    <tr>
+    <th hidden>Mã</th>
+    <th hidden>Mã Loại tiền</th>
+    <th>Loại tiền</th>
+    <th>Số lượng</th>
+    <th>Thành tiền</th>
+    <th>Ghi chú</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (dataChiTietBangKe != null)
+    {
+    foreach (var item in dataChiTietBangKe)
+    {
+    var loaitien = listLoaiTien.FirstOrDefault(x => x.Ma == item.MaLoaiTien);
+    var tenLoaiTien = loaitien?.GiaTri; // Using null-conditional operator
 
-                        <button class="btn-custom" id="btnSaveChiTietNhanVien">
-                            <i class="fa fa-check-circle fa-lg"></i>
-                        </button>
-                    </div>
-                </div>
+    <tr>
+    <td hidden>@item.Ma</td>
+    <td hidden>@item.MaLoaiTien</td>
+    <td>@(tenLoaiTien.HasValue ? tenLoaiTien.Value.ToString("N0") : "0")</td> <!-- Fixed to use tenLoaiTien correctly -->
+    <td>
+    @(item.SoLuong.HasValue ? item.SoLuong.Value.ToString("N0") : "0")
+    </td>
+    <td>
+    @(item.ThanhTien.HasValue ? item.ThanhTien.Value.ToString("N0") : "0")
+    </td>
+    <td>@item.GhiChu</td>
+    </tr>
+    }
+    }
+
+    </tbody>
+    <tfoot>
+    <tr>
+    <th></th>
+    <th></th>
+    <th colspan="2" id="DonViTienTe">@currencyName</th>
+    <th style="text-align:right" id="TotalMoney">
+    @(Model.SoTien.HasValue ? Model.SoTien.Value.ToString("N0") : "0")
+    </th>
+    <th></th>
+    </tr>
+    </tfoot>
 
 
-            </div>
-
-            <div class="card-body">
-
-                <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>Mã nhân viên</th>
-                            <th>Tên nhân viên</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (dataNhanVien != null)
-                        {
-                            foreach (var item in dataNhanVien)
-                            {
-                                var employee = listNguoiNopTien.FirstOrDefault(x => x.Ma == item.MaNhanVien);
-                                var employeeName = employee != null ? employee.FullName : "Không tìm thấy";
-
-                                <tr>
-                                    <td>@item.MaNhanVien</td>
-                                    <td>@employeeName</td>
-                                    <td>@(item.SoTien.HasValue ? item.SoTien.Value.ToString("N0") : "0") </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    </table>
 
     </div>
+    </div>
+    </div>
+    <div class="col-md-6 mb-3">
+    <div class="card shadow">
+    <div class="card-header bg-primary">
+    <div class="row">
+    <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
+    <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
+    <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
+    </select>
+    </div>
+    <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
+    <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
+    <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" oninput="formatCurrencyInput(this)" />
+
+    <button class="btn-custom" id="btnSaveChiTietNhanVien">
+    <i class="fa fa-check-circle fa-lg"></i>
+    </button>
+    </div>
+    </div>
+
+
+    </div>
+
+    <div class="card-body">
+
+    <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
+    <thead>
+    <tr>
+    <th>Mã nhân viên</th>
+    <th>Tên nhân viên</th>
+    <th>Số tiền</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (dataNhanVien != null)
+    {
+    foreach (var item in dataNhanVien)
+    {
+    var employee = listNguoiNopTien.FirstOrDefault(x => x.Ma == item.MaNhanVien);
+    var employeeName = employee != null ? employee.FullName : "Không tìm thấy";
+
+    <tr>
+    <td>@item.MaNhanVien</td>
+    <td>@employeeName</td>
+    <td>@(item.SoTien.HasValue ? item.SoTien.Value.ToString("N0") : "0") </td>
+    </tr>
+    }
+    }
+    </tbody>
+    </table>
+    </div>
+    </div>
+
+    </div> *@
     <div class="col-md-12 mb-3">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">Chức năng</div>
@@ -244,6 +244,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/soquy/bangkenoptien/form.js"></script>
+    <script defer src="/extendFE/common/CallAPI.js"></script>
     <style>
         .table thead th {
             font-size: 14px;
@@ -298,17 +299,10 @@
 
     </style>
     <script>
-        // console.log("Model:", @Html.Raw(JsonSerializer.Serialize(Model)));
-        // console.log("ListTienTe:", @Html.Raw(JsonSerializer.Serialize(listTienTe)));
-        // console.log("ListNoiDung:", @Html.Raw(JsonSerializer.Serialize(listNoiDung)));
-        // console.log("ListNguoiNopTien:", @Html.Raw(JsonSerializer.Serialize(listNguoiNopTien)));
-        // console.log("ListNhanVien:", @Html.Raw(JsonSerializer.Serialize(listNhanVien)));
 
         var defaultUID = '@defaultUID';
+        var MaChiNhanhDangNhap = '@branchID';
+        var MaPhongBanDangNhap = '@deparmentId';
         var isEdit = @Html.Raw(JsonSerializer.Serialize(isEdit));
-        var MaDonViNop = '@Model.MaChiNhanhNop';
-        var MaBoPhanNop = '@Model.MaPhongBanNop';
-        var MaDonViNhan = '@Model.MaChiNhanhNhan';
-        var MaBoPhanNhan = '@Model.MaPhongBanNhan';
     </script>
 }

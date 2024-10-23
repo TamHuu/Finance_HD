@@ -174,8 +174,7 @@ namespace Finance_HD.Controllers.ChungTu
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
-
-            ViewData["listTienTe"] = _dbContext.FiaTienTe.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["TaiKhoanDangNhap"]=loggedInUser;
             ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
 

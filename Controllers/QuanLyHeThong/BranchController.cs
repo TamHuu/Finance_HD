@@ -29,9 +29,9 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         public JsonResult getListBranch()
         {
             var listBranch = _dbContext.SysBranch.ToList();
-            return Json(new { Data = listBranch });
+            return Json(new {success=true, Data = listBranch });
         }
-
+        
         public IActionResult Add()
         {
             return View("Form", new SysBranch());
