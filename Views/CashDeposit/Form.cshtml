@@ -15,6 +15,7 @@
     var branchID = taikhoandangnhap.BranchId; // Lấy branchID
     var deparmentId = taikhoandangnhap.MaPhongBan; // Lấy mã phòng ban
     var listNguoiNopTien = ViewData["listNguoiNopTien"] as List<Finance_HD.Models.SysUser>;
+    var listNhanVien = ViewData["listNhanVien"] as List<Finance_HD.Models.SysUser>;
 }
 <div class="row">
     <div class="col-md-12 mb-3">
@@ -148,14 +149,19 @@
             </div>
         </div>
     </div>
-   @*  <div class="col-md-6 mb-3">
+     <div class="col-md-6 mb-3">
         <div class="card shadow">
             <div class="card-header bg-primary">
                 <div class="row">
                     <div class="col-md-6 d-flex" style="justify-content:space-evenly;text-align:center;align-items:center">
                         <h6 style="width:105px" class="m-0 text-white">Nhân viên</h6>
                         <select class="form-control form-control-sm" id="MaNhanVien" name="MaNhanVien">
+                            @foreach (var tt in listNhanVien)
+                            {
+                                <!option value="@tt.Ma" @(branchID == tt.BranchId ? "selected" : "")>@tt.FullName</!option>
+                            }
                         </select>
+                    
                     </div>
                     <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
                         <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
@@ -178,6 +184,7 @@
                             <th>Mã nhân viên</th>
                             <th>Tên nhân viên</th>
                             <th>Số tiền</th>
+                            <th hidden></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -186,7 +193,7 @@
                 </table>
             </div>
         </div>
- *@
+ 
     </div>
     <div class="col-md-12 mb-3">
         <div class="card shadow">

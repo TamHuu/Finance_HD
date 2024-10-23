@@ -1,77 +1,85 @@
 ﻿var TableChiTietBangKe;
+var TableChiTietNhanVien
+var DataChiTietBangKe = [];
+var DataNhanVien=[];
 $(document).ready(function () {
     fetchMonetaryList();
     fetchBranchList();
     sendFormData();
     ConfigTable();
+    // Sử dụng callback để xử lý sau khi DataTable được khởi tạo
+    setTimeout(function () {
+        handleTableRows();
+    }, 100);
 });
 function ConfigTable() {
-        TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
-            columnDefs: [
-                { className: "d-none", targets: [0, 1], orderable: false },
-                { width: '170px', className: 'dt-right dt-head-center', targets: [2, 3, 4], orderable: false },
-                { width: '170px', className: 'dt-left dt-head-center', targets: [5], orderable: false },
-                { targets: [ 3,5], createdCell: function (td) { $(td).attr('contenteditable', true); } }
-            ],
-            ordering: false,
-            searching: false,
-            paging: false,
-            lengthChange: false,
-            info: false,
-            language: {
-                "decimal": "",
-                "emptyTable": "Không có dữ liệu trong bảng",
-                "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
-                "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
-                "infoFiltered": "(đã lọc từ _MAX_ mục)",
-                "lengthMenu": "Hiển thị _MENU_ mục",
-                "loadingRecords": "Đang tải...",
-                "processing": "Đang xử lý...",
-                "search": "Tìm kiếm:",
-                "searchPlaceholder": "Nhập từ khóa...",
-                "zeroRecords": "Không tìm thấy kết quả nào",
-                "paginate": {
-                    "first": "Đầu tiên",
-                    "last": "Cuối cùng",
-                    "next": "Kế tiếp",
-                    "previous": "Trước"
-                }
+    TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
+        columnDefs: [
+            { className: "d-none", targets: [0, 1], orderable: false },
+            { width: '170px', className: 'dt-right dt-head-center', targets: [2, 3, 4], orderable: false },
+            { width: '170px', className: 'dt-left dt-head-center', targets: [5], orderable: false },
+            { targets: [3, 5], createdCell: function (td) { $(td).attr('contenteditable', true); } }
+        ],
+        ordering: false,
+        searching: false,
+        paging: false,
+        lengthChange: false,
+        info: false,
+        language: {
+            "decimal": "",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
+            "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
+            "infoFiltered": "(đã lọc từ _MAX_ mục)",
+            "lengthMenu": "Hiển thị _MENU_ mục",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "searchPlaceholder": "Nhập từ khóa...",
+            "zeroRecords": "Không tìm thấy kết quả nào",
+            "paginate": {
+                "first": "Đầu tiên",
+                "last": "Cuối cùng",
+                "next": "Kế tiếp",
+                "previous": "Trước"
             }
-        });
+        }
+    });
 
-        //TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
-        //    columnDefs: [
-        //        { width: '200px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
-        //        { width: '100px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
-        //        { width: '100px', className: 'dt-right dt-head-center', targets: [2], orderable: false },
+    TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
+        columnDefs: [
+            { width: '200px', className: 'dt-left dt-head-center', targets: [0], orderable: false },
+            { width: '100px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [2], orderable: false },
+            { width: '50px', targets: [3], orderable: false },
 
-        //    ],
-        //    ordering: false,
-        //    searching: false,
-        //    lengthChange: false,
-        //    sorting: false,
-        //    paging: false,
-        //    info: false,
-        //    language: {
-        //        "decimal": "",
-        //        "emptyTable": "Không có dữ liệu trong bảng",
-        //        "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
-        //        "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
-        //        "infoFiltered": "(đã lọc từ _MAX_ mục)",
-        //        "lengthMenu": "Hiển thị _MENU_ mục",
-        //        "loadingRecords": "Đang tải...",
-        //        "processing": "Đang xử lý...",
-        //        "search": "Tìm kiếm:",
-        //        "searchPlaceholder": "Nhập từ khóa...",
-        //        "zeroRecords": "Không tìm thấy kết quả nào",
-        //        "paginate": {
-        //            "first": "Đầu tiên",
-        //            "last": "Cuối cùng",
-        //            "next": "Kế tiếp",
-        //            "previous": "Trước"
-        //        }
-        //    }
-        //});
+        ],
+        ordering: false,
+        searching: false,
+        lengthChange: false,
+        sorting: false,
+        paging: false,
+        info: false,
+        language: {
+            "decimal": "",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
+            "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
+            "infoFiltered": "(đã lọc từ _MAX_ mục)",
+            "lengthMenu": "Hiển thị _MENU_ mục",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "searchPlaceholder": "Nhập từ khóa...",
+            "zeroRecords": "Không tìm thấy kết quả nào",
+            "paginate": {
+                "first": "Đầu tiên",
+                "last": "Cuối cùng",
+                "next": "Kế tiếp",
+                "previous": "Trước"
+            }
+        }
+    });
 }
 
 
@@ -174,7 +182,7 @@ function BoPhanNopSelect(maDonViNop) {
                     const option = $('<option>', {
                         value: department.maPhongBan,
                         text: department.tenPhongBan,
-                        selected: department.maPhongBan === MaPhongBanDangNhap, 
+                        selected: department.maPhongBan === MaPhongBanDangNhap,
                     });
                     DepartmentSelect.append(option);
                 });
@@ -231,7 +239,7 @@ function sendFormData() {
         var NgayNopTien = $("#NgayNopTien").val();
         var NgayLap = $("#NgayLap").val();
         var MaHinhThuc = $("#HinhThuc").val();
-        var MaTienTe = $("#TyGia").val();
+        var MaTienTe = $("#TienTe").val();
         var NguoiNopTien = $("#NguoiNopTien").val();
         var MaChiNhanhNop = $("#DonViNop").val();
         var MaPhongBanNop = $("#BoPhanNop").val();
@@ -241,6 +249,7 @@ function sendFormData() {
         var MaNoiDung = $("#NoiDung").val();
         var GhiChu = $("#GhiChu").val();
         var DiaChi = $("#DiaChi").val();
+        var TyGia = $("#TyGia").val();
         var formData = {
             Ma,
             NgayNopTien,
@@ -256,8 +265,11 @@ function sendFormData() {
             MaNoiDung,
             GhiChu,
             DiaChi,
+            DataChiTietBangKe,
+            DataNhanVien,
+            TyGia,
         };
-        console.table(formData);
+        console.table(formData)
         callAPI('POST', '/CashDeposit/Add', formData,
             function (response) {
                 if (response.success) {
@@ -271,10 +283,11 @@ function sendFormData() {
                 console.error('Lỗi khi lấy danh sách chi nhánh:', error);
             }
         );
-    }); 
-} 
+    });
+}
+// Xử lý Chi tiết bảng kê
 function TableBangKe(MaTienTe) {
-    callAPI('GET', '/Currency/getListCurrency',null,
+    callAPI('GET', '/Currency/getListCurrency', null,
         function (response) {
             if (response.success) {
                 var result = response.data;
@@ -303,3 +316,115 @@ function TableBangKe(MaTienTe) {
         }
     );
 }
+function handleTableRows() {
+    TableChiTietBangKe.rows().every(function () {
+        var row = $(this.node());
+
+        var maBangKe = row.find('td:eq(0)').text();
+        var maLoaiTien = row.find('td:eq(1)').text();
+        var loaiTien = parseFloat(row.find('td:eq(2)').text().replace(/,/g, ''));
+        var soLuong = parseInt(row.find('td:eq(3)').text().replace(/,/g, ''), 10);
+        var thanhTien = loaiTien * soLuong;
+        var ghiChu = row.find('td:eq(5)').text();
+
+        row.find('td:eq(4)').text(thanhTien.toLocaleString());
+
+        var allData = {
+            maBangKe,
+            maLoaiTien,
+            loaiTien,
+            soLuong,
+            thanhTien,
+            ghiChu
+        };
+
+        DataChiTietBangKe.push(allData);
+
+        // Bắt sự kiện khi ô được chỉnh sửa cho các cột số lượng, thành tiền và ghi chú
+        row.find('td:eq(3), td:eq(4), td:eq(5)').on('input', function () {
+            var updatedValue = $(this).text();
+            var columnIndex = $(this).index(); // Lấy chỉ số cột
+
+            // Cập nhật giá trị tương ứng vào đối tượng allData
+            if (columnIndex === 3) { // Số lượng
+                soLuong = parseInt(updatedValue.replace(/,/g, ''), 10); // Cập nhật số lượng
+                thanhTien = loaiTien * soLuong; // Tính lại thành tiền
+                row.find('td:eq(3)').text(soLuong.toLocaleString()); // Cập nhật ô số lượng với định dạng số
+                row.find('td:eq(4)').text(thanhTien.toLocaleString()); // Cập nhật ô thành tiền với định dạng số
+
+                // Cập nhật đối tượng allData
+                allData.soLuong = soLuong;
+                allData.thanhTien = thanhTien;
+            } else if (columnIndex === 4) {
+                thanhTien = parseFloat(updatedValue.replace(/,/g, ''));
+                allData.thanhTien = thanhTien;
+            } else if (columnIndex === 5) {
+                ghiChu = updatedValue;
+                allData.ghiChu = ghiChu;
+            }
+        });
+        row.find('td:eq(3), td:eq(4)').on('keydown', function (e) {
+            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'Tab' || e.key === 'Enter' || e.key === 'Escape' || e.key === ',' || e.key === '.')) {
+                e.preventDefault();
+            }
+        });
+    });
+}
+
+// Xủ lý bảng nhân viên
+// Khởi tạo mảng DataNhanVien nếu chưa có
+
+$("#btnSaveChiTietNhanVien").on('click', function () {
+    // Lấy giá trị từ input
+    var MaNhanVien = $("#MaNhanVien").val();
+    var SoTienNhanVien = $("#SoTienNhanVien").val();
+
+    if (!SoTienNhanVien) {
+        showAlert('Lỗi!', 'Vui lòng nhập số tiền.', 'error');
+        return; 
+    }
+
+    var exists = DataNhanVien.some(function (data) {
+        return data.MaNhanVien === MaNhanVien; 
+    });
+
+    // Nếu nhân viên đã tồn tại, không cho nhập trùng
+    if (exists) {
+        showAlert('Lỗi!', 'Nhân viên này đã tồn tại trong danh sách.', 'error');
+        return; // Dừng việc thêm dữ liệu
+    }
+
+    // Tạo đối tượng dữ liệu nhân viên mới
+    var allData = { MaNhanVien, SoTienNhanVien };
+    DataNhanVien.push(allData); // Thêm nhân viên vào mảng
+
+    callAPI('GET', '/User/getListUser', null,
+        function (response) {
+           
+                var result = response.data;
+                var filteredData = result.filter(x => x.ma == MaNhanVien);
+                filteredData.forEach(function (item) {
+                    let rowContent = [
+                        `<td>${item.ma}</td>`,
+                        `<td>${item.fullName}</td>`,
+                        `<td>${SoTienNhanVien}</td>`,
+                        `<td><button class="btn btn-danger btn-sm btnDelete" data-ma="${item.ma}"><i class="fas fa-trash"></i></button></td>`
+                    ];
+                    TableChiTietNhanVien.row.add(rowContent).draw();
+                });
+                $("#SoTienNhanVien").val(''); 
+            },
+    );
+});
+$('#TableChiTietNhanVien tbody').on('click', '.btnDelete', function () {
+    // Lấy mã nhân viên từ data attribute
+    var maNhanVien = $(this).data('ma');
+
+    // Xóa hàng khỏi DataNhanVien
+    DataNhanVien = DataNhanVien.filter(function (data) {
+        return data.MaNhanVien !== maNhanVien; // Giữ lại các nhân viên không phải là nhân viên bị xóa
+    });
+
+    // Xóa hàng khỏi bảng
+    TableChiTietNhanVien.row($(this).parents('tr')).remove().draw();
+});

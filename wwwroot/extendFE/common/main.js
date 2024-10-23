@@ -30,3 +30,19 @@ function formatCurrencyInput(input) {
 
     input.value = formattedValue;
 }
+function showAlert(title, text, icon, confirmButtonText = 'OK', cancelButtonText = null, onConfirm = null) {
+    const swalOptions = {
+        title: title,
+        text: text,
+        icon: icon,
+        confirmButtonText: confirmButtonText,
+        showCancelButton: !!cancelButtonText, // Chỉ hiển thị nút hủy nếu có giá trị
+        cancelButtonText: cancelButtonText
+    };
+
+    Swal.fire(swalOptions).then((result) => {
+        if (result.isConfirmed && typeof onConfirm === 'function') {
+            onConfirm(); // Gọi hàm callback nếu xác nhận
+        }
+    });
+}

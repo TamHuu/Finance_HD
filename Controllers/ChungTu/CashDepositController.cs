@@ -199,7 +199,6 @@ namespace Finance_HD.Controllers.ChungTu
        string MaNoiDung,
        string GhiChu,
        string DiaChi,
-       string LyDo,
        int SoTien,
        string NguoiNhanTien,
        string KhachHang,
