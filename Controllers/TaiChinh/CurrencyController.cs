@@ -40,7 +40,7 @@ namespace Finance_HD.Controllers.TaiChinh
                                     Status = loaitien.Status,
                                 }).OrderByDescending(x=>x.GiaTri).ToList();
 
-            return Json(new { Data = listCurrency });
+            return Json(new {success=true, Data = listCurrency });
         }
 
         [HttpGet]

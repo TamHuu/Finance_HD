@@ -104,8 +104,13 @@ function MonetarySelect(data) {
         });
         monetarySelect.append(option);
     });
+    var maTienTe = $("#TienTe").val();
+    TableBangKe(maTienTe);
 }
-
+$("#TienTe").on('change', function () {
+    var maTienTeChange = $("#TienTe").val();
+    TableBangKe(maTienTeChange);
+})
 // Chi nhánh
 function fetchBranchList() {
     callAPI('GET', '/Branch/getListBranch', null,
@@ -266,5 +271,35 @@ function sendFormData() {
                 console.error('Lỗi khi lấy danh sách chi nhánh:', error);
             }
         );
-    }); // Thêm dấu đóng cho sự kiện 'click'
+    }); 
 } 
+function TableBangKe(MaTienTe) {
+    callAPI('GET', '/Currency/getListCurrency',null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                var filteredResult = result.filter(x => x.maTienTe === MaTienTe);
+                TableChiTietBangKe.clear().draw();
+                filteredResult.forEach(function (item) {
+                    let rowContent = [
+                        `<td>${item.ma}</td>`,
+                        `<td>${item.maTienTe}</td>`,
+                        `<td>${addCommas(item.giaTri) ?? 0}</td>`,
+                        `<td>0</td>`,
+                        `<td>0</td>`,
+                        `<td></td>`,
+                    ];
+
+
+                    TableChiTietBangKe.row.add(rowContent).draw();
+                });
+                // Xử lý kết quả thành công ở đây nếu cần
+            } else {
+                console.log("Lỗi khi lấy dữ liệu chi nhánh");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách chi nhánh:', error);
+        }
+    );
+}
