@@ -236,7 +236,6 @@ namespace Finance_HD.Controllers.ChungTu
                 NguoiNopTien = NguoiNopTien.GetGuid(),
                 TenNguoiNopTien = TenNguoiNopTien.FullName,
                 DiaChi = DiaChi,
-                LyDo = LyDo,
                 MaTienTe = MaTienTe.GetGuid(),
                 TyGia = TyGia,
                 SoTien = SoTien,

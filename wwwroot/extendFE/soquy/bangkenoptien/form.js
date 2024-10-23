@@ -11,6 +11,8 @@ $(document).ready(function () {
     setTimeout(function () {
         handleTableRows();
     }, 100);
+
+
 });
 function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
@@ -315,6 +317,19 @@ function TableBangKe(MaTienTe) {
             console.error('Lỗi khi lấy danh sách chi nhánh:', error);
         }
     );
+
+    var newRow = $('<tr></tr>');
+    var newData1 = $('<td colspan="2" style="text-align:center;"></td>').text('Tổng tiền (${MaTienTe})');
+    var newData3 = $('<td style="text-align:right;"></td>').text(''); // Thành tiền
+    var newData4 = $('<td></td>').text(''); // Ghi chú
+
+    // Gắn các <td> vào <tr>
+    newRow.append(newData1);
+    newRow.append(newData3);
+    newRow.append(newData4);
+
+    // Append <tr> vào <tfoot> của bảng
+    $('#TableChiTietBangKe tfoot').append(newRow);
 }
 function handleTableRows() {
     TableChiTietBangKe.rows().every(function () {
