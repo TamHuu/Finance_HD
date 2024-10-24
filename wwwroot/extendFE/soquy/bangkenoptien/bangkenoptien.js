@@ -173,7 +173,7 @@ function loadChiNhanhDeNghi() {
 function setupEventHandlers() {
     $('#btnXem').on('click', function (e) {
         e.preventDefault();
-        loadCashDepositData();
+        loadDanhSachBangKe();
     });
     $('#btnXuatExcel').on('click', function (e) {
         e.preventDefault();

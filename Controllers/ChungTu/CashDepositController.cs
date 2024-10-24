@@ -309,10 +309,14 @@ namespace Finance_HD.Controllers.ChungTu
         [HttpGet]
         public IActionResult Edit(string Ma)
         {
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            ViewData["TaiKhoanDangNhap"] = loggedInUser;
             ViewData["listTienTe"] = _dbContext.FiaTienTe.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listLoaiTien"] = _dbContext.FaLoaiTien.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
+            ViewData["listNhanVien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
             var BangKe = _dbContext.FiaBangKeNopTien.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (BangKe == null)
             {
