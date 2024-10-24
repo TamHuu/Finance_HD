@@ -294,43 +294,69 @@ function TableBangKe(MaTienTe) {
             if (response.success) {
                 var result = response.data;
                 var filteredResult = result.filter(x => x.maTienTe === MaTienTe);
+
+                // Làm sạch bảng trước khi thêm dữ liệu mới
                 TableChiTietBangKe.clear().draw();
-                filteredResult.forEach(function (item) {
-                    let rowContent = [
-                        `<td>${item.ma}</td>`,
-                        `<td>${item.maTienTe}</td>`,
-                        `<td>${addCommas(item.giaTri) ?? 0}</td>`,
-                        `<td>0</td>`,
-                        `<td>0</td>`,
-                        `<td></td>`,
-                    ];
 
+                if (filteredResult.length > 0) {
+                    // Thêm các dòng dữ liệu mới vào bảng
+                    filteredResult.forEach(function (item) {
+                        let rowContent = [
+                            `<td>${item.ma}</td>`,
+                            `<td>${item.maTienTe}</td>`,
+                            `<td>${addCommas(item.giaTri) ?? 0}</td>`,
+                            `<td>0</td>`,
+                            `<td>0</td>`,
+                            `<td></td>`,
+                        ];
 
-                    TableChiTietBangKe.row.add(rowContent).draw();
-                });
-                // Xử lý kết quả thành công ở đây nếu cần
+                        TableChiTietBangKe.row.add(rowContent).draw();
+                    });
+
+                    // Lấy tên tiền tệ
+                    var tenTienTeHienThi = filteredResult[0].tenTienTe;
+
+                    // Thêm dòng tổng tiền vào tfoot
+                    var newRow = $('<tr></tr>');
+                    var newData1 = $(`<td colspan="2" style="text-align:center;"></td>`).text(`Tổng tiền (${tenTienTeHienThi})`);
+                    var newData3 = $('<td style="text-align:right;"></td>').text(''); // Thành tiền (chưa có giá trị, tùy ý cập nhật sau)
+                    var newData4 = $('<td></td>').text(''); // Ghi chú
+
+                    // Gắn các <td> vào <tr>
+                    newRow.append(newData1);
+                    newRow.append(newData3);
+                    newRow.append(newData4);
+
+                    $('#TableChiTietBangKe tfoot').empty().append(newRow);
+
+                } else {
+                    // Không tìm thấy kết quả thỏa điều kiện lọc
+                    var tenTienTe = $("#TienTe option:selected").text();
+                    // Thêm dòng tổng tiền không tìm thấy
+                    var newRow = $('<tr></tr>');
+                    var newData1 = $(`<td colspan="2" style="text-align:center;"></td>`).text(`Tổng tiền (${tenTienTe})`);
+                    var newData3 = $('<td style="text-align:right;"></td>').text(''); // Thành tiền (chưa có giá trị, tùy ý cập nhật sau)
+                    var newData4 = $('<td></td>').text(''); // Ghi chú
+
+                    // Gắn các <td> vào <tr>
+                    newRow.append(newData1);
+                    newRow.append(newData3);
+                    newRow.append(newData4);
+
+                    // Append <tr> vào <tfoot> của bảng
+                    $('#TableChiTietBangKe tfoot').empty().append(newRow);
+                }
             } else {
-                console.log("Lỗi khi lấy dữ liệu chi nhánh");
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
             }
         },
         function (xhr, status, error) {
-            console.error('Lỗi khi lấy danh sách chi nhánh:', error);
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
         }
     );
-
-    var newRow = $('<tr></tr>');
-    var newData1 = $('<td colspan="2" style="text-align:center;"></td>').text('Tổng tiền (${MaTienTe})');
-    var newData3 = $('<td style="text-align:right;"></td>').text(''); // Thành tiền
-    var newData4 = $('<td></td>').text(''); // Ghi chú
-
-    // Gắn các <td> vào <tr>
-    newRow.append(newData1);
-    newRow.append(newData3);
-    newRow.append(newData4);
-
-    // Append <tr> vào <tfoot> của bảng
-    $('#TableChiTietBangKe tfoot').append(newRow);
 }
+
+
 function handleTableRows() {
     TableChiTietBangKe.rows().every(function () {
         var row = $(this.node());
