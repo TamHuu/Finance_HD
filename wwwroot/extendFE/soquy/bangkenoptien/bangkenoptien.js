@@ -46,7 +46,8 @@ function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '170px', className: 'dt-left dt-head-center', targets: [1,2, 3, 4], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [1, 2, 3], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [4], orderable: false },
         ],
         searching:false,
         ordering:false,
@@ -212,6 +213,7 @@ function loadDanhSachBangKe() {
     });
 }
 function loadChiTietBangKe(Ma) {
+
     $.ajax({
         url: "CashDeposit/getChiTietBangKe",
         type: 'POST',
@@ -377,8 +379,24 @@ function TableBangKe(data) {
     });
 }
 function TableDetailBangKe(data) {
-    TableChiTietBangKe.clear().draw();
-    console.table(data)
+    $('#TableDanhSachBangKe').on('click', 'tr', function (e) {
+        e.preventDefault();
+        var totalMoney = $(this).find('td:eq(15)').text();
+        var tenTienTe = $(this).find('td:eq(12)').text();
+
+        var newRow = $('<tr></tr>');
+        var newData1 = $(`<td colspan="2" style="text-align:center;"></td>`).text(`Tổng tiền (${tenTienTe})`);
+        var newData3 = $('<td style="text-align:right;"></td>').text(`${totalMoney}`); // Use addCommas if needed
+        var newData4 = $('<td></td>').text(''); // Assuming no specific content for this column
+
+        newRow.append(newData1);
+        newRow.append(newData3);
+        newRow.append(newData4);
+
+        $('#TableChiTietBangKe tfoot').empty().append(newRow);
+    });
+
+    TableChiTietBangKe.clear().draw(); // Clear existing data before adding new
     data.forEach(function (item) {
         let rowContent = [
             `<td>${item.ma}</td>`,
@@ -386,15 +404,14 @@ function TableDetailBangKe(data) {
             `<td>${addCommas(item.soLuong)}</td>`,
             `<td>${addCommas(item.thanhTien)}</td>`,
             `<td>${item.ghiChu}</td>`,
-      
         ];
 
-
+        // Thêm hàng mới vào bảng
         TableChiTietBangKe.row.add(rowContent).draw();
     });
 }
+
 function TableNhanVien(data) {
-    console.log("props nhan vien", data)
     TableChiTietNhanVien.clear().draw();
     data.forEach(function (item) {
         let rowContent = [
@@ -419,7 +436,7 @@ $('#TableDanhSachBangKe').on('click', 'tr', function (e) {
     e.preventDefault();
 
     // Lấy giá trị của ô đầu tiên (thứ 0) trong hàng được click
-    var firstCellValue = $(this).find('td:eq(0)').text(); // Hoặc $(this).children('td').eq(0).text();
+    var firstCellValue = $(this).find('td:eq(0)').text(); 
     loadChiTietBangKe(firstCellValue);
     loadChiTietNhanVien(firstCellValue);
 });

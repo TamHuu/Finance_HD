@@ -64,7 +64,7 @@
                             <select class="form-control form-control-sm" id="NguoiNopTien" name="NguoiNopTien">
                                 @foreach (var tt in listNguoiNopTien)
                                 {
-                                    <!option value="@tt.BranchId" @(branchID == tt.BranchId ? "selected" : "")>@tt.FullName</!option>
+                                    <!option value="@tt.Ma" @(branchID == tt.BranchId ? "selected" : "")>@tt.FullName</!option>
                                 }
                             </select>
 
@@ -142,8 +142,6 @@
                     <tfoot>
                       
                     </tfoot>
-
-
                 </table>
 
             </div>

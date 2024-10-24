@@ -13,6 +13,22 @@ namespace Finance_HD.Controllers.ChungTu
         {
             _dbContext = context;
         }
+        public long CovertLong(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return 0; 
+            }
+
+            if (long.TryParse(input, out long result))
+            {
+                return result; 
+            }
+
+            return 0; 
+        }
+
+
         // Hàm để lấy số thứ tự tiếp theo
         private int GetNextSequentialNumber(string chiNhanhCode)
         {
@@ -158,7 +174,7 @@ namespace Finance_HD.Controllers.ChungTu
                              && !(bangkenhanvien.Deleted ?? false)
                                        select new
                                        {
-                                           TenNhanVien = nhanvien.FullName+"",
+                                           TenNhanVien = nhanvien.FullName + "",
                                            Ma = bangkenhanvien.Ma + "",
                                            MaBangKe = bangkenoptien.Ma + "",
                                            MaNhanVien = nhanvien.Ma + "",
@@ -172,9 +188,11 @@ namespace Finance_HD.Controllers.ChungTu
         public IActionResult Add()
         {
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
-
+            var maChiTietBangKe = _dbContext.FiaChiTietBangKeNopTien
+                            .Select(x => x.Ma)  
+                            .FirstOrDefault();
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
-            ViewData["TaiKhoanDangNhap"]=loggedInUser;
+            ViewData["TaiKhoanDangNhap"] = loggedInUser;
             ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNhanVien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
@@ -199,7 +217,7 @@ namespace Finance_HD.Controllers.ChungTu
        string MaNoiDung,
        string GhiChu,
        string DiaChi,
-       int SoTien,
+       string SoTien,
        string NguoiNhanTien,
        string KhachHang,
     List<FiaChiTietBangKeNopTien> DataChiTietBangKe,
@@ -238,7 +256,7 @@ namespace Finance_HD.Controllers.ChungTu
                 DiaChi = DiaChi,
                 MaTienTe = MaTienTe.GetGuid(),
                 TyGia = TyGia,
-                SoTien = SoTien,
+                SoTien = CovertLong(SoTien),
                 GhiChu = GhiChu,
                 NguoiNhanTien = NguoiNhanTien.GetGuid(),
                 MaNoiDung = MaNoiDung.GetGuid(),
