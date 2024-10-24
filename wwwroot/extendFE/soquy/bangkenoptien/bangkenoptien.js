@@ -386,8 +386,8 @@ function TableDetailBangKe(data) {
 
         var newRow = $('<tr></tr>');
         var newData1 = $(`<td colspan="2" style="text-align:center;"></td>`).text(`Tổng tiền (${tenTienTe})`);
-        var newData3 = $('<td style="text-align:right;"></td>').text(`${totalMoney}`); // Use addCommas if needed
-        var newData4 = $('<td></td>').text(''); // Assuming no specific content for this column
+        var newData3 = $('<td style="text-align:right;"></td>').text(`${totalMoney}`); 
+        var newData4 = $('<td></td>').text(''); 
 
         newRow.append(newData1);
         newRow.append(newData3);
@@ -396,7 +396,7 @@ function TableDetailBangKe(data) {
         $('#TableChiTietBangKe tfoot').empty().append(newRow);
     });
 
-    TableChiTietBangKe.clear().draw(); // Clear existing data before adding new
+    TableChiTietBangKe.clear().draw(); 
     data.forEach(function (item) {
         let rowContent = [
             `<td>${item.ma}</td>`,
@@ -405,8 +405,7 @@ function TableDetailBangKe(data) {
             `<td>${addCommas(item.thanhTien)}</td>`,
             `<td>${item.ghiChu}</td>`,
         ];
-
-        // Thêm hàng mới vào bảng
+        
         TableChiTietBangKe.row.add(rowContent).draw();
     });
 }
@@ -500,7 +499,20 @@ function addCommas(amount) {
     if (amount == null || isNaN(amount)) {
         return '0';
     }
-    // Chuyển đổi số thành chuỗi và sử dụng phương thức replace với biểu thức chính quy
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+$('#TableDanhSachBangKe tbody').on('click', 'tr', function () {
+    // Remove 'selected' class from any row that has it
+    $('#TableDanhSachBangKe tbody tr.selected').removeClass('selected');
+    
+    $(this).toggleClass('selected');
+});
+$('#TableChiTietBangKe tbody').on('click', 'tr', function () {
+    $('#TableChiTietBangKe tbody tr.selected').removeClass('selected');
+    $(this).toggleClass('selected');
+});
+$('#TableChiTietNhanVien tbody').on('click', 'tr', function () {
+    $('#TableChiTietNhanVien tbody tr.selected').removeClass('selected');
+    $(this).toggleClass('selected');
+});
