@@ -47,7 +47,6 @@ function ConfigTable() {
     });
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
-            { className: "d-none", targets: 3, orderable: false },
             { width: '300px', className: 'dt-left dt-head-center', targets: [0,1], orderable: false },
             { width: '100px', className: 'dt-left dt-head-center', targets: [2], orderable: false },
         ],
@@ -97,7 +96,6 @@ function fetchMonetaryList() {
 function MonetarySelect(data) {
     const monetarySelect = $('#TienTe');
     monetarySelect.empty();
-    console.log("Mã tiền tệ", MaTienTe)
     // Sử dụng giá trị MaTienTe nếu đang ở chế độ chỉnh sửa
     var maTienTe = isEdit ? MaTienTe : '0febf710-436d-40cc-95e5-e457605cd104'; // Mặc định VND hoặc giá trị từ Model
     data.forEach(function (monetary) {
@@ -138,7 +136,6 @@ function fetchUserList() {
 function UserSelect(data) {
     const userSelect = $('#NguoiNopTien');
     userSelect.empty();
-    console.log("Mã tiền tệ", MaNguoiNopTien)
     var maNguoiNopTien = isEdit ? MaNguoiNopTien : MaNguoiDangNhap;
     data.forEach(function (user) {
         const option = $('<option>', {
@@ -307,8 +304,7 @@ function sendFormData() {
             var DataRow = { maLoaiTien, loaiTien, soLuong, thanhTien, ghiChu };
             DataChiTietBangKe.push(DataRow);
         });
-
-        console.log("dữ liệu", DataChiTietBangKe);
+        
         var Ma = $("#Ma").val();
         var NgayNopTien = $("#NgayNopTien").val();
         var NgayLap = $("#NgayLap").val();
@@ -504,21 +500,24 @@ $("#btnSaveChiTietNhanVien").on('click', function () {
     // Lấy giá trị từ input
     var MaNhanVien = $("#MaNhanVien").val();
     var SoTien = $("#SoTienNhanVien").val();
+    var firstRow = $('#TableChiTietNhanVien tbody tr:first');
 
+    // Lấy giá trị của cột đầu tiên (giả sử là cột thứ nhất)
+    var cashAmount = firstRow.find('td:eq(0)').text(); // Sử dụng eq(0) để lấy cột thứ nhất
+
+    // Hiển thị giá trị của cột đầu tiên
+    console.log(cashAmount);
     if (!SoTien) {
         showAlert('Lỗi!', 'Vui lòng nhập số tiền.', 'error');
         return;
     }
-
     var exists = DataNhanVien.some(function (data) {
         return data.MaNhanVien === MaNhanVien;
     });
-
     if (exists) {
         showAlert('Lỗi!', 'Nhân viên này đã tồn tại trong danh sách.', 'error');
         return;
     }
-
     var allData = { MaNhanVien, SoTien };
     DataNhanVien.push(allData);
 
