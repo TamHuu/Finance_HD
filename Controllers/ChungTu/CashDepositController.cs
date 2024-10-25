@@ -2,6 +2,7 @@
 using Finance_HD.Helpers;
 using Finance_HD.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Finance_HD.Controllers.ChungTu
 {
@@ -17,15 +18,15 @@ namespace Finance_HD.Controllers.ChungTu
         {
             if (string.IsNullOrEmpty(input))
             {
-                return 0; 
+                return 0;
             }
 
             if (long.TryParse(input, out long result))
             {
-                return result; 
+                return result;
             }
 
-            return 0; 
+            return 0;
         }
 
 
@@ -189,7 +190,7 @@ namespace Finance_HD.Controllers.ChungTu
         {
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
             var maChiTietBangKe = _dbContext.FiaChiTietBangKeNopTien
-                            .Select(x => x.Ma)  
+                            .Select(x => x.Ma)
                             .FirstOrDefault();
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
             ViewData["TaiKhoanDangNhap"] = loggedInUser;
@@ -317,11 +318,13 @@ namespace Finance_HD.Controllers.ChungTu
             ViewData["listNoiDung"] = _dbContext.CatNoiDungThuChi.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNguoiNopTien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
             ViewData["listNhanVien"] = _dbContext.SysUser.Where(x => !(x.Deleted ?? false)).ToList();
+
             var BangKe = _dbContext.FiaBangKeNopTien.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (BangKe == null)
             {
                 return NotFound();
             }
+
             var DataChiTietBangKe = _dbContext.FiaChiTietBangKeNopTien.Where(x => x.MaBangKeNopTien == BangKe.Ma).ToList();
             var DataNhanVien = _dbContext.FiaChiTietBangKeNhanVien.Where(x => x.MaBangKe == BangKe.Ma).ToList();
 
@@ -465,6 +468,73 @@ namespace Finance_HD.Controllers.ChungTu
 
             return Json(new { success = true, message = "Xoá thành công!" });
         }
+        [HttpPost]
+       
+        public async Task<JsonResult> getCashDepositById(string ma)
+        {
+            if (string.IsNullOrEmpty(ma))
+            {
+                return Json(new { success = false, message = "Mã không hợp lệ." });
+            }
+
+            // Kiểm tra chuyển đổi `ma` sang `Guid`
+            var maGuid = ma.GetGuid();
+            if (maGuid == null)
+            {
+                return Json(new { success = false, message = "Mã không hợp lệ." });
+            }
+
+            // Tìm thông tin bảng kê nộp tiền
+            var cashDeposit = await _dbContext.FiaBangKeNopTien
+                .FirstOrDefaultAsync(x => x.Ma == maGuid);
+
+            if (cashDeposit == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy thông tin bảng kê." });
+            }
+
+            // Truy vấn chi tiết bảng kê và loại tiền
+            var listChiTietBangKe = await (from bangke in _dbContext.FiaChiTietBangKeNopTien
+                                           join loaitien in _dbContext.FaLoaiTien
+                                           on bangke.MaLoaiTien equals loaitien.Ma
+                                           where bangke.MaBangKeNopTien == maGuid
+                                           select new
+                                           {
+                                               Ma = bangke.Ma,
+                                               MaBangKeNopTien = bangke.MaBangKeNopTien,
+                                               MaLoaiTien = bangke.MaLoaiTien,
+                                               SoLuong = bangke.SoLuong,
+                                               ThanhTien = bangke.ThanhTien,
+                                               GhiChu = bangke.GhiChu,
+                                               TenLoaiTien = loaitien.GiaTri
+                                           }).OrderByDescending(x=>x.TenLoaiTien).ToListAsync();
+
+            // Truy vấn nhân viên
+            var listNhanVien = await (from nhanvien in _dbContext.FiaChiTietBangKeNhanVien
+                                           join user in _dbContext.SysUser
+                                           on nhanvien.MaNhanVien equals user.Ma
+                                           where nhanvien.MaBangKe == maGuid
+                                           select new
+                                           {
+                                               Ma = nhanvien.Ma,
+                                               MaBangKe = nhanvien.MaBangKe,
+                                               MaNhanVien = nhanvien.MaNhanVien,
+                                               SoTien = nhanvien.SoTien,
+                                               TenNhanVien = user.FullName,
+                                               CreatedDate = nhanvien.CreatedDate,
+                                           }).OrderByDescending(x => x.CreatedDate).ToListAsync();
+            // Đóng gói dữ liệu trả về
+            var responseData = new
+            {
+                cashDeposit,
+                ChiTietBangKe = listChiTietBangKe,
+                NhanVien = listNhanVien
+            };
+
+            return Json(new { success = true, data = responseData });
+        }
+
+
     }
 
 }

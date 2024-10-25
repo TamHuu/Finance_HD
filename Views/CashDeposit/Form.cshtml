@@ -3,7 +3,9 @@
 
 @{
     var dataChiTietBangKe = ViewBag.DataChiTietBangKe as List<Finance_HD.Models.FiaChiTietBangKeNopTien>;
+    var maChiTietBangKe = dataChiTietBangKe?.Select(d => d.Ma).ToList();
     var dataNhanVien = ViewBag.DataNhanVien as List<Finance_HD.Models.FiaChiTietBangKeNhanVien>;
+    var maTableNhanVien = dataNhanVien?.Select(d => d.Ma).ToList();
     bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
     ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
@@ -12,6 +14,7 @@
     var listLoaiTien = ViewData["listLoaiTien"] as List<Finance_HD.Models.FaLoaiTien>;
     var listNoiDung = ViewData["listNoiDung"] as List<Finance_HD.Models.CatNoiDungThuChi>;
     var taikhoandangnhap = ViewData["TaiKhoanDangNhap"] as Finance_HD.Models.SysUser;
+    var maNguoiDangNhap = taikhoandangnhap.Ma;
     var branchID = taikhoandangnhap.BranchId; // Lấy branchID
     var deparmentId = taikhoandangnhap.MaPhongBan; // Lấy mã phòng ban
     var listNguoiNopTien = ViewData["listNguoiNopTien"] as List<Finance_HD.Models.SysUser>;
@@ -50,22 +53,20 @@
                         </div>
                         <div class="form-group col-md-2">
                             <label for="TienTe">Tiền tệ<span style="color: red;">*</span></label>
-                            <select class="form-control form-control-sm" id="TienTe" name="TienTe">
+                            <select class="form-control form-control-sm" id="TienTe" name="TienTe" value="@Model.MaTienTe">
                             </select>
                         </div>
                         <div class="form-group col-md-2">
                             <label for="TyGia">Tỷ Giá<span style="color: red;">*</span></label>
                             <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" required
-                                   value="@((Model.TyGia.HasValue) ? Model.TyGia.Value.ToString("F2") : "1")" />
+                                   value="@(Model.TyGia != null && Model.TyGia != 0 ? Model.TyGia : 1)" />
                         </div>
+
 
                         <div class="form-group col-md-2">
                             <label for="NguoiNopTien">Người nộp<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="NguoiNopTien" name="NguoiNopTien">
-                                @foreach (var tt in listNguoiNopTien)
-                                {
-                                    <!option value="@tt.Ma" @(branchID == tt.BranchId ? "selected" : "")>@tt.FullName</!option>
-                                }
+                             
                             </select>
 
                         </div>
@@ -163,7 +164,7 @@
                     </div>
                     <div class="col-md-6 d-flex text-white" style="justify-content: space-evenly; text-align: center; align-items: center;">
                         <h6 style="width: 100px;" class="m-0 text-white">Số tiền</h6>
-                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien" name="SoTienNhanVien" oninput="formatCurrencyInput(this)" />
+                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" id="SoTienNhanVien"  name="SoTienNhanVien" oninput="formatCurrencyInput(this)" />
 
                         <button class="btn-custom" id="btnSaveChiTietNhanVien">
                             <i class="fa fa-check-circle fa-lg"></i>
@@ -262,10 +263,21 @@
 
     </style>
     <script>
-
         var defaultUID = '@defaultUID';
         var MaChiNhanhDangNhap = '@branchID';
         var MaPhongBanDangNhap = '@deparmentId';
-        var isEdit = @Html.Raw(JsonSerializer.Serialize(isEdit));
+        var MaDonViNop = '@Model.MaChiNhanhNop';
+        var MaDonViNhan = '@Model.MaChiNhanhNhan';
+        var MaBoPhanNop = '@Model.MaPhongBanNop';
+        var MaBoPhanNhan = '@Model.MaPhongBanNhan';
+        var MaNguoiNopTien = '@Model.NguoiNopTien';
+        var isEdit = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(isEdit, typeof(bool)));
+        var MaTienTe = '@Model.MaTienTe';
+        var MaNguoiDangNhap = '@maNguoiDangNhap';
+
+        var maBangKe = '@Model.Ma';
+      console.log("Mã bảng kê", maBangKe)
     </script>
+
+
 }
