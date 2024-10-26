@@ -1,6 +1,8 @@
 ﻿var TableChiTietBangKe;
 var TableChiTietNhanVien
 var DataNhanVien = [];
+var soTienChange = 0;
+
 var totalSum = 0;
 $(document).ready(function () {
     fetchMonetaryList();
@@ -43,7 +45,9 @@ function ConfigTable() {
                 "previous": "Trước"
             }
         },
+        drawCallback: function (settings) {
 
+        }
     });
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
@@ -73,7 +77,6 @@ function ConfigTable() {
         }
     });
 }
-
 
 
 // Tiền tệ (VND)
@@ -341,7 +344,8 @@ function sendFormData() {
             TyGia,
             SoTien,
         };
-        callAPI('POST', '/CashDeposit/Add', formData,
+        var url = Ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
+        callAPI('POST', url, formData,
             function (response) {
                 if (response.success) {
                     showAlert('Thành công!', response.message, 'success', 'OK', null, function () {
@@ -482,6 +486,10 @@ function handleTableRows() {
 }
 
 function updateTotalSum() {
+    if (isEdit) {
+        totalSum = soTienChange
+    }
+
     TableChiTietBangKe.rows().every(function () {
         var row = $(this.node());
         var thanhTien = parseFloat(row.find('td:eq(4)').text().replace(/,/g, ''));
@@ -601,19 +609,27 @@ function getCashDepositById() {
                         addCommas(item.soTien),
                         ""
                     ];
-                    
+
                     TableChiTietNhanVien.row.add(rowContent);
                 });
-                TableChiTietNhanVien.draw(); 
+                TableChiTietNhanVien.draw();
+               
+                    handleTableRows();
+                
+                var tenTienTe = result.cashDeposit.length > 0 ? result.cashDeposit[0].tenTienTe : null;
+                soTienChange = result.cashDeposit.length > 0 ? result.cashDeposit[0].soTien : null;
 
+               
+                updateTotalRow(tenTienTe);
+                $('#TableChiTietBangKe tfoot td:eq(1)').text(addCommas(soTienChange));
             } else {
-                // Xử lý lỗi nếu không thành công
-                console.error("Lỗi khi lấy dữ liệu:", response.message);
+                // Nếu không có kết quả
+                var tenTienTe = $("#TienTe option:selected").text();
+                updateTotalRow(tenTienTe);
             }
         },
-        function (error) {
-            // Xử lý lỗi mạng hoặc các lỗi khác
-            console.error("Lỗi mạng:", error);
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
         }
     );
 }

@@ -484,14 +484,37 @@ namespace Finance_HD.Controllers.ChungTu
                 return Json(new { success = false, message = "Mã không hợp lệ." });
             }
 
-            // Tìm thông tin bảng kê nộp tiền
-            var cashDeposit = await _dbContext.FiaBangKeNopTien
-                .FirstOrDefaultAsync(x => x.Ma == maGuid);
+    
 
-            if (cashDeposit == null)
-            {
-                return Json(new { success = false, message = "Không tìm thấy thông tin bảng kê." });
-            }
+            var cashDeposit = await (from bangke in _dbContext.FiaBangKeNopTien
+                                      join tiente in _dbContext.FiaTienTe
+                                      on bangke.MaTienTe equals tiente.Ma
+                                      where bangke.Ma == maGuid
+                                      select new
+                                      {
+                                          Ma = bangke.Ma,
+                                          MaChiNhanhNhan = bangke.MaChiNhanhNhan,
+                                          MaChiNhanhNop = bangke.MaChiNhanhNop,
+                                          MaPhongBanNhan = bangke.MaPhongBanNhan,
+                                          MaPhongBanNop = bangke.MaPhongBanNop,
+                                          NgayLap = bangke.NgayLap,
+                                          NgayNopTien = bangke.NgayNopTien,
+                                          NguoiNopTien = bangke.NguoiNopTien,
+                                          TenNguoiNopTien = bangke.TenNguoiNopTien,
+                                          DiaChi = bangke.DiaChi,
+                                          LyDo = bangke.LyDo,
+                                          MaTienTe = tiente.Ma,
+                                          TenTienTe = tiente.Ten,
+                                          TyGia = bangke.TyGia,
+                                          SoTien = bangke.SoTien,
+                                          GhiChu = bangke.GhiChu,
+                                          NguoiNhanTien = bangke.NguoiNhanTien,
+                                          MaNoiDung = bangke.MaNoiDung,
+                                          MaHinhThuc = bangke.MaHinhThuc,
+                                          SoPhieu = bangke.SoPhieu,
+                                          TrangThai = bangke.TrangThai,
+                                          CreatedDate = bangke.CreatedDate,
+                                      }).OrderByDescending(x => x.CreatedDate).ToListAsync();
 
             // Truy vấn chi tiết bảng kê và loại tiền
             var listChiTietBangKe = await (from bangke in _dbContext.FiaChiTietBangKeNopTien

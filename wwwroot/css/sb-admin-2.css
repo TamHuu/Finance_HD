@@ -10,6 +10,57 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+.table thead th {
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+}
+
+.table tbody td {
+    color: #333;
+}
+
+.btn-custom {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 11px;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+.d-flex > h6 {
+    margin-right: 5px;
+}
+
+.d-flex > input {
+    margin-right: 5px;
+}
+
+.btn-custom:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.btn-custom:active {
+    transform: scale(0.95);
+}
+
+#TableChiTietBangKe tfoot {
+    background-color: #007bff;
+    font-weight: bold;
+    color: white;
+}
+
+    #TableChiTietBangKe tfoot th {
+        border-top: 2px solid #dee2e6;
+        padding: 10px;
+    }
+
 :root {
   --blue: #4e73df;
   --indigo: #6610f2;
