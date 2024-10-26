@@ -1,6 +1,5 @@
 ﻿var TableChiTietBangKe;
-var TableChiTietNhanVien
-var DataNhanVien = [];
+var TableChiTietNhanVien;
 var soTienChange = 0;
 
 var totalSum = 0;
@@ -8,10 +7,10 @@ $(document).ready(function () {
     fetchMonetaryList();
     fetchUserList();
     fetchBranchList();
-    sendFormData();
     ConfigTable();
     getCashDepositById();
     initialize();
+    sendFormData();
 });
 function ConfigTable() {
     TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
@@ -291,76 +290,7 @@ $("#DonViNhan").on('change', function () {
     BoPhanNhanSelect(maDonViNhan);
 });
 
-// Gửi dữ liệu sang controller
-function sendFormData() {
-    $("#btnSave").on('click', function () {
-        var DataChiTietBangKe = [];
-        TableChiTietBangKe.rows().every(function () {
-            var row = $(this.node());
 
-            var maLoaiTien = row.find('td:eq(0)').text();
-            var loaiTien = parseFloat(row.find('td:eq(2)').text());
-            var soLuong = parseInt(row.find('td:eq(3)').text());
-            var thanhTien = parseInt(row.find('td:eq(4)').text());
-            var ghiChu = row.find('td:eq(5)').text();
-
-            var DataRow = { maLoaiTien, loaiTien, soLuong, thanhTien, ghiChu };
-            DataChiTietBangKe.push(DataRow);
-        });
-        
-        var Ma = $("#Ma").val();
-        var NgayNopTien = $("#NgayNopTien").val();
-        var NgayLap = $("#NgayLap").val();
-        var MaHinhThuc = $("#HinhThuc").val();
-        var MaTienTe = $("#TienTe").val();
-        var NguoiNopTien = $("#NguoiNopTien").val();
-        var MaChiNhanhNop = $("#DonViNop").val();
-        var MaPhongBanNop = $("#BoPhanNop").val();
-        var MaChiNhanhNhan = $("#DonViNhan").val();
-        var MaPhongBanNhan = $("#BoPhanNhan").val();
-        var KhachHang = $("#KhachHang").val();
-        var MaNoiDung = $("#NoiDung").val();
-        var GhiChu = $("#GhiChu").val();
-        var DiaChi = $("#DiaChi").val();
-        var TyGia = $("#TyGia").val();
-        var SoTien = totalSum;
-        var formData = {
-            Ma,
-            NgayNopTien,
-            NgayLap,
-            MaHinhThuc,
-            MaTienTe,
-            NguoiNopTien,
-            MaChiNhanhNop,
-            MaPhongBanNop,
-            MaChiNhanhNhan,
-            MaPhongBanNhan,
-            KhachHang,
-            MaNoiDung,
-            GhiChu,
-            DiaChi,
-            DataChiTietBangKe,
-            DataNhanVien,
-            TyGia,
-            SoTien,
-        };
-        var url = Ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
-        callAPI('POST', url, formData,
-            function (response) {
-                if (response.success) {
-                    showAlert('Thành công!', response.message, 'success', 'OK', null, function () {
-                        window.location.href = "/CashDeposit"; // Chuyển trang sau khi nhấn OK
-                    });
-                } else {
-                    console.log("Lỗi khi lấy dữ liệu chi nhánh");
-                }
-            },
-            function (xhr, status, error) {
-                console.error('Lỗi khi lấy danh sách chi nhánh:', error);
-            }
-        );
-    });
-}
 // Xử lý Chi tiết bảng kê
 function TableBangKe(MaTienTe) {
     callAPI('GET', '/Currency/getListCurrency', null,
@@ -632,4 +562,88 @@ function getCashDepositById() {
             console.error('Lỗi khi lấy danh sách tiền tệ:', error);
         }
     );
+}
+// Gửi dữ liệu sang controller
+function sendFormData() {
+    $("#btnSave").on('click', function () {
+        var DataChiTietBangKe = [];
+        var DataNhanVien = []; 
+        TableChiTietBangKe.rows().every(function () {
+            var row = $(this.node());
+
+            var maLoaiTien = row.find('td:eq(0)').text();
+            var loaiTien = parseFloat(row.find('td:eq(2)').text());
+            var soLuong = parseInt(row.find('td:eq(3)').text());
+            var thanhTien = parseInt(row.find('td:eq(4)').text());
+            var ghiChu = row.find('td:eq(5)').text();
+
+            var DataRow = { maLoaiTien, loaiTien, soLuong, thanhTien, ghiChu };
+            DataChiTietBangKe.push(DataRow);
+        });
+
+        TableChiTietNhanVien.rows().every(function () {
+            var row = $(this.node());
+
+            var maNhanVien = row.find('td:eq(0)').text();
+            var tenNhanVien = row.find('td:eq(1)').text();
+            var soTienString = row.find('td:eq(2)').text().trim();
+            var soTien = parseInt(soTienString.replace(/,/g, '').replace(/\./g, ''), 10);
+
+            var DataRowNhanVien = { maNhanVien, tenNhanVien, soTien };
+            DataNhanVien.push(DataRowNhanVien); // Correctly push to DataNhanVien
+        });
+
+        var Ma = $("#Ma").val();
+        var NgayNopTien = $("#NgayNopTien").val();
+        var NgayLap = $("#NgayLap").val();
+        var MaHinhThuc = $("#HinhThuc").val();
+        var MaTienTe = $("#TienTe").val();
+        var NguoiNopTien = $("#NguoiNopTien").val();
+        var MaChiNhanhNop = $("#DonViNop").val();
+        var MaPhongBanNop = $("#BoPhanNop").val();
+        var MaChiNhanhNhan = $("#DonViNhan").val();
+        var MaPhongBanNhan = $("#BoPhanNhan").val();
+        var KhachHang = $("#KhachHang").val();
+        var MaNoiDung = $("#NoiDung").val();
+        var GhiChu = $("#GhiChu").val();
+        var DiaChi = $("#DiaChi").val();
+        var TyGia = $("#TyGia").val();
+        var SoTien = totalSum; // Ensure totalSum is defined somewhere in your code
+        var formData = {
+            Ma,
+            NgayNopTien,
+            NgayLap,
+            MaHinhThuc,
+            MaTienTe,
+            NguoiNopTien,
+            MaChiNhanhNop,
+            MaPhongBanNop,
+            MaChiNhanhNhan,
+            MaPhongBanNhan,
+            KhachHang,
+            MaNoiDung,
+            GhiChu,
+            DiaChi,
+            DataChiTietBangKe,
+            DataNhanVien, // This should now be populated
+            TyGia,
+            SoTien,
+        };
+
+        var url = Ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
+        callAPI('POST', url, formData,
+            function (response) {
+                if (response.success) {
+                    showAlert('Thành công!', response.message, 'success', 'OK', null, function () {
+                        window.location.href = "/CashDeposit"; // Redirect after clicking OK
+                    });
+                } else {
+                    console.log("Lỗi khi lấy dữ liệu chi nhánh");
+                }
+            },
+            function (xhr, status, error) {
+                console.error('Lỗi khi lấy danh sách chi nhánh:', error);
+            }
+        );
+    });
 }
