@@ -62,10 +62,6 @@
                                    value="@(Model.TyGia != null && Model.TyGia != 0 ? Model.TyGia : 1)" />
                         </div>
 
-
-                    </div>
-                    <div class="form-row ">
-
                         <div class="form-group col-md-2">
                             <label for="NguoiNopTien">Người nộp<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="NguoiNopTien" name="NguoiNopTien">
@@ -77,10 +73,7 @@
                             <select class="form-control form-control-sm" id="NguoiNhanTien" name="NguoiNhanTien">
                             </select>
 
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-2">
+                        </div> <div class="form-group col-md-2">
                             <label for="DonViNop">Đơn vị nộp<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="DonViNop" name="DonViNop"></select>
                         </div>
@@ -97,9 +90,6 @@
 
                             <select class="form-control form-control-sm" id="BoPhanNhan" name="BoPhanNhan"></select>
                         </div>
-                    </div>
-
-                    <div class="form-row">
                         <div class="form-group col-md-2">
                             <label for="KhachHang">Khách hàng</label>
                             <input placeholder="Nhập tên khách hàng" type="text" class="form-control form-control-sm" id="KhachHang" name="TenNguoiNopTien" required value="@Model.TenNguoiNopTien" />
@@ -123,6 +113,9 @@
                             <input type="text" placeholder="Nhập địa chỉ" class="form-control form-control-sm w-100" id="DiaChi" name="DiaChi" value="@Model.DiaChi" />
                         </div>
                     </div>
+                  
+                 
+                 
                 </form>
             </div>
         </div>
