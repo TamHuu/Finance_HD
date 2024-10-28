@@ -16,43 +16,41 @@
         <form id="Form">
             <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
 
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Monetary">Tên tiền tệ:</label>
-                        <select class="form-control" id="Monetary" name="Monetary">
-                            @foreach (var item in lisTienTe)
-                            {
-                                <!option value="@item.Ma" @(Model.MaTienTe == item.Ma ? "selected" : "")>@item.Ten</!option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="GiaTri">Nhập giá trị </label>
-                        <input type="text" class="form-control form-control-sm" id="GiaTri" name="GiaTri" required value="@Model.GiaTri" />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Code">Code</label>
-                        <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
-                    </div>
-                </div>
-              
-               
-               
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Status">Trạng thái</label>
-                        <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status==true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(!Model.Status==true ? "selected" : "")>Không hoạt động</!option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+           <div class="row">
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="Monetary">Tên tiền tệ:</label>
+            <select class="form-control" id="Monetary" name="Monetary">
+                @foreach (var item in lisTienTe)
+                {
+                    <!option value="@item.Ma" @(Model.MaTienTe == item.Ma ? "selected" : "")>@item.Ten</!option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="GiaTri">Nhập giá trị</label>
+            <input placeholder="Nhập giá trị" type="text" class="form-control form-control-sm" id="GiaTri" name="GiaTri" required value="@Model.GiaTri" />
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="Code">Code</label>
+            <input placeholder="Nhập code" type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="Status">Trạng thái</label>
+            <select class="form-control form-control-sm" id="Status" name="Status">
+                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+            </select>
+        </div>
+    </div>
+</div>
+
 
             <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
         </form>

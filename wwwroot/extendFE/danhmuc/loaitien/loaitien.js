@@ -4,8 +4,10 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '600px', className: 'dt-left dt-head-center', targets: [1, 2, 3], orderable: false },
-            { width: '150px', className: 'text-center', targets: [4,5], orderable: false },
+            { width: '300px',className: 'dt-right dt-head-center', targets: [1, 2], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [ 3], orderable: false },
+            { minWidth: "200px", width: '170px', className: 'text-center', targets: [4], orderable: false },
+            { minWidth: "100px", width: '100px', className: 'text-center', targets: [5], orderable: false },
         ],
         sorting: true, 
         language: {

@@ -201,6 +201,7 @@
     <_ContentIncludedByDefault Remove="Views\Permissions\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Report\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\User\Form.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\global.css" />
   </ItemGroup>
 
   <ItemGroup>

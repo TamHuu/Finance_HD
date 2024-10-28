@@ -75,10 +75,9 @@ function ConfigTable() {
 
     TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
         columnDefs: [
-            { className: "d-none", targets: 0, orderable: false },
-            { width: '300px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
-            { width: '100px', className: 'dt-left dt-head-center', targets: [2, 3], orderable: false },
-            { width: '100px', className: 'dt-right dt-head-center', targets: [3], orderable: false },
+            { className: "d-none", targets: [0,1], orderable: false },
+            { width: '300px', className: 'dt-left dt-head-center', targets: [2], orderable: false },
+            { width: '200px', className: 'dt-right dt-head-center', targets: [3], orderable: false },
         ],
         searching: false,
         lengthChange: false,
