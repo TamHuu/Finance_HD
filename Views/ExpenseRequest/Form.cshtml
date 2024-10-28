@@ -76,13 +76,15 @@
 
     <div class="form-group col-md-2">
         <label for="TyGia">Tỷ Giá</label>
-        <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" required value="@Model.TyGia" />
+                    <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" required
+                           value="@(Model.TyGia != null && Model.TyGia != 0 ? Model.TyGia : 1)" />
     </div>
 
     <!-- Dòng 4: Số Tiền, Hình Thức -->
     <div class="form-group col-md-2">
         <label for="SoTien">Số Tiền</label>
-        <input type="number" class="form-control form-control-sm" id="SoTien" name="SoTien" required value="@Model.SoTien" />
+                    <input type="number" class="form-control form-control-sm" id="SoTien" name="SoTien" required
+                           value="@(Model.SoTien != null && Model.SoTien != 0 ? Model.SoTien : 0)" />
     </div>
 
     <div class="form-group col-md-2">
@@ -97,7 +99,7 @@
     <!-- Dòng 5: Ghi Chú -->
     <div class="form-group col-md-12">
         <label for="GhiChu">Ghi Chú</label>
-        <textarea rows="5" class="form-control form-control-sm" id="GhiChu" name="GhiChu">@Model.GhiChu</textarea>
+        <textarea rows="5" class="form-control form-control-sm" id="GhiChu" name="GhiChu" placeholder="Nhập ghi chú">@Model.GhiChu</textarea>
     </div>
 </div>
 

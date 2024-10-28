@@ -274,7 +274,7 @@ function drawDanhSach(data) {
             `<td>${item.tenTrangThai}</td>`,
             `<td>${item.nguoiChi ?? ""}</td>`,
             `<td>${formatDate(item.ngayChi)}</td>`,
-            `<td>${addCommas(item.soTienChi) ?? 0}</td>`,
+            `<td>${addCommas(item.soTien) ?? 0}</td>`,
             `
     <td>
         ${item.tenTrangThai === "Lập phiếu"
