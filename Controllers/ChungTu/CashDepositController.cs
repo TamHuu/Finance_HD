@@ -221,8 +221,8 @@ namespace Finance_HD.Controllers.ChungTu
        string SoTien,
        string NguoiNhanTien,
        string KhachHang,
-    List<FiaChiTietBangKeNopTien> DataChiTietBangKe,
-    List<FiaChiTietBangKeNhanVien> DataNhanVien
+    List<FiaChiTietBangKeNopTien> SaveDataBangKe,
+    List<FiaChiTietBangKeNhanVien> SaveDataNhanVien
    )
         {
 
@@ -243,6 +243,7 @@ namespace Finance_HD.Controllers.ChungTu
                 return Json(new { success = false, message = "Không được thêm bảng kê từ chi nhánh khác!" });
             }
             var TenNguoiNopTien = _dbContext.SysUser.FirstOrDefault(x => x.Ma == NguoiNopTien.GetGuid());
+          
             var listBangKe = new FiaBangKeNopTien
             {
                 Ma = Ma.GetGuid(),
@@ -269,7 +270,7 @@ namespace Finance_HD.Controllers.ChungTu
             };
             _dbContext.FiaBangKeNopTien.Add(listBangKe);
             _dbContext.SaveChanges();
-            foreach (var chiTiet in DataChiTietBangKe)
+            foreach (var chiTiet in SaveDataBangKe)
             {
                 var listChiTietBangKe = new FiaChiTietBangKeNopTien
                 {
@@ -285,7 +286,7 @@ namespace Finance_HD.Controllers.ChungTu
 
                 _dbContext.FiaChiTietBangKeNopTien.Add(listChiTietBangKe);
             }
-            foreach (var nhanVien in DataNhanVien)
+            foreach (var nhanVien in SaveDataNhanVien)
             {
                 var BangKeNhanVien = new FiaChiTietBangKeNhanVien
                 {
@@ -352,8 +353,8 @@ namespace Finance_HD.Controllers.ChungTu
        string LyDo,
        int SoTien,
        string NguoiNhanTien,
-    List<FiaChiTietBangKeNopTien> DataChiTietBangKe,
-    List<FiaChiTietBangKeNhanVien> DataNhanVien
+    List<FiaChiTietBangKeNopTien> SaveDataBangKe,
+    List<FiaChiTietBangKeNhanVien> SaveDataNhanVien
    )
         {
 
@@ -402,7 +403,7 @@ namespace Finance_HD.Controllers.ChungTu
             };
             _dbContext.FiaBangKeNopTien.Update(listBangKe);
             _dbContext.SaveChanges();
-            foreach (var chiTiet in DataChiTietBangKe)
+            foreach (var chiTiet in SaveDataBangKe)
             {
                 var listChiTietBangKe = new FiaChiTietBangKeNopTien
                 {
@@ -420,7 +421,7 @@ namespace Finance_HD.Controllers.ChungTu
 
                 _dbContext.FiaChiTietBangKeNopTien.Update(listChiTietBangKe);
             }
-            foreach (var chiTiet in DataNhanVien)
+            foreach (var chiTiet in SaveDataNhanVien)
             {
                 var listChiTietBangKe = new FiaChiTietBangKeNhanVien
                 {

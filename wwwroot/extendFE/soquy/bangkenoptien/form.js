@@ -1,130 +1,88 @@
-﻿var TableChiTietBangKe;
-var TableChiTietNhanVien;
-var soTienChange = 0;
-
-var totalSum = 0;
+﻿var SaveDataBangKe = [];
+var TongTien = 0;
+var listDataNhanVien = []; // Khởi tạo mảng bên ngoài sự kiện click
 $(document).ready(function () {
-    fetchMonetaryList();
-    fetchUserList();
-    fetchBranchList();
     ConfigTable();
-    getCashDepositById();
-    initialize();
+    EventHandler();
     sendFormData();
+
 });
+function EventHandler() {
+    TienTe();
+    NguoiNopTien();
+    NguoiNhanTien();
+    DonViNop();
+    DonViNhan();
+    TableBangKeNhanVien();
+    TableBangKeNhanVien();
+}
 function ConfigTable() {
-    TableChiTietBangKe = $('#TableChiTietBangKe').DataTable({
+    // Định nghĩa ngôn ngữ dùng chung
+    const commonLanguage = {
+        "decimal": "",
+        "emptyTable": "Không có dữ liệu trong bảng",
+        "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
+        "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
+        "infoFiltered": "(đã lọc từ _MAX_ mục)",
+        "lengthMenu": "Hiển thị _MENU_ mục",
+        "loadingRecords": "Đang tải...",
+        "processing": "Đang xử lý...",
+        "search": "Tìm kiếm:",
+        "searchPlaceholder": "Nhập từ khóa...",
+        "zeroRecords": "Không tìm thấy kết quả nào",
+        "paginate": {
+            "first": "Đầu tiên",
+            "last": "Cuối cùng",
+            "next": "Kế tiếp",
+            "previous": "Trước"
+        }
+    };
+
+    TableBangKeNopTien = $('#TableBangKeNopTien').DataTable({
         columnDefs: [
             { className: "d-none", targets: [0, 1], orderable: false },
-            { width: '170px', className: 'dt-right dt-head-center', targets: [2, 3, 4], orderable: false },
-            { width: '170px', className: 'dt-left dt-head-center', targets: [5], orderable: false },
-            { targets: [3, 5], createdCell: function (td) { $(td).attr('contenteditable', true); } }
+            { width: '100px', className: 'dt-right dt-head-center', targets: [2, 3, 4], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [5], orderable: false },
+            { targets: [5], createdCell: function (td) { $(td).attr('contenteditable', true); } },
+            {
+                targets: [3],
+                createdCell: function (td) {
+                    $(td).attr('contenteditable', true);
+
+                    if ($(td).index() === 3) {
+                        $(td).on('keypress', function (e) {
+                            if (!/[0-9]/.test(String.fromCharCode(e.which))) {
+                                e.preventDefault();
+                            }
+                        });
+                    }
+                }
+            }
         ],
+        searching: false,
         ordering: false,
-        searching: false,
-        paging: false,
         lengthChange: false,
-        info: false,
-        language: {
-            "decimal": "",
-            "emptyTable": "Không có dữ liệu trong bảng",
-            "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
-            "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
-            "infoFiltered": "(đã lọc từ _MAX_ mục)",
-            "lengthMenu": "Hiển thị _MENU_ mục",
-            "loadingRecords": "Đang tải...",
-            "processing": "Đang xử lý...",
-            "search": "Tìm kiếm:",
-            "searchPlaceholder": "Nhập từ khóa...",
-            "zeroRecords": "Không tìm thấy kết quả nào",
-            "paginate": {
-                "first": "Đầu tiên",
-                "last": "Cuối cùng",
-                "next": "Kế tiếp",
-                "previous": "Trước"
-            }
-        },
-        drawCallback: function (settings) {
-
-        }
+        language: commonLanguage,
     });
-    TableChiTietNhanVien = $('#TableChiTietNhanVien').DataTable({
+
+    TableChiTietBangKeNhanVien = $('#TableChiTietBangKeNhanVien').DataTable({
         columnDefs: [
-            { width: '300px', className: 'dt-left dt-head-center', targets: [0,1], orderable: false },
-            { width: '100px', className: 'dt-left dt-head-center', targets: [2], orderable: false },
+            { className: "d-none", targets: 0, orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1], orderable: false },
+            { width: '150px', className: 'dt-right dt-head-center', targets: [2], orderable: false },
+            { width: '100px', className: 'dt-right dt-head-center', targets: [3], orderable: false },
         ],
         searching: false,
         lengthChange: false,
-        language: {
-            "decimal": "",
-            "emptyTable": "Không có dữ liệu trong bảng",
-            "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
-            "infoEmpty": "Hiển thị 0 đến 0 trong tổng số 0 mục",
-            "infoFiltered": "(đã lọc từ _MAX_ mục)",
-            "lengthMenu": "Hiển thị _MENU_ mục",
-            "loadingRecords": "Đang tải...",
-            "processing": "Đang xử lý...",
-            "search": "Tìm kiếm:",
-            "searchPlaceholder": "Nhập từ khóa...",
-            "zeroRecords": "Không tìm thấy kết quả nào",
-            "paginate": {
-                "first": "Đầu tiên",
-                "last": "Cuối cùng",
-                "next": "Kế tiếp",
-                "previous": "Trước"
-            }
-        }
+        language: commonLanguage,
     });
 }
 
-
-// Tiền tệ (VND)
-function fetchMonetaryList() {
-
-    callAPI('GET', '/Monetary/getListMonetary', null,
-        function (response) {
-            if (response.success) {
-                MonetarySelect(response.data);
-            } else {
-                console.log("Lỗi khi lấy dữ liệu tiền tệ");
-            }
-        },
-        function (xhr, status, error) {
-            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
-        }
-    );
-}
-
-function MonetarySelect(data) {
-    const monetarySelect = $('#TienTe');
-    monetarySelect.empty();
-    // Sử dụng giá trị MaTienTe nếu đang ở chế độ chỉnh sửa
-    var maTienTe = isEdit ? MaTienTe : '0febf710-436d-40cc-95e5-e457605cd104'; // Mặc định VND hoặc giá trị từ Model
-    data.forEach(function (monetary) {
-        const option = $('<option>', {
-            value: monetary.ma,
-            text: monetary.ten,
-            selected: monetary.ma === maTienTe || monetary.code === "VND",
-        });
-        monetarySelect.append(option);
-    });
-    var selectedMaTienTe = monetarySelect.val();
-
-    if (!isEdit) {
-    TableBangKe(selectedMaTienTe);
-    }
-}
-$("#TienTe").on('change', function () {
-    var maTienTeChange = $("#TienTe").val();
-    TableBangKe(maTienTeChange);
-})
-// Người nộp tiền
-function fetchUserList() {
-
+function NguoiNhanTien() {
     callAPI('GET', '/User/getListUser', null,
         function (response) {
             if (response.success) {
-                UserSelect(response.data);
+                selectNguoiNhanTien(response.data);
             } else {
                 console.log("Lỗi khi lấy dữ liệu tiền tệ");
             }
@@ -134,200 +92,22 @@ function fetchUserList() {
         }
     );
 }
-
-function UserSelect(data) {
-    const userSelect = $('#NguoiNopTien');
-    userSelect.empty();
-    var maNguoiNopTien = isEdit ? MaNguoiNopTien : MaNguoiDangNhap;
+function selectNguoiNhanTien(data) {
+    var InitialSelectNguoiNhanTien = $("#NguoiNhanTien");
     data.forEach(function (user) {
         const option = $('<option>', {
             value: user.ma,
             text: user.fullName,
-            selected: user.ma === maNguoiNopTien,
+            selected: user.ma === MaNguoiNhanTien,
         });
-        userSelect.append(option);
+        InitialSelectNguoiNhanTien.append(option);
     });
 }
-
-
-// Chi nhánh
-function fetchBranchList() {
-    callAPI('GET', '/Branch/getListBranch', null,
+function TienTe() {
+    callAPI('GET', '/Monetary/getListMonetary', null,
         function (response) {
             if (response.success) {
-                DonViNopSelect(response.data);
-                DonViNhanSelect(response.data);
-
-                // Gọi lại để cập nhật phòng ban nộp và nhận
-                var maDonViNop = $('#DonViNop').val();
-                BoPhanNopSelect(maDonViNop);
-                var maDonViNhan = $('#DonViNhan').val();
-                BoPhanNhanSelect(maDonViNhan);
-            } else {
-                console.log("Lỗi khi lấy dữ liệu chi nhánh");
-            }
-        },
-        function (xhr, status, error) {
-            console.error('Lỗi khi lấy danh sách chi nhánh:', error);
-        }
-    );
-}
-
-function DonViNopSelect(data) {
-    const BranchSelect = $('#DonViNop');
-    BranchSelect.empty();
-    var maDonViNop = isEdit ? MaDonViNop : MaChiNhanhDangNhap;
-    data.forEach(function (branch) {
-        const option = $('<option>', {
-            value: branch.ma,
-            text: branch.ten,
-            selected: branch.ma === maDonViNop,
-        });
-        BranchSelect.append(option);
-    });
-}
-
-function DonViNhanSelect(data) {
-    const BranchSelect = $('#DonViNhan');
-    BranchSelect.empty();
-
-    var maDonViNhan = isEdit ? MaDonViNhan : '';
-
-    if (!maDonViNhan) {
-        const defaultOption = $('<option>', {
-            value: '',
-            text: 'Chọn...',
-            selected: true
-        });
-        BranchSelect.append(defaultOption);
-    }
-
-    // Thêm các tùy chọn khác từ data
-    data.forEach(function (branch) {
-        const option = $('<option>', {
-            value: branch.ma,
-            text: branch.ten,
-            selected: branch.ma === maDonViNhan,
-        });
-        BranchSelect.append(option);
-    });
-}
-
-
-// Phòng ban
-function BoPhanNopSelect(maDonViNop) {
-    callAPI('GET', '/Department/getListDepartment', null,
-        function (response) {
-            if (response.success) {
-                var result = response.data;
-                var filterData = result.filter(x => x.maChiNhanh === maDonViNop);
-
-                const DepartmentSelect = $('#BoPhanNop');
-                DepartmentSelect.empty();
-
-                filterData.forEach(function (department) {
-                    const option = $('<option>', {
-                        value: department.maPhongBan,
-                        text: department.tenPhongBan,
-                        selected: department.maPhongBan === MaPhongBanDangNhap,
-                    });
-                    DepartmentSelect.append(option);
-                });
-            } else {
-                console.log("Lỗi khi lấy dữ liệu bộ phận nộp");
-            }
-        },
-        function (xhr, status, error) {
-            console.error('Lỗi khi lấy danh sách bộ phận nộp:', error);
-        }
-    );
-}
-function BoPhanNhanSelect(maDonViNhan) {
-    callAPI('GET', '/Department/getListDepartment', null,
-        function (response) {
-            if (response.success) {
-                var result = response.data;
-                const DepartmentSelect = $('#BoPhanNhan');
-                DepartmentSelect.empty();
-
-                if (!maDonViNhan) {
-                    const defaultOption = $('<option>', {
-                        value: '',
-                        text: 'Chọn...',
-                        selected: true
-                    });
-                    DepartmentSelect.append(defaultOption);
-                }
-
-                var filterData = result.filter(x => x.maChiNhanh === maDonViNhan);
-
-                // Thêm các tùy chọn từ filterData
-                filterData.forEach(function (department) {
-                    const option = $('<option>', {
-                        value: department.maPhongBan,
-                        text: department.tenPhongBan,
-                    });
-                    DepartmentSelect.append(option);
-                });
-            } else {
-                console.log("Lỗi khi lấy dữ liệu bộ phận nhận");
-            }
-        },
-        function (xhr, status, error) {
-            console.error('Lỗi khi lấy danh sách bộ phận nhận:', error);
-        }
-    );
-}
-
-// Sự kiện onchange phòng ban theo chi nhánh
-$("#DonViNop").on('change', function () {
-    var maDonViNop = $(this).val();
-    BoPhanNopSelect(maDonViNop);
-});
-
-$("#DonViNhan").on('change', function () {
-    var maDonViNhan = $(this).val();
-    BoPhanNhanSelect(maDonViNhan);
-});
-
-
-// Xử lý Chi tiết bảng kê
-function TableBangKe(MaTienTe) {
-    callAPI('GET', '/Currency/getListCurrency', null,
-        function (response) {
-            if (response.success) {
-                var result = response.data;
-                var filteredResult = result.filter(x => x.maTienTe === MaTienTe);
-
-                // Làm sạch bảng trước khi thêm dữ liệu mới
-                TableChiTietBangKe.clear().draw();
-
-                if (filteredResult.length > 0) {
-                    // Thêm các dòng dữ liệu mới vào bảng
-                    filteredResult.forEach(function (item) {
-                        let rowContent = [
-                            `<td>${item.ma}</td>`,
-                            `<td>${item.maTienTe}</td>`,
-                            `<td>${addCommas(item.giaTri) ?? 0}</td>`,
-                            `<td contenteditable="true">0</td>`,
-                            `<td>0</td>`,
-                            `<td contenteditable="true"></td>`,  // Ghi chú có thể chỉnh sửa
-                        ];
-
-                        TableChiTietBangKe.row.add(rowContent).draw();
-                    });
-
-                    handleTableRows(); // Gọi hàm xử lý hàng
-
-                    // Cập nhật dòng tổng tiền ban đầu
-                    var tenTienTeHienThi = filteredResult[0].tenTienTe;
-                    updateTotalRow(tenTienTeHienThi);
-
-                } else {
-                    // Nếu không có kết quả
-                    var tenTienTe = $("#TienTe option:selected").text();
-                    updateTotalRow(tenTienTe);
-                }
+                selectTienTe(response.data);
             } else {
                 console.log("Lỗi khi lấy dữ liệu tiền tệ");
             }
@@ -337,225 +117,32 @@ function TableBangKe(MaTienTe) {
         }
     );
 }
+function selectTienTe(data) {
 
-function updateTotalRow(tenTienTe) {
-    var newRow = $('<tr></tr>');
-    var newData1 = $(`<td colspan="2" style="text-align:center;"></td>`).text(`Tổng tiền (${tenTienTe})`);
-    var newData3 = $('<td style="text-align:right;"></td>').text('0');
-    var newData4 = $('<td></td>').text('');
-
-    newRow.append(newData1);
-    newRow.append(newData3);
-    newRow.append(newData4);
-
-    $('#TableChiTietBangKe tfoot').empty().append(newRow);
+    var InitialSelectTienTe = $("#TienTe");
+    data.forEach(function (tiente) {
+        const option = $('<option>', {
+            value: tiente.ma,
+            text: tiente.ten,
+            selected: tiente.ma === MaTienTeVND || tiente.code === "VND",
+        });
+        InitialSelectTienTe.append(option);
+    });
+    var maTienTeSelected = $("#TienTe").find("option:selected").val();
+    TableChiTietBangKeNopTien(maTienTeSelected)
+    $("#TienTe").on('change', function () {
+        var maTienTeChange = $("#TienTe").val();
+        TableChiTietBangKeNopTien(maTienTeChange)
+    })
 }
 
-// Hàm xử lý sự kiện chỉnh sửa các hàng trong bảng
-function handleTableRows() {
-    TableChiTietBangKe.rows().every(function () {
-        var row = $(this.node());
-        var maBangKe = row.find('td:eq(0)').text();
-        var maTienTe = row.find('td:eq(1)').text();
-        var loaiTien = parseFloat(row.find('td:eq(2)').text().replace(/,/g, ''));
-        var soLuong = parseInt(row.find('td:eq(3)').text().replace(/,/g, ''), 10);
-        var thanhTien = loaiTien * soLuong;
-        var ghiChu = row.find('td:eq(5)').text();
-
-        row.find('td:eq(4)').text(thanhTien.toLocaleString());
-
-        var allData = {
-            maBangKe,
-            maTienTe,
-            loaiTien,
-            soLuong,
-            thanhTien,
-            ghiChu
-        };
-        // Bắt sự kiện khi ô được chỉnh sửa cho các cột số lượng và thành tiền
-        row.find('td:eq(3), td:eq(4)').on('input', function () {
-            var updatedValue = $(this).text();
-            var columnIndex = $(this).index();
-
-            if (columnIndex === 3) { // Số lượng
-                const newSoLuong = parseInt(updatedValue.replace(/,/g, ''), 10);
-                if (!isNaN(newSoLuong) && newSoLuong !== soLuong) {
-                    soLuong = newSoLuong;
-                    thanhTien = loaiTien * soLuong;
-                    row.find('td:eq(3)').text(soLuong.toLocaleString());
-                    row.find('td:eq(4)').text(thanhTien.toLocaleString());
-
-                    // Cập nhật đối tượng allData
-                    allData.soLuong = soLuong;
-                    allData.thanhTien = thanhTien;
-                }
-
-            } else if (columnIndex === 4) { // Thành tiền
-                const newThanhTien = parseFloat(updatedValue.replace(/,/g, ''));
-                if (!isNaN(newThanhTien) && newThanhTien !== thanhTien) {
-                    thanhTien = newThanhTien;
-                    allData.thanhTien = thanhTien;
-                }
-            }
-
-            updateTotalSum();
-        });
-
-        row.find('td:eq(5)').on('blur', function () {
-            ghiChu = $(this).text();
-            allData.ghiChu = ghiChu;
-        });
-
-        // Ràng buộc sự kiện keydown cho ô số lượng và thành tiền
-        row.find('td:eq(3), td:eq(4)').on('keydown', function (e) {
-            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'Tab' || e.key === 'Enter' || e.key === 'Escape' || e.key === ',' || e.key === '.')) {
-                e.preventDefault();
-            }
-        });
-    });
-}
-
-function updateTotalSum() {
-    if (isEdit) {
-        totalSum = soTienChange
-    }
-
-    TableChiTietBangKe.rows().every(function () {
-        var row = $(this.node());
-        var thanhTien = parseFloat(row.find('td:eq(4)').text().replace(/,/g, ''));
-        if (!isNaN(thanhTien)) {
-            totalSum += thanhTien;
-        }
-    });
-    $('#TableChiTietBangKe tfoot td:eq(1)').text(totalSum.toLocaleString());
-}
-
-
-
-// Xủ lý bảng nhân viên
-
-$("#btnSaveChiTietNhanVien").on('click', function () {
-    // Lấy giá trị từ input
-    var MaNhanVien = $("#MaNhanVien").val();
-    var SoTien = $("#SoTienNhanVien").val();
-    var firstRow = $('#TableChiTietNhanVien tbody tr:first');
-
-    // Lấy giá trị của cột đầu tiên (giả sử là cột thứ nhất)
-    var cashAmount = firstRow.find('td:eq(0)').text(); // Sử dụng eq(0) để lấy cột thứ nhất
-
-    // Hiển thị giá trị của cột đầu tiên
-    console.log(cashAmount);
-    if (!SoTien) {
-        showAlert('Lỗi!', 'Vui lòng nhập số tiền.', 'error');
-        return;
-    }
-    var exists = DataNhanVien.some(function (data) {
-        return data.MaNhanVien === MaNhanVien;
-    });
-    if (exists) {
-        showAlert('Lỗi!', 'Nhân viên này đã tồn tại trong danh sách.', 'error');
-        return;
-    }
-    var allData = { MaNhanVien, SoTien };
-    DataNhanVien.push(allData);
-
+function NguoiNopTien() {
     callAPI('GET', '/User/getListUser', null,
         function (response) {
-
-            var result = response.data;
-            var filteredData = result.filter(x => x.ma == MaNhanVien);
-            filteredData.forEach(function (item) {
-                let rowContent = [
-                    `<td>${item.ma}</td>`,
-                    `<td>${item.fullName}</td>`,
-                    `<td>${SoTien}</td>`,
-                    `<td><button class="btn btn-danger btn-sm btnDelete" data-ma="${item.ma}"><i class="fas fa-trash"></i></button></td>`
-                ];
-                TableChiTietNhanVien.row.add(rowContent).draw();
-            });
-            $("#SoTienNhanVien").val('');
-        },
-    );
-});
-$('#TableChiTietNhanVien tbody').on('click', '.btnDelete', function () {
-    // Lấy mã nhân viên từ data attribute
-    var maNhanVien = $(this).data('ma');
-
-    // Xóa hàng khỏi DataNhanVien
-    DataNhanVien = DataNhanVien.filter(function (data) {
-        return data.MaNhanVien !== maNhanVien; // Giữ lại các nhân viên không phải là nhân viên bị xóa
-    });
-
-    // Xóa hàng khỏi bảng
-    TableChiTietNhanVien.row($(this).parents('tr')).remove().draw();
-});
-
-
-
-function initialize(MaTienTe) {
-    // Kiểm tra xem dữ liệu đã được lưu trong local storage hay chưa
-    var storedData = localStorage.getItem('dataKey');
-    if (storedData) {
-        // Nếu có dữ liệu đã lưu, hãy khôi phục nó
-        DataNhanVien = JSON.parse(storedData);
-        // Tải lại bảng từ dữ liệu đã lưu
-        loadTableFromData(DataNhanVien);
-    } else if (isEdit) {
-        getCashDepositById();
-    } else {
-        TableBangKe(MaTienTe);
-        TableNhanVien(MaTienTe);
-    }
-}
-function getCashDepositById() {
-    callAPI('POST', '/CashDeposit/getCashDepositById', { ma: maBangKe },
-        function (response) {
             if (response.success) {
-                var result = response.data;
-
-                // Xóa dữ liệu cũ trong bảng Chi Tiết Bảng Kê
-                TableChiTietBangKe.clear().draw();
-                result.chiTietBangKe.forEach(function (item) {
-                    let rowContent = [
-                        item.ma,
-                        item.maLoaiTien,
-                        addCommas(item.tenLoaiTien),
-                        item.soLuong,
-                        addCommas(item.thanhTien),
-                        item.ghiChu,
-                    ];
-
-                    // Thêm hàng mới vào bảng Chi Tiết Bảng Kê
-                    TableChiTietBangKe.row.add(rowContent);
-                });
-                TableChiTietBangKe.draw();
-
-                // Xóa dữ liệu cũ trong bảng Chi Tiết Nhân Viên
-                TableChiTietNhanVien.clear().draw();
-                result.nhanVien.forEach(function (item) {
-                    let rowContent = [
-                        item.maNhanVien,
-                        item.tenNhanVien,
-                        addCommas(item.soTien),
-                        ""
-                    ];
-
-                    TableChiTietNhanVien.row.add(rowContent);
-                });
-                TableChiTietNhanVien.draw();
-               
-                    handleTableRows();
-                
-                var tenTienTe = result.cashDeposit.length > 0 ? result.cashDeposit[0].tenTienTe : null;
-                soTienChange = result.cashDeposit.length > 0 ? result.cashDeposit[0].soTien : null;
-
-               
-                updateTotalRow(tenTienTe);
-                $('#TableChiTietBangKe tfoot td:eq(1)').text(addCommas(soTienChange));
+                selectNguoiNopTien(response.data);
             } else {
-                // Nếu không có kết quả
-                var tenTienTe = $("#TienTe option:selected").text();
-                updateTotalRow(tenTienTe);
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
             }
         },
         function (xhr, status, error) {
@@ -563,74 +150,183 @@ function getCashDepositById() {
         }
     );
 }
-// Gửi dữ liệu sang controller
+function selectNguoiNopTien(data) {
+    var InitialSelectNguoiNopTien = $("#NguoiNopTien");
+    data.forEach(function (user) {
+        const option = $('<option>', {
+            value: user.ma,
+            text: user.fullName,
+            selected: user.ma === MaNguoiDangNhap,
+        });
+        InitialSelectNguoiNopTien.append(option);
+    });
+
+}
+
+function DonViNop() {
+    callAPI('GET', '/Branch/getListBranch', null,
+        function (response) {
+            if (response.success) {
+                selectDonViNop(response.data);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
+        }
+    );
+}
+function selectDonViNop(data) {
+    var InitialSelectDonViNop = $("#DonViNop");
+    data.forEach(function (branch) {
+        const option = $('<option>', {
+            value: branch.ma,
+            text: branch.ten,
+            selected: isEdit ? branch.ma === MaDonViNop : branch.ma === MaChiNhanhDangNhap,
+        });
+        InitialSelectDonViNop.append(option);
+    });
+    var maDonViNop = InitialSelectDonViNop.val();
+    BoPhanNop(maDonViNop)
+}
+function BoPhanNop(Ma) {
+    callAPI('GET', '/Department/getListDepartment', null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                var filteredBoPhanNop = result.filter(x => x.maChiNhanh == Ma)
+
+                selectBoPhanNop(filteredBoPhanNop);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
+        }
+    );
+}
+function DonViNhan() {
+    callAPI('GET', '/Branch/getListBranch', null,
+        function (response) {
+            if (response.success) {
+                selectDonViNhan(response.data);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
+        }
+    );
+}
+function selectDonViNhan(data) {
+    var InitialSelectDonViNhan = $("#DonViNhan");
+    data.forEach(function (branch) {
+        const option = $('<option>', {
+            value: branch.ma,
+            text: branch.ten,
+            selected: branch.ma === MaDonViNhan,
+        });
+        InitialSelectDonViNhan.append(option);
+    });
+    var maDonViNhan = $("#DonViNhan").val();
+    BoPhanNhan(maDonViNhan)
+}
+function BoPhanNhan(Ma) {
+    callAPI('GET', '/Department/getListDepartment', null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                var filteredBoPhanNhan = result.filter(x => x.maChiNhanh == Ma)
+                selectBoPhanNhan(filteredBoPhanNhan);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
+        }
+    );
+}
+function selectBoPhanNhan(data) {
+    var InitialSelectBoPhanNhan = $("#BoPhanNhan");
+    data.forEach(function (department) {
+        const option = $('<option>', {
+            value: department.maPhongBan,
+            text: department.tenPhongBan,
+            selected: department.maPhongBan === MaBoPhanNop,
+        });
+        InitialSelectBoPhanNhan.append(option);
+    });
+}
+
+$("#DonViNop").on('change', function () {
+    var maDonViNopChange = $(this).val();
+    console.log("mã đơn vị nộp change", maDonViNopChange);
+    BoPhanNop(maDonViNopChange);
+});
+function selectBoPhanNop(data) {
+    var InitialSelectBoPhanNop = $("#BoPhanNop");
+    InitialSelectBoPhanNop.empty();
+
+    if (data.length === 0) {
+        const option = $('<option>', {
+            value: '',
+            text: "Không có bộ phận nộp",
+            selected: true
+        });
+        InitialSelectBoPhanNop.append(option);
+    } else {
+        data.forEach(function (department) {
+            const option = $('<option>', {
+                value: department.maPhongBan,
+                text: department.tenPhongBan,
+                selected: isEdit ? department.maPhongBan === MaBoPhanNop : department.maPhongBan == MaPhongBanDangNhap,
+            });
+            InitialSelectBoPhanNop.append(option);
+        });
+    }
+}
+
+$("#DonViNhan").on('change', function () {
+    var maDonViNhanChange = $(this).val();
+    console.log("mã đơn vị nộp change", maDonViNhanChange);
+    BoPhanNhan(maDonViNhanChange);
+});
+function selectBoPhanNhan(data) {
+    var InitialSelectBoPhanNhan = $("#BoPhanNhan");
+    InitialSelectBoPhanNhan.empty();
+
+    if (data.length === 0) {
+        const option = $('<option>', {
+            value: '',
+            text: "Không có bộ phận nhận",
+            selected: true
+        });
+        InitialSelectBoPhanNhan.append(option);
+    } else {
+        data.forEach(function (department) {
+            const option = $('<option>', {
+                value: department.maPhongBan,
+                text: department.tenPhongBan,
+                selected: department.maPhongBan === MaBoPhanNhan,
+            });
+            InitialSelectBoPhanNhan.append(option);
+        });
+    }
+}
 function sendFormData() {
     $("#btnSave").on('click', function () {
-        var DataChiTietBangKe = [];
-        var DataNhanVien = []; 
-        TableChiTietBangKe.rows().every(function () {
-            var row = $(this.node());
+        var url = isEdit ? "/CashDeposit/Edit" : "/CashDeposit/Add";
+        updateThanhTien();
 
-            var maLoaiTien = row.find('td:eq(0)').text();
-            var loaiTien = parseFloat(row.find('td:eq(2)').text());
-            var soLuong = parseInt(row.find('td:eq(3)').text());
-            var thanhTien = parseInt(row.find('td:eq(4)').text());
-            var ghiChu = row.find('td:eq(5)').text();
+        const formData = collectFormData();
+        console.log("dữ liệu truyền đi", formData);
+        formData.SaveDataBangKe = SaveDataBangKe;
+        formData.SaveDataNhanVien = listDataNhanVien;
 
-            var DataRow = { maLoaiTien, loaiTien, soLuong, thanhTien, ghiChu };
-            DataChiTietBangKe.push(DataRow);
-        });
-
-        TableChiTietNhanVien.rows().every(function () {
-            var row = $(this.node());
-
-            var maNhanVien = row.find('td:eq(0)').text();
-            var tenNhanVien = row.find('td:eq(1)').text();
-            var soTienString = row.find('td:eq(2)').text().trim();
-            var soTien = parseInt(soTienString.replace(/,/g, '').replace(/\./g, ''), 10);
-
-            var DataRowNhanVien = { maNhanVien, tenNhanVien, soTien };
-            DataNhanVien.push(DataRowNhanVien); // Correctly push to DataNhanVien
-        });
-
-        var Ma = $("#Ma").val();
-        var NgayNopTien = $("#NgayNopTien").val();
-        var NgayLap = $("#NgayLap").val();
-        var MaHinhThuc = $("#HinhThuc").val();
-        var MaTienTe = $("#TienTe").val();
-        var NguoiNopTien = $("#NguoiNopTien").val();
-        var MaChiNhanhNop = $("#DonViNop").val();
-        var MaPhongBanNop = $("#BoPhanNop").val();
-        var MaChiNhanhNhan = $("#DonViNhan").val();
-        var MaPhongBanNhan = $("#BoPhanNhan").val();
-        var KhachHang = $("#KhachHang").val();
-        var MaNoiDung = $("#NoiDung").val();
-        var GhiChu = $("#GhiChu").val();
-        var DiaChi = $("#DiaChi").val();
-        var TyGia = $("#TyGia").val();
-        var SoTien = totalSum; // Ensure totalSum is defined somewhere in your code
-        var formData = {
-            Ma,
-            NgayNopTien,
-            NgayLap,
-            MaHinhThuc,
-            MaTienTe,
-            NguoiNopTien,
-            MaChiNhanhNop,
-            MaPhongBanNop,
-            MaChiNhanhNhan,
-            MaPhongBanNhan,
-            KhachHang,
-            MaNoiDung,
-            GhiChu,
-            DiaChi,
-            DataChiTietBangKe,
-            DataNhanVien, // This should now be populated
-            TyGia,
-            SoTien,
-        };
-
-        var url = Ma !== defaultUID ? '/CashDeposit/Edit' : '/CashDeposit/Add';
         callAPI('POST', url, formData,
             function (response) {
                 if (response.success) {
@@ -645,5 +341,144 @@ function sendFormData() {
                 console.error('Lỗi khi lấy danh sách chi nhánh:', error);
             }
         );
+    });
+}
+function collectFormData() {
+    return {
+        Ma: $("#Ma").val(),
+        MaChiNhanhNhan: $("#DonViNhan").val(),
+        MaChiNhanhNop: $("#DonViNop").val(),
+        MaPhongBanNhan: $("#BoPhanNhan").val(),
+        MaPhongBanNop: $("#BoPhanNop").val(),
+        NgayNopTien: $("#NgayNopTien").val(),
+        NgayLap: $("#NgayLap").val(),
+        MaHinhThuc: $("#MaHinhThuc").val(),
+        MaTienTe: $("#TienTe").val(),
+        TyGia: $("#TyGia").val(),
+        NguoiNopTien: $("#NguoiNopTien").val(),
+        NguoiNhanTien: $("#NguoiNhanTien").val(),
+        MaNoiDung: $("#MaNoiDung").val(),
+        GhiChu: $("#GhiChu").val(),
+        DiaChi: $("#DiaChi").val(),
+        SoTien: TongTien,
+    };
+}
+
+function TableChiTietBangKeNopTien(MaTienTeChange) {
+    callAPI('GET', '/Currency/getListCurrency', null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                var filterDataByTienTe = result.filter(x => x.maTienTe == MaTienTeChange);
+                TableBangKeNopTien.clear().draw();
+
+                filterDataByTienTe.forEach(function (item) {
+                    let rowContent = [
+                        `<td>${item.ma}</td>`,
+                        `<td>${item.maTienTe}</td>`,
+                        `<td contenteditable="true">${addCommas(item.giaTri) ?? 0}</td>`,
+                        `<td>0</td>`,
+                        `<td>0</td>`,
+                        `<td></td>`,
+                    ];
+
+                    TableBangKeNopTien.row.add(rowContent).draw();
+                });
+                updateThanhTien();
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
+        }
+    );
+}
+
+
+
+function updateThanhTien() {
+    SaveDataBangKe = [];
+    TongTien = 0;
+    $("#TableBangKeNopTien tbody tr").each(function () {
+        var maLoaiTien = $(this).find('td').eq(0).text();
+        var maTienTe = $(this).find('td').eq(1).text();
+        var loaiTien = parseFloat($(this).find('td').eq(2).text().replace(/,/g, '')) || 0;
+        var soLuong = parseFloat($(this).find('td').eq(3).text().replace(/,/g, '')) || 0;
+        var thanhTien = soLuong * loaiTien;
+
+        $(this).find('td').eq(3).text(addCommas(soLuong));
+        $(this).find('td').eq(4).text(addCommas(thanhTien));
+
+        var ghiChu = $(this).find('td').eq(5).text();
+        var listData = { maLoaiTien, maTienTe, soLuong, loaiTien, thanhTien, ghiChu };
+        SaveDataBangKe.push(listData);
+        TongTien += thanhTien;
+        var tenTienTeSelected = $("#TienTe").find("option:selected").text();
+        $("#totalAmount").text(addCommas(TongTien));
+        $("#currency").text(tenTienTeSelected);
+    });
+}
+
+$("#TableBangKeNopTien").on('input', 'tbody tr td:nth-child(4)', function () {
+    updateThanhTien();
+});
+
+
+
+$("#btnSaveChiTietNhanVien").on('click', function () {
+    var maNhanVien = $("#MaNhanVien").val();
+    var soTien = $("#SoTienNhanVien").val();
+
+    if (!maNhanVien || !soTien) {
+        showAlert('Thất bại!','Vui lòng chọn nhân viên và nhập số tiền.','error','OK');
+        return;
+    }
+    var exists = listDataNhanVien.some(function (item) {
+        return item.maNhanVien === maNhanVien;
+    });
+
+    if (exists) {
+        showAlert('Thất bại!', 'Mã nhân viên này đã tồn tại trong danh sách.', 'error', 'OK');
+        return;
+    }
+    var form = { maNhanVien, soTien };
+    listDataNhanVien.push(form); // Thêm mục mới vào mảng
+    console.log("list nhân viên", listDataNhanVien);
+
+    // Gọi hàm để thêm danh sách nhân viên vào bảng
+    TableBangKeNhanVien(listDataNhanVien);
+});
+
+function TableBangKeNhanVien() {
+    // Kiểm tra xem list có phải là mảng không
+    if (!Array.isArray(listDataNhanVien)) {
+        console.error("list không phải là một mảng:", listDataNhanVien);
+        return; // Ngừng thực thi hàm nếu không phải là mảng
+    }
+
+    callAPI('GET', '/User/getListUser', null, function (response) {
+        if (response.success) {
+            var result = response.data;
+            TableChiTietBangKeNhanVien.clear();
+
+            listDataNhanVien.forEach(function (data) {
+                var filterUser = result.filter(x => x.ma == data.maNhanVien);
+
+                if (filterUser.length === 0) {
+                    console.log('Không có dữ liệu cho nhân viên này:', data.maNhanVien);
+                } else {
+                    filterUser.forEach(function (item) {
+                        let rowContent = [
+                            `<td>${item.ma}</td>`,
+                            `<td>${item.fullName}</td>`,
+                            `<td>${data.soTien}</td>`,
+                            `<td><button class="btn btn-danger btn-sm btnDelete" data-ma="${item.ma}"><i class="fas fa-trash"></i></button></td>`
+                        ];
+                        TableChiTietBangKeNhanVien.row.add(rowContent);
+                    });
+                }
+            });
+        }
+
+        TableChiTietBangKeNhanVien.draw();
     });
 }

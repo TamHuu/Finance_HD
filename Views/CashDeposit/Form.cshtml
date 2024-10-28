@@ -42,7 +42,7 @@
                         </div>
                         <div class="form-group col-md-2">
                             <label for="HinhThuc">Hình thức chi<span style="color: red;">*</span></label>
-                            <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
+                            <select class="form-control form-control-sm" id="MaHinhThuc" name="HinhThuc">
                                 <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)"
                                 @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
                                 <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan)"
@@ -63,15 +63,22 @@
                         </div>
 
 
+                    </div>
+                    <div class="form-row ">
+
                         <div class="form-group col-md-2">
                             <label for="NguoiNopTien">Người nộp<span style="color: red;">*</span></label>
                             <select class="form-control form-control-sm" id="NguoiNopTien" name="NguoiNopTien">
-                             
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="NguoiNopTien">Người nhận<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="NguoiNhanTien" name="NguoiNhanTien">
                             </select>
 
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group col-md-2">
                             <label for="DonViNop">Đơn vị nộp<span style="color: red;">*</span></label>
@@ -99,7 +106,7 @@
                         </div>
                         <div class="form-group col-md-2">
                             <label for="NoiDung">Tên nội dung <span style="color: red;">*</span></label>
-                            <select class="form-control form-control-sm" id="NoiDung" name="NoiDung">
+                            <select class="form-control form-control-sm" id="MaNoiDung" name="NoiDung">
                                 @foreach (var nd in listNoiDung)
                                 {
                                     <!option value="@nd.Ma" @(Model.MaNoiDung == nd.Ma ? "selected" : "")>@nd.Ten</!option>
@@ -126,7 +133,7 @@
                 <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
             </div>
             <div class="card-body">
-                <table id="TableChiTietBangKe" class="table table-bordered table-hover">
+                <table id="TableBangKeNopTien" class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th hidden>Mã Bảng Kê Chi Tiết</th>
@@ -140,11 +147,10 @@
                     <tbody>
                         
                     </tbody>
-                    <tfoot>
-                      
-                    </tfoot>
+                   
                 </table>
-
+                <p class="total-amount">Tổng số tiền: <span id="totalAmount">0</span></p>
+                <p class="currency-unit">Đơn vị tiền tệ: <span id="currency">VND</span> </p></p>
             </div>
         </div>
     </div>
@@ -177,7 +183,7 @@
 
             <div class="card-body">
 
-                <table id="TableChiTietNhanVien" class="table table-bordered table-hover">
+                <table id="TableChiTietBangKeNhanVien" class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>Mã nhân viên</th>
@@ -261,6 +267,21 @@
                 padding: 10px;
             }
 
+        .total-amount {
+            font-weight: bold; /* Chữ đậm */
+            font-size: 18px; /* Kích thước chữ lớn hơn */
+            margin-top: 10px; /* Khoảng cách trên */
+        }
+
+        #currency{
+            font-weight: bold; /* Chữ đậm */
+            font-size: 18px;
+        }
+
+        .currency-unit {
+            font-style: italic; /* Chữ nghiêng */
+            color: #666; /* Màu chữ nhạt */
+        }
     </style>
     <script>
         var defaultUID = '@defaultUID';
@@ -272,11 +293,10 @@
         var MaBoPhanNhan = '@Model.MaPhongBanNhan';
         var MaNguoiNopTien = '@Model.NguoiNopTien';
         var isEdit = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(isEdit, typeof(bool)));
-        var MaTienTe = '@Model.MaTienTe';
+        var MaTienTeVND = '@Model.MaTienTe';
         var MaNguoiDangNhap = '@maNguoiDangNhap';
-
+        var MaNguoiNhanTien = '@Model.NguoiNhanTien';
         var maBangKe = '@Model.Ma';
-      console.log("Mã bảng kê", maBangKe)
     </script>
 
 
