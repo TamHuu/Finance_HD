@@ -6,110 +6,142 @@
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
 }
-
-<div class="col-md-6">
+<div class="col-md-12 mb-3">
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">@ViewData["Title"]</h5>
         </div>
         <div class="card-body">
-            <form id="Form">
-                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+            <div class="row">
+                <!-- Form Section -->
+                <div class="col-12 col-md-6">
+                    <form id="Form">
+                        <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
 
-                <div class="row">
-                    <div class="form-group col-md-4">
-                        <label for="DonViThu">Đơn vị thu <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="DonViThu" name="DonViThu">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="BoPhanThu">Bộ phận thu <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="BoPhanThu" name="BoPhanThu">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="DonViChi">Đơn vị chi <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="DonViChi" name="DonViChi">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="BoPhanChi">Bộ phận chi <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="BoPhanChi" name="BoPhanChi">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="NgayLap">Ngày lập <span style="color: red;">*</span></label>
-                        <input class="form-control form-control-sm" type="datetime-local" value="@Model.NgayLapPhieu" />
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="NguoiThuTien">Người thu tiền <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="NguoiThuTien" name="NguoiThuTien">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="NhanVienNop">Nhân viên nộp <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="NhanVienNop" name="NhanVienNop">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="KhachHangNop">Khách hàng nộp <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="KhachHangNop" name="KhachHangNop">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="BangKe">Bảng kê <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="BangKe" name="BangKe">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="TienTe">Tiền <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="TienTe" name="TienTe">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="TienTe">Tỷ giá <span style="color: red;">*</span></label>
-                        <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" required
-                               value="@(Model.TyGia != null && Model.TyGia != 0 ? Model.TyGia : 1)" />
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="SoPhieuChi">Số phiếu chi <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="SoPhieuChi" name="SoPhieuChi">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="SoTien">Số tiền <span style="color: red;">*</span></label>
-                        <input class="form-control form-control-sm" type="number" placeholder="Nhập số tiền" value="@Model.SoTien" />
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="HinhThuc">Hình thức <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="SoHoSoKemTheo">Số chứng từ kế toán <span style="color: red;">*</span></label>
-                        <input class="form-control form-control-sm" type="text" placeholder="Nhập chứng từ kế toán" value="@Model.SoHoSoKemTheo" />
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="MaDongTien">Mã dòng tiền <span style="color: red;">*</span></label>
-                        <select class="form-control form-control-sm" id="MaDongTien" name="MaDongTien">
-                        </select>
-                    </div>
-                </div>
-                <div class="button-container" style="text-align:center">
-                    <button type="button" id="btnSave" class="btn btn-primary btn-custom">
-                        <i class="fas fa-check"></i> @ViewData["Title"]
-                    </button>
-                    <button type="button" class="btn btn-danger btn-custom" onclick="window.location.href='/Receipt'">
-                        <i class="fas fa-times"></i> Huỷ
-                    </button>
+                        <div class="row">
+                            <div class="form-group col-12 col-md-6">
+                                <label for="DonViThu">Đơn vị thu <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="DonViThu" name="DonViThu">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="BoPhanThu">Bộ phận thu <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="BoPhanThu" name="BoPhanThu">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="DonViChi">Đơn vị chi <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="DonViChi" name="DonViChi">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="BoPhanChi">Bộ phận chi <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="BoPhanChi" name="BoPhanChi">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="NgayLap">Ngày lập <span style="color: red;">*</span></label>
+                                <input class="form-control form-control-sm" type="datetime-local" id="NgayLap" name="NgayLap" value="@Model.NgayLapPhieu" />
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="NguoiThuTien">Người thu tiền <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="NguoiThuTien" name="NguoiThuTien">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="NhanVienNop">Nhân viên nộp <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="NhanVienNop" name="NhanVienNop">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="KhachHangNop">Khách hàng nộp <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="KhachHangNop" name="KhachHangNop">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="BangKe">Bảng kê <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="BangKe" name="BangKe">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="TienTe">Tiền <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="TienTe" name="TienTe">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="TyGia">Tỷ giá <span style="color: red;">*</span></label>
+                                <input type="number" step="0.01" class="form-control form-control-sm" id="TyGia" name="TyGia" required value="@(Model.TyGia != null && Model.TyGia != 0 ? Model.TyGia : 1)" />
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="SoPhieuChi">Số phiếu chi <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="SoPhieuChi" name="SoPhieuChi">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="SoTien">Số tiền <span style="color: red;">*</span></label>
+                                <input class="form-control form-control-sm" type="number" id="SoTien" name="SoTien" placeholder="Nhập số tiền" value="@Model.SoTien" />
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="HinhThuc">Hình thức <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
+                                </select>
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="SoHoSoKemTheo">Số chứng từ kế toán <span style="color: red;">*</span></label>
+                                <input class="form-control form-control-sm" type="text" id="SoHoSoKemTheo" name="SoHoSoKemTheo" placeholder="Nhập chứng từ kế toán" value="@Model.SoHoSoKemTheo" />
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                <label for="MaDongTien">Mã dòng tiền <span style="color: red;">*</span></label>
+                                <select class="form-control form-control-sm" id="MaDongTien" name="MaDongTien">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-
-            </form>
+                <!-- Table Section -->
+                <div class="col-12 col-md-6">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary">
+                            <h6 class="m-0 text-white">Chi tiết bảng kê nộp tiền</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="TableBangKeNopTien" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th hidden>Mã Bảng Kê Chi Tiết</th>
+                                            <th hidden>Mã Loại tiền</th>
+                                            <th>Loại tiền</th>
+                                            <th>Số lượng</th>
+                                            <th>Thành tiền</th>
+                                            <th>Ghi chú</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="total-amount">Tổng số tiền: <span id="totalAmount">0</span></p>
+                            <p class="currency-unit">Đơn vị tiền tệ: <span id="currency">VND</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="button-container" style="display: flex; justify-content: center; margin-top: 20px;">
+                        <button type="button" id="btnSave" class="btn btn-primary btn-custom">
+                            <i class="fas fa-check"></i> @ViewData["Title"]
+                        </button>
+                        <button type="button" class="btn btn-danger btn-custom" onclick="window.location.href='/Receipt'" style="margin-left: 10px;">
+                            <i class="fas fa-times"></i> Huỷ
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-
     </div>
 </div>
+
 
 
 @section Scripts {
