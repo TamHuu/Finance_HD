@@ -5,7 +5,6 @@ $(document).ready(function () {
     ConfigTable();
     EventHandler();
     sendFormData();
-
 });
 function EventHandler() {
     TienTe();
@@ -13,8 +12,7 @@ function EventHandler() {
     NguoiNhanTien();
     DonViNop();
     DonViNhan();
-    TableBangKeNhanVien();
-    TableBangKeNhanVien();
+    InitForm();
 }
 function ConfigTable() {
     // Định nghĩa ngôn ngữ dùng chung
@@ -78,6 +76,15 @@ function ConfigTable() {
     });
 }
 
+function InitForm() {
+    if (isEdit) {
+        getCashDepositById()
+    } else {
+        TableChiTietBangKeNopTien();
+        TableBangKeNhanVien();
+    }
+}
+
 function NguoiNhanTien() {
     callAPI('GET', '/User/getListUser', null,
         function (response) {
@@ -108,6 +115,7 @@ function TienTe() {
         function (response) {
             if (response.success) {
                 selectTienTe(response.data);
+                
             } else {
                 console.log("Lỗi khi lấy dữ liệu tiền tệ");
             }
@@ -117,6 +125,7 @@ function TienTe() {
         }
     );
 }
+
 function selectTienTe(data) {
 
     var InitialSelectTienTe = $("#TienTe");
@@ -128,14 +137,15 @@ function selectTienTe(data) {
         });
         InitialSelectTienTe.append(option);
     });
+    if (!isEdit) {
     var maTienTeSelected = $("#TienTe").find("option:selected").val();
     TableChiTietBangKeNopTien(maTienTeSelected)
+    }
     $("#TienTe").on('change', function () {
         var maTienTeChange = $("#TienTe").val();
         TableChiTietBangKeNopTien(maTienTeChange)
     })
 }
-
 function NguoiNopTien() {
     callAPI('GET', '/User/getListUser', null,
         function (response) {
@@ -363,13 +373,12 @@ function collectFormData() {
         SoTien: TongTien,
     };
 }
-
 function TableChiTietBangKeNopTien(MaTienTeChange) {
     callAPI('GET', '/Currency/getListCurrency', null,
         function (response) {
             if (response.success) {
                 var result = response.data;
-                var filterDataByTienTe = result.filter(x => x.maTienTe == MaTienTeChange);
+                var filterDataByTienTe = result.filter(x => x.maTienTe ==  MaTienTeChange);
                 TableBangKeNopTien.clear().draw();
 
                 filterDataByTienTe.forEach(function (item) {
@@ -392,9 +401,6 @@ function TableChiTietBangKeNopTien(MaTienTeChange) {
         }
     );
 }
-
-
-
 function updateThanhTien() {
     SaveDataBangKe = [];
     TongTien = 0;
@@ -422,8 +428,6 @@ $("#TableBangKeNopTien").on('input', 'tbody tr td:nth-child(4)', function () {
     updateThanhTien();
 });
 
-
-
 $("#btnSaveChiTietNhanVien").on('click', function () {
     var maNhanVien = $("#MaNhanVien").val();
     var soTien = $("#SoTienNhanVien").val();
@@ -441,18 +445,14 @@ $("#btnSaveChiTietNhanVien").on('click', function () {
         return;
     }
     var form = { maNhanVien, soTien };
-    listDataNhanVien.push(form); // Thêm mục mới vào mảng
-    console.log("list nhân viên", listDataNhanVien);
-
-    // Gọi hàm để thêm danh sách nhân viên vào bảng
+    listDataNhanVien.push(form);
+    
     TableBangKeNhanVien(listDataNhanVien);
 });
 
 function TableBangKeNhanVien() {
-    // Kiểm tra xem list có phải là mảng không
     if (!Array.isArray(listDataNhanVien)) {
-        console.error("list không phải là một mảng:", listDataNhanVien);
-        return; // Ngừng thực thi hàm nếu không phải là mảng
+        return; 
     }
 
     callAPI('GET', '/User/getListUser', null, function (response) {
@@ -482,3 +482,48 @@ function TableBangKeNhanVien() {
         TableChiTietBangKeNhanVien.draw();
     });
 }
+
+
+function getCashDepositById() {
+    callAPI('POST', '/CashDeposit/getCashDepositById', { ma: maBangKe },
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                var dataChiTietBangKe = result.chiTietBangKe || [];
+                var dataChitietNhanVien = result.nhanVien || [];
+
+                TableBangKeNopTien.clear().draw();
+                dataChiTietBangKe.forEach(function (item) {
+                    let rowContent = [
+                        `<td>${item.ma}</td>`,
+                        `<td>${item.maLoaiTien}</td>`,
+                        `<td>${item.tenLoaiTien ?? 0}</td>`,
+                        `<td>${addCommas(item.soLuong)}</td>`,
+                        `<td>${addCommas(item.thanhTien)}</td>`,
+                        `<td>${item.ghiChu}</td>`
+                    ];
+                    TableBangKeNopTien.row.add(rowContent).draw();
+                });
+                updateThanhTien();
+
+                TableChiTietBangKeNhanVien.clear().draw();
+                dataChitietNhanVien.forEach(function (item) {
+                    let rowContentNhanVien = [
+                        `<td>${item.maNhanVien}</td>`,
+                        `<td>${item.tenNhanVien}</td>`,
+                        `<td>${addCommas(item.soTien)}</td>`,
+                        `<td><button class="btn btn-danger btn-sm btnDelete" data-ma="${item.maNhanVien}"><i class="fas fa-trash"></i></button></td>`
+                    ];
+                    TableChiTietBangKeNhanVien.row.add(rowContentNhanVien).draw();
+                });
+            } else {
+                console.log("Không có dữ liệu cho bảng nhân viên.");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
+        }
+    );
+}
+
+

@@ -336,114 +336,93 @@ namespace Finance_HD.Controllers.ChungTu
         }
         [HttpPost]
         public JsonResult Edit(
-       string Ma,
-       string MaChiNhanhNhan,
-       string MaChiNhanhNop,
-       string MaPhongBanNhan,
-       string MaPhongBanNop,
-       DateTime NgayNopTien,
-       DateTime NgayLap,
-       int MaHinhThuc,
-       string MaTienTe,
-       decimal TyGia,
-       string NguoiNopTien,
-       string MaNoiDung,
-       string GhiChu,
-       string DiaChi,
-       string LyDo,
-       int SoTien,
-       string NguoiNhanTien,
-    List<FiaChiTietBangKeNopTien> SaveDataBangKe,
-    List<FiaChiTietBangKeNhanVien> SaveDataNhanVien
-   )
+            string Ma,
+            string MaChiNhanhNhan,
+            string MaChiNhanhNop,
+            string MaPhongBanNhan,
+            string MaPhongBanNop,
+            DateTime NgayNopTien,
+            DateTime NgayLap,
+            int MaHinhThuc,
+            string MaTienTe,
+            decimal TyGia,
+            string NguoiNopTien,
+            string MaNoiDung,
+            string GhiChu,
+            string DiaChi,
+            string LyDo,
+            string SoTien,
+            string NguoiNhanTien,
+            List<FiaChiTietBangKeNopTien> SaveDataBangKe,
+            List<FiaChiTietBangKeNhanVien> SaveDataNhanVien
+        )
         {
-
             SysBranch? cn = _dbContext.SysBranch.FirstOrDefault(t => t.Ma == MaChiNhanhNop.GetGuid());
             if (cn == null)
             {
                 return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
             }
 
-            int nextSequentialNumber = GetNextSequentialNumber(cn.Code);
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
 
-            var existingListDocumentType = _dbContext.FiaBangKeNopTien.FirstOrDefault(x => x.MaChiNhanhNop == loggedInUser.Ma);
-            if (existingListDocumentType != null)
+            var listBangKe = _dbContext.FiaBangKeNopTien.FirstOrDefault(x => x.Ma == Ma.GetGuid());
+            if (listBangKe == null)
             {
-                return Json(new { success = false, message = "Không được thêm bảng kê từ chi nhánh khác!" });
+                return Json(new { success = false, message = "Không tìm thấy bảng kê để cập nhật!" });
             }
-            var TenNguoiNopTien = _dbContext.SysUser.FirstOrDefault(x => x.Ma == NguoiNopTien.GetGuid());
-            var listBangKe = new FiaBangKeNopTien
-            {
-                Ma = Ma.GetGuid(),
-                MaChiNhanhNhan = MaChiNhanhNhan.GetGuid(),
-                MaChiNhanhNop = MaChiNhanhNop.GetGuid(),
-                MaPhongBanNhan = MaPhongBanNhan.GetGuid(),
-                MaPhongBanNop = MaPhongBanNop.GetGuid(),
-                NgayLap = NgayLap,
-                NgayNopTien = NgayNopTien,
-                NguoiNopTien = NguoiNopTien.GetGuid(),
-                TenNguoiNopTien = TenNguoiNopTien.FullName,
-                DiaChi = DiaChi,
-                LyDo = LyDo,
-                MaTienTe = MaTienTe.GetGuid(),
-                TyGia = TyGia,
-                SoTien = SoTien,
-                GhiChu = GhiChu,
-                NguoiNhanTien = NguoiNhanTien.GetGuid(),
-                MaNoiDung = MaNoiDung.GetGuid(),
-                MaHinhThuc = MaHinhThuc,
-                SoPhieu = string.Format("BK/{0}/{1:yyyyMMdd}/{2:000}", cn.Code, DateTime.Today, nextSequentialNumber),
-                UserModified = loggedInUser.Ma,
-                CreatedDate = DateTime.Now,
-                UserCreated = loggedInUser.Ma,
-                TrangThai = (int)TrangThaiChungTu.LapPhieu,
-                ModifiedDate = DateTime.Now
-            };
-            _dbContext.FiaBangKeNopTien.Update(listBangKe);
-            _dbContext.SaveChanges();
+
+            // Cập nhật các thuộc tính
+            listBangKe.MaChiNhanhNhan = MaChiNhanhNhan.GetGuid();
+            listBangKe.MaChiNhanhNop = MaChiNhanhNop.GetGuid();
+            listBangKe.MaPhongBanNhan = MaPhongBanNhan.GetGuid();
+            listBangKe.MaPhongBanNop = MaPhongBanNop.GetGuid();
+            listBangKe.NgayLap = NgayLap;
+            listBangKe.NgayNopTien = NgayNopTien;
+            listBangKe.NguoiNopTien = NguoiNopTien.GetGuid();
+            listBangKe.DiaChi = DiaChi;
+            listBangKe.LyDo = LyDo;
+            listBangKe.MaTienTe = MaTienTe.GetGuid();
+            listBangKe.TyGia = TyGia;
+            listBangKe.SoTien = CovertLong(SoTien);
+            listBangKe.GhiChu = GhiChu;
+            listBangKe.NguoiNhanTien = NguoiNhanTien.GetGuid();
+            listBangKe.MaNoiDung = MaNoiDung.GetGuid();
+            listBangKe.MaHinhThuc = MaHinhThuc;
+            listBangKe.ModifiedDate = DateTime.Now;
+            listBangKe.UserModified = loggedInUser?.Ma;
+
             foreach (var chiTiet in SaveDataBangKe)
             {
-                var listChiTietBangKe = new FiaChiTietBangKeNopTien
+                var listChiTietBangKe = _dbContext.FiaChiTietBangKeNopTien.FirstOrDefault(x => x.Ma == chiTiet.Ma);
+                if (listChiTietBangKe != null)
                 {
-                    Ma = chiTiet.Ma,
-                    MaBangKeNopTien = listBangKe.Ma,
-                    MaLoaiTien = listBangKe.MaTienTe,
-                    SoLuong = chiTiet.SoLuong,
-                    ThanhTien = chiTiet.ThanhTien,
-                    GhiChu = chiTiet.GhiChu,
-                    CreatedDate = DateTime.Now,
-                    UserCreated = loggedInUser.Ma,
-                    UserModified = loggedInUser.Ma,
-                    ModifiedDate = DateTime.Now
-                };
-
-                _dbContext.FiaChiTietBangKeNopTien.Update(listChiTietBangKe);
+                    listChiTietBangKe.MaLoaiTien = listBangKe.MaTienTe;
+                    listChiTietBangKe.SoLuong = chiTiet.SoLuong;
+                    listChiTietBangKe.ThanhTien = chiTiet.ThanhTien;
+                    listChiTietBangKe.GhiChu = chiTiet.GhiChu;
+                    listChiTietBangKe.ModifiedDate = DateTime.Now;
+                    listChiTietBangKe.UserModified = loggedInUser?.Ma;
+                }
             }
+
             foreach (var chiTiet in SaveDataNhanVien)
             {
-                var listChiTietBangKe = new FiaChiTietBangKeNhanVien
+                var listChiTietBangKe = _dbContext.FiaChiTietBangKeNhanVien.FirstOrDefault(x => x.Ma == chiTiet.Ma);
+                if (listChiTietBangKe != null)
                 {
-                    Ma = chiTiet.Ma,
-                    MaBangKe = listBangKe.Ma,
-                    MaNhanVien = chiTiet.MaNhanVien,
-                    SoTien = chiTiet.SoTien,
-                    CreatedDate = DateTime.Now,
-                    UserCreated = loggedInUser.Ma,
-                    UserModified = loggedInUser.Ma,
-                    ModifiedDate = DateTime.Now
-                };
-
-                _dbContext.FiaChiTietBangKeNhanVien.Update(listChiTietBangKe);
+                    listChiTietBangKe.MaNhanVien = chiTiet.MaNhanVien;
+                    listChiTietBangKe.SoTien = chiTiet.SoTien;
+                    listChiTietBangKe.ModifiedDate = DateTime.Now;
+                    listChiTietBangKe.UserModified = loggedInUser?.Ma;
+                }
             }
 
             _dbContext.SaveChanges();
 
-
-            // Trả về kết quả thành công
-            return Json(new { success = true, message = "Thêm thành công!" });
+            return Json(new { success = true, message = "Cập nhật thành công!" });
         }
+
 
         [HttpDelete]
         public IActionResult Delete(string Id)
