@@ -174,7 +174,7 @@ function sendFormData() {
         var ChiNhanh = $("#Branch").val();
         var PhongBan = $("#Department").val();
         var NganHang = $("#Bank").val();
-        var TienTe = $("#Montery").val();
+        var TienTe = $("#TienTe").val();
         var SoTaiKhoan = $("#SoTaiKhoan").val();
         var DienGiai = $("#DienGiai").val();
         var DongTienThu = $("#DongTienThu").val();

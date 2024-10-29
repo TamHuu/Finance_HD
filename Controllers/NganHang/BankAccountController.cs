@@ -30,8 +30,44 @@ namespace Finance_HD.Controllers.NganHang
         [HttpGet]
         public JsonResult getListBankAccount()
         {
-            var listBankAccount = _dbContext.FiaTaiKhoanNganHang
-                             .Where(role => !(role.Deleted ?? false))
+            var listBankAccount = (from taikhoan in _dbContext.FiaTaiKhoanNganHang
+                                   join nganhang in _dbContext.FiaNganHang
+                                   on taikhoan.MaNganHang equals nganhang.Ma
+                                   join loaitaikhoan in _dbContext.FiaLoaiTaiKhoanNganHang
+                                   on taikhoan.MaLoai equals loaitaikhoan.Ma
+                                   join tiente in _dbContext.FiaTienTe
+                                   on taikhoan.MaTienTe equals tiente.Ma
+                                   join chinhanh in _dbContext.SysBranch
+                                   on taikhoan.MaChiNhanh equals chinhanh.Ma
+                                   join phongban in _dbContext.TblPhongBan
+                                   on taikhoan.MaPhongBan equals phongban.Ma
+                                   join dongtienthu in _dbContext.CatNoiDungThuChi
+                                   on taikhoan.DongTienThu equals dongtienthu.Ma
+                                   join dongtienchi in _dbContext.CatNoiDungThuChi
+                                   on taikhoan.DongTienChi equals dongtienchi.Ma
+                                   where !(taikhoan.Deleted ?? false)
+
+                                   select new
+                                   {
+                                       Ma = taikhoan.Ma + "",
+                                       MaNganHang = nganhang.Ma + "",
+                                       TenNganHang = nganhang.Ten + "",
+                                       MaLoai = loaitaikhoan.Ma + "",
+                                       TenLoaiTaiKhoan = loaitaikhoan.Ten + "",
+                                       MaTienTe = tiente.Ma + "",
+                                       TenTienTe = tiente.Ten + "",
+                                       SoTaiKhoan = taikhoan.SoTaiKhoan,
+                                       DienGiai = taikhoan.DienGiai + "",
+                                       MaDongTienThu = dongtienthu.Ma + "",
+                                       MaDongTienChi = dongtienchi.Ma + "",
+                                       TenDongTienThu = dongtienthu.Ten + "",
+                                       TenDongTienChi = dongtienchi.Ten + "",
+                                       MaChiNhanh = chinhanh.Ma + "",
+                                       TenChiNhanh = chinhanh.Ten +"",
+                                       MaPhongBan = phongban.Ma + "",
+                                       TenPhongBan = phongban.Ten +"",
+                                       CreatedDate = taikhoan.CreatedDate,
+                                   })
                              .OrderByDescending(role => role.CreatedDate)
                              .ToList();
 
@@ -42,6 +78,11 @@ namespace Finance_HD.Controllers.NganHang
         {
             ViewBag.DongTienThu = _dbContext.CatNoiDungThuChi.ToList();
             ViewBag.DongTienChi = _dbContext.CatNoiDungThuChi.ToList();
+            ViewBag.LoaiTaiKhoanNganHang = _dbContext.FiaLoaiTaiKhoanNganHang
+           .GroupBy(x => x.Ten)
+           .Select(g => g.First())
+           .ToList();
+
             return View("Form", new FiaTaiKhoanNganHang());
         }
 
@@ -72,11 +113,11 @@ namespace Finance_HD.Controllers.NganHang
             }
             var BankAccount = new FiaTaiKhoanNganHang
             {
-                MaChiNhanh=ChiNhanh.GetGuid(),
+                MaChiNhanh = ChiNhanh.GetGuid(),
                 MaPhongBan = PhongBan.GetGuid(),
-                MaNganHang= NganHang.GetGuid(),
-                MaTienTe= TienTe.GetGuid(),
-                SoTaiKhoan= SoTaiKhoan,
+                MaNganHang = NganHang.GetGuid(),
+                MaTienTe = TienTe.GetGuid(),
+                SoTaiKhoan = SoTaiKhoan,
                 MaLoai = LoaiTaiKhoan.GetGuid(),
                 DienGiai = DienGiai,
                 DongTienThu = DongTienThu.GetGuid(),

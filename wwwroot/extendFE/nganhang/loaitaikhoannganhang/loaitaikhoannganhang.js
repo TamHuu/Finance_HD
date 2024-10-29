@@ -4,9 +4,9 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '300px', className: 'dt-left dt-head-center', targets: [1, 2,3,4,5,6,7,8,9], orderable: false },
-            { width: '150px', className: 'dt-center dt-head-center', targets: [ 10], orderable: false },
-            { width: '150px', className: 'text-center', targets: [11], orderable: false },
+            { width: '300px', className: 'dt-left dt-head-center', targets: [1, 2,3], orderable: false },
+            { width: '100px', className: 'text-center', targets: [4], orderable: false },
+            { width: '100px', className: 'text-center', targets: [5], orderable: false },
         ],
         sorting: true,
         language: {
@@ -34,7 +34,7 @@ $(document).ready(function () {
 });
 function loadDanhSach() {
     $.ajax({
-        url: "/BankAccount/getListBankAccount",
+        url: "/BankAccountType/getListBankAccountType",
         method: "GET",
         success: function (response) {
             if (response && response.data) {
@@ -53,27 +53,15 @@ function drawDanhSach(data) {
     console.log("data", data)
     data.forEach(function (item, index) {
         let ma = item.ma;
-        let tenChiNhanh = item.tenChiNhanh;
-        let tenPhongBan = item.tenPhongBan;
-        let tenNganHang = item.tenNganHang;
-        let soTaiKhoan = item.soTaiKhoan;
-        let loaiTaiKhoan = item.tenLoaiTaiKhoan;
-        let tenTienTe = item.tenTienTe;
-        let dienGiai = item.dienGiai;
-        let dongTienThu = item.tenDongTienThu;
-        let dongTienChi = item.tenDongTienChi;
+        let tennganhang = item.tenNganHang;
+        let code = item.code;
+        let ten = item.ten;
         let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
-            `<td>${tenChiNhanh}</td>`,
-            `<td>${tenPhongBan}</td>`,
-            `<td>${tenNganHang}</td>`,
-            `<td>${soTaiKhoan}</td>`,
-            `<td>${loaiTaiKhoan}</td>`,
-            `<td>${tenTienTe}</td>`,
-            `<td>${dienGiai}</td>`,
-            `<td>${dongTienThu}</td>`,
-            `<td>${dongTienChi}</td>`,
+            `<td>${tennganhang}</td>`,
+            `<td>${code}</td>`,
+            `<td>${ten}</td>`,
             `<td>${tentrangthai}</td>`,
 
         ];
@@ -95,7 +83,7 @@ function drawDanhSach(data) {
 function Edit(row) {
     var rowData = table.row($(row).parents('tr')).data();
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
-    window.open('/Bank/Edit?ma=' + firstCellValue, '_blank');
+    window.open('/BankAccountType/Edit?ma=' + firstCellValue, '_blank');
 
 }
 $('#Table').on('click', '.btnDelete', function (e) {
@@ -125,7 +113,7 @@ function handleDelete(Id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Bank/Delete',
+                url: '/BankAccountType/Delete',
                 type: 'DELETE',
                 data: { Id: Id },
                 success: function (response) {
