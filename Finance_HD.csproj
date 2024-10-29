@@ -75,6 +75,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\BankAccount\Form.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\BankAccount\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Bank\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Views\CashDeposit\Form.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -190,6 +202,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Bank\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Currency\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Customer\Form.cshtml" />
     <_ContentIncludedByDefault Remove="Views\DocumentType\Form.cshtml" />
@@ -246,6 +259,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\login\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Bank\Form.cshtml" />
   </ItemGroup>
 
 </Project>

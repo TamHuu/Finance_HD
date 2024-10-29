@@ -64,3 +64,20 @@
     font-style: italic; /* Chữ nghiêng */
     color: #666; /* Màu chữ nhạt */
 }
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-right: 20px; /* Khoảng cách giữa các form-group */
+}
+
+    .form-group label {
+        margin-right: 10px; /* Khoảng cách giữa label và input */
+    }
+
+.custom-datetime {
+    width: 200px; /* Điều chỉnh kích thước ô input */
+}
+
+.label-top-padding {
+    padding-top: 8px
+}

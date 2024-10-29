@@ -1,0 +1,109 @@
+﻿@model Finance_HD.Models.FiaNganHang
+
+@{
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa " : "Thêm mới ";
+    string formAction = isEdit ? "Edit" : "Add";
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+}
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body">
+            <form id="Form">
+                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Code">Code</label>
+                            <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" placeholder="Nhập mã" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Ten">Tên </label>
+                            <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" placeholder="Nhập tên" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="CodeVa">Code VA </label>
+                            <input type="text" class="form-control form-control-sm" id="CodeVa" name="CodeVa" required value="@Model.CodeVa" placeholder="Nhập Code VA" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="MaxLengthVa">Max length VA </label>
+                            <input type="text" class="form-control form-control-sm" id="MaxLengthVa" name="MaxLengthVa" required value="@Model.MaxLengthVa" placeholder="Nhập số lượng tối đa kí tự của tài khoản ảo" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Status">Trạng thái</label>
+                            <select class="form-control form-control-sm" id="Status" name="Status">
+                                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button type="button" id="btnSave" class="btn btn-primary btn-custom">@ViewData["Title"]</button>
+                    <button type="button" class="btn btn-danger btn-custom" onclick="window.location.href='/Bank'">Huỷ</button>
+                </div>
+               
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/nganhang/nganhang/form.js"></script>
+    <script>
+        // Pass the isEdit variable to JavaScript
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var defaultUID = '@defaultUID'; // Truyền defaultUID vào JavaScript
+        console.log("Is Edit:", isEdit);
+        console.log("Default UID:", defaultUID);
+    </script>
+    <style>
+    .button-container {
+        display: flex; /* Sử dụng Flexbox */
+        justify-content: center; /* Căn giữa */
+        gap: 10px; /* Khoảng cách giữa các nút */
+        margin-top: 20px; /* Khoảng cách trên cùng */
+    }
+
+    .btn-custom {
+        padding: 10px 20px; /* Padding cho nút */
+        border-radius: 5px; /* Bo tròn các góc */
+        transition: background-color 0.3s, box-shadow 0.3s; /* Hiệu ứng chuyển tiếp */
+        font-size: 14px; /* Kích thước chữ */
+        font-weight: bold; /* Chữ đậm */
+    }
+
+    .btn-primary {
+        background-color: #007bff; /* Màu nền */
+        border: none; /* Không viền */
+        color: white; /* Màu chữ */
+    }
+
+    .btn-danger {
+        background-color: #dc3545; /* Màu nền cho nút Huỷ */
+        border: none; /* Không viền */
+        color: white; /* Màu chữ */
+    }
+
+    .btn-primary:hover, .btn-danger:hover {
+        opacity: 0.8; /* Hiệu ứng giảm độ sáng khi hover */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng */
+    }
+</style>
+}
