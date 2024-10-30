@@ -31,6 +31,12 @@ namespace Finance_HD.Common
         [EnumGuid("F79AC5AF-85B1-43E4-964B-25515F302C86")]
         KhuVuiChoi = 2,
     }
+    public enum WebsiteUsing
+    {
+        all,
+        qlcv,
+        tmtt,
+        xncovid
+    }
 
-   
 }

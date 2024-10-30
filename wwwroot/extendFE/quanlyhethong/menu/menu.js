@@ -4,8 +4,8 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], orderable: false },
-            { width: '150px', className: 'text-center', targets: [12], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1, 2, 3, 4, 5, 6, 7, 8], orderable: false },
+            { width: '150px', className: 'text-center', targets: [9, 10], orderable: false },
         ],
 
         language: {
@@ -50,25 +50,27 @@ function loadDanhSach() {
 function drawDanhSach(data) {
     table.clear().draw();
     console.table(data)
-    data.forEach(function (branch, index) {
-        let ma = branch.ma;
-        let code = branch.code;
-        let tenchinhanh = branch.ten;
-        let cosoquy = branch.coSoQuy == true ? "Có" : "Không";
-        let diachi = branch.diaChi;
-        let masothue = branch.maSoThue;
+    data.forEach(function (item, index) {
+        let ma = item.ma;
+        let website = item.website;
+        let code = item.code;
+        let menuCha = item.menuCha;
+        let ten = item.ten;
+        let soThuTu = item.soThuTu;
+        let url = item.url;
+        let icon = item.icon;
+        let menuCon = item.menuCon;
         let tentrangthai = branch.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
+            `<td>${website}</td>`,
             `<td>${code}</td>`,
-            `<td>${tenchinhanh}</td>`,
-            `<td>${cosoquy}</td>`,
-            `<td>${diachi}</td>`,
-            `<td>${masothue}</td>`,
-            `<td>${masothue}</td>`,
-            `<td>${masothue}</td>`,
-            `<td>${masothue}</td>`,
-            `<td>${masothue}</td>`,
+            `<td>${menuCha}</td>`,
+            `<td>${ten}</td>`,
+            `<td>${soThuTu}</td>`,
+            `<td>${url}</td>`,
+            `<td>${icon}</td>`,
+            `<td>${menuCon}</td>`,
             `<td>${tentrangthai}</td>`,
         ];
         let tdChucNang = `
@@ -97,7 +99,7 @@ function Edit(row) {
 $('#Table').on('click', '.btnDelete', function (e) {
     e.preventDefault();
     var Id = $(this).data('id');
-  
+
     handleDelete(Id);
 });
 

@@ -63,6 +63,7 @@ namespace Finance_HD.Controllers.QuanLyHeThong
 
         public IActionResult Add()
         {
+
             return View("Form", new SysMenu());
         }
 
