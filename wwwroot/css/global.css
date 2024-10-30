@@ -81,3 +81,14 @@
 .label-top-padding {
     padding-top: 8px
 }
+
+.action .btn {
+    border-radius: 20px; /* Đặt giá trị bo tròn ở đây (20px là ví dụ, có thể điều chỉnh) */
+    padding: 8px 16px; /* Điều chỉnh padding cho nút */
+    font-weight: bold; /* Bolding cho văn bản trong nút */
+}
+
+    /* Optional: Thay đổi màu nền và màu chữ khi di chuột */
+    .action .btn:hover {
+        opacity: 0.9; /* Giảm độ trong suốt khi hover */
+    }

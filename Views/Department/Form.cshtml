@@ -2,83 +2,88 @@
 
 @{
     bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
-    ViewData["Title"] = isEdit ? "Chỉnh sửa phòng ban" : "Thêm mới phòng ban";
+    ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
 
 
 }
+<div class="col-12 col-md-6">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body">
+            <form id="Form">
+                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+                <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" />
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">@ViewData["Title"]</h5>
-    </div>
-    <div class="card-body">
-        <form id="Form">
-            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
-            <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" />
-
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Code">Code</label>
-                        <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Code">Code<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Branch">Tên chi nhánh:</label>
-                        <select class="form-control" id="Branch" name="Branch">
-                        </select>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Branch">Tên chi nhánh<span style="color: red;">*</span></label>
+                            <select class="form-control" id="Branch" name="Branch">
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Division">Tên ban:</label>
-                        <select class="form-control" id="Division" name="Division">
-                        </select>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Division">Tên ban<span style="color: red;">*</span></label>
+                            <select class="form-control" id="Division" name="Division">
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Ten">Tên phòng ban</label>
-                        <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" />
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Ten">Tên phòng ban<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" />
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Ban">Ban</label>
-                        <div>
-                            <input type="checkbox" id="Ban" name="Ban" value="true" @(Model.Ban == true ? "checked" : "") />
-                            <label for="Ban">Có</label>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Ban">Ban<span style="color: red;">*</span></label>
+                            <div>
+                                <input type="checkbox" id="Ban" name="Ban" value="true" @(Model.Ban == true ? "checked" : "") />
+                                <label for="Ban">Có</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="CoSoQuy">Có sổ quỹ<span style="color: red;">*</span></label>
+                            <div>
+                                <input type="checkbox" id="CoSoQuy" name="CoSoQuy" value="true" @(Model.CoSoQuy == true ? "checked" : "") />
+                                <label for="CoSoQuy">Có</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Status">Trạng thái<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="Status" name="Status">
+                                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                            </select>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="CoSoQuy">Có sổ quỹ</label>
-                        <div>
-                            <input type="checkbox" id="CoSoQuy" name="CoSoQuy" value="true" @(Model.CoSoQuy == true ? "checked" : "") />
-                            <label for="CoSoQuy">Có</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Status">Trạng thái</label>
-                        <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
-                        </select>
-                    </div>
-                </div>
-            </div>
 
-            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
-        </form>
+                <div class="action" style="text-align: center;">
+                    <a href="/Department" class="btn btn-danger btn-sm" style="margin-right: 10px;">Huỷ</a>
+                    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+                </div>
+            </form>
 
+        </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

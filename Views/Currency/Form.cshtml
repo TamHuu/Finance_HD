@@ -7,60 +7,67 @@
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
     var lisTienTe = ViewData["listTienTe"] as List<Finance_HD.Models.FiaTienTe>;
 }
+<div class="col-12 col-md-6">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body">
+            <form id="Form">
+                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">@ViewData["Title"]</h5>
-    </div>
-    <div class="card-body">
-        <form id="Form">
-            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Monetary">Tên tiền tệ<span style="color: red;">*</span></label>
+                            <select class="form-control" id="Monetary" name="Monetary">
+                                @foreach (var item in lisTienTe)
+                                {
+                                    <!option value="@item.Ma" @(Model.MaTienTe == item.Ma ? "selected" : "")>@item.Ten</!option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="GiaTri">Nhập giá trị<span style="color: red;">*</span></label>
+                            <input placeholder="Nhập giá trị" type="text" class="form-control form-control-sm" id="GiaTri" name="GiaTri" required value="@Model.GiaTri" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Code">Code<span style="color: red;">*</span></label>
+                            <input placeholder="Nhập code" type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Status">Trạng thái<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="Status" name="Status">
+                                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-           <div class="row">
-    <div class="col-md-2">
-        <div class="form-group">
-            <label for="Monetary">Tên tiền tệ:</label>
-            <select class="form-control" id="Monetary" name="Monetary">
-                @foreach (var item in lisTienTe)
-                {
-                    <!option value="@item.Ma" @(Model.MaTienTe == item.Ma ? "selected" : "")>@item.Ten</!option>
-                }
-            </select>
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label for="GiaTri">Nhập giá trị</label>
-            <input placeholder="Nhập giá trị" type="text" class="form-control form-control-sm" id="GiaTri" name="GiaTri" required value="@Model.GiaTri" />
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label for="Code">Code</label>
-            <input placeholder="Nhập code" type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label for="Status">Trạng thái</label>
-            <select class="form-control form-control-sm" id="Status" name="Status">
-                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
-                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
-            </select>
+                <div class="action" style="text-align: center;">
+                    <a href="/Currency" class="btn btn-danger btn-sm" style="margin-right: 10px;">Huỷ</a>
+                    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+                </div>
+
+
+            </form>
         </div>
     </div>
 </div>
 
-
-            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
-        </form>
-    </div>
-</div>
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/danhmuc/loaitien/form.js"></script>
+
     <script>
       
         var isEdit = @Html.Raw(Json.Serialize(isEdit));
