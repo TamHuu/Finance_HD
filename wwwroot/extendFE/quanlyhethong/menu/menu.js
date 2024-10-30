@@ -60,7 +60,7 @@ function drawDanhSach(data) {
         let url = item.url;
         let icon = item.icon;
         let menuCon = item.menuCon;
-        let tentrangthai = branch.status == true ? "Hoạt động" : "Hết hoạt động";
+        let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
             `<td>${website}</td>`,

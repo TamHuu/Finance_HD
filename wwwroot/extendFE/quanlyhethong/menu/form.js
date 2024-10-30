@@ -1,54 +1,45 @@
 ﻿$(document).ready(function () {
-    $('#btnSave').on('click', function (e) {
-        e.preventDefault();
-
-        var ma = $('#Ma').val();  
-        var ten = $('#Name').val();         
-        var code = $('#Code').val();        
-        var maSoThue = $('#MaSoThue').val();
-        var phapNhan = $('#PhapNhan').val(); 
-        var diaChi = $('#DiaChi').val();   
-     /*   var logo = $('#Logo')[0].files[0]; */  
-        var coSoQuy = $('#CoSoQuy').val();
-        var status = $('#Status').val();   
-        var url = ma !== defaultUID ? '/Menu/Edit' : '/Menu/Add';
-
-        var data = {
-            Ma: ma,
-            Ten: ten,
-            Code: code,
-            MaSoThue: maSoThue,
-            PhapNhan: phapNhan,
-            Status: status,
-            DiaChi: diaChi,
-            CoSoQuy: coSoQuy
+    $('#btnSave').click(function () {
+        let formData = {
+            Ma: $('#Ma').val(),
+            UsingFor: $('#cboUsingFor').val(),
+            Code: $('#Code').val(),
+            MenuCha: $('#MenuCha').val(),
+            Name: $('#Name').val(),
+            STT: $('#STT').val(),
+            Url: $('#Url').val(),
+            Icon: $('#Icon').val(),
+            MenuCon: $('#MenuCon').val(),
+            Status: $('#Status').val()
         };
+        var url = isEdit ? '/Menu/Edit' : '/Menu/Add';
+        console.log("dữ liệu gửi đi", formData);
 
         $.ajax({
             url: url,
             type: 'POST',
-            data: data,
+            data: formData,
             success: function (response) {
                 if (response.success) {
-                    Swal.fire({
-                        title: 'Thành công!',
+                    swal.fire({
+                        title: 'thành công!',
                         text: response.message,
                         icon: 'success'
                     }).then(() => {
-                        window.location.href = "/Branch";
+                        window.location.href = "/Menu";
                     });
                 } else {
-                    Swal.fire({
-                        title: 'Thất bại!',
+                    swal.fire({
+                        title: 'thất bại!',
                         text: response.message,
                         icon: 'error'
                     });
                 }
             },
             error: function (xhr, status, error) {
-                Swal.fire({
-                    title: 'Đã xảy ra lỗi!',
-                    text: 'Vui lòng thử lại.',
+                swal.fire({
+                    title: 'đã xảy ra lỗi!',
+                    text: 'vui lòng thử lại.',
                     icon: 'error'
                 });
                 console.error(error);

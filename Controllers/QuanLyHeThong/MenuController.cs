@@ -28,7 +28,7 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         [HttpGet]
         public JsonResult getListMenu()
         {
-            var listUser = (from user in _dbContext.SysUser
+            var listMenu = (from user in _dbContext.SysUser
                             join chinhanh in _dbContext.SysBranch on user.BranchId equals chinhanh.Ma
                             join phongban in _dbContext.TblPhongBan on user.MaPhongBan equals phongban.Ma into banGroup
                             from ban in banGroup.DefaultIfEmpty()
@@ -41,7 +41,6 @@ namespace Finance_HD.Controllers.QuanLyHeThong
                                 CCCD = user.Cccd + "",
                                 SoDienThoai = user.SoDienThoai + "",
                                 GioiTinh = user.GioiTinh + "",
-                                Status = user.Status == true ? "Hoạt động" : "Hết hoạt động",
                                 FullName = user.FullName + "",
                                 MaDinhDanh = user.MaDinhDanh + "",
                                 NgaySinh = user.NgaySinh + "",
@@ -52,13 +51,14 @@ namespace Finance_HD.Controllers.QuanLyHeThong
                                 TenChiNhanh = chinhanh.Ten + "",
                                 MaPhongBan = ban.Ma + "",
                                 TenPhongBan = ban.Ten + "",
+                                Status = user.Status == true ? "Hoạt động" : "Hết hoạt động",
                                 CreatedDate = DateTime.Now,
                             })
 
                              .OrderByDescending(role => role.CreatedDate)
                              .ToList();
 
-            return Json(new { success = true, Data = listUser });
+            return Json(new { success = true, Data = listMenu });
         }
 
         public IActionResult Add()
@@ -68,69 +68,24 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         }
 
         [HttpPost]
-        public JsonResult Add(SysMenu model)
+        public JsonResult Add( string UsingFor, string Code, string MenuCha, string Name, string STT, string Url, string Icon, string MenuCon, bool Status)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
-            }
 
-            //if (string.IsNullOrWhiteSpace(model.Username))
-            //{
-            //    return Json(new { success = false, message = "Tên đăng nhập không được để trống!" });
-            //}
-            //if (string.IsNullOrWhiteSpace(model.Password))
-            //{
-            //    return Json(new { success = false, message = "Mật khẩu không được để trống!" });
-            //}
-            //if (string.IsNullOrWhiteSpace(model.FullName))
-            //{
-            //    return Json(new { success = false, message = "Họ tên không được để trống!" });
-            //}
-            //if (model.BranchId == Guid.Empty)
-            //{
-            //    return Json(new { success = false, message = "Chi nhánh không được để trống!" });
-            //}
-            //if (model.MaPhongBan == Guid.Empty)
-            //{
-            //    return Json(new { success = false, message = "Phòng ban không được để trống!" });
-            //}
-            //if (!model.NgaySinh.HasValue)
-            //{
-            //    return Json(new { success = false, message = "Ngày sinh không được để trống!" });
-            //}
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
-            //var existingUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == model.Username);
-            //if (existingUser != null)
-            //{
-            //    return Json(new { success = false, message = "Tên người dùng đã tồn tại!" });
-            //}
-            //string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
-
-            //var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
-            //if (loggedInUser == null)
-            //{
-            //    return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
-            //}
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
             var user = new SysMenu
             {
-                //Username = model.Username,
-                //Msnv = model.Msnv,
-                //Password = model.Password,
-                //MaDinhDanh = model.MaDinhDanh,
-                //BranchId = model.BranchId,
-                //MaPhongBan = model.MaPhongBan,
-                //Cccd = model.Cccd,
-                //Status = model.Status,
-                //FullName = model.FullName,
-                //DiaChi = model.DiaChi,
-                //GioiTinh = model.GioiTinh,
-                //NgaySinh = model.NgaySinh,
-                //NgayVaoLam = model.NgayVaoLam,
-                //SoDienThoai = model.SoDienThoai,
-                //NgayKetThuc = model.NgayKetThuc,
-                //UserCreated = loggedInUser.Ma,
-                CreatedDate = model.CreatedDate ?? DateTime.Now,
+                Code = Code,
+                ParentId = MenuCha.GetGuid(),
+                Name = Name,
+                Link = Url,
+                Icon = Icon,
+                ChildOfMenu = MenuCon.GetGuid(),
+                UsingFor = UsingFor,
+                Status = Status,
+                UserCreated = loggedInUser.Ma,
+                CreatedDate = DateTime.Now,
             };
 
             _dbContext.SysMenu.Add(user);
