@@ -6,58 +6,63 @@
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
 }
+<div class="col-12 col-md-6">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body">
+            <form id="Form">
+                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+                <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" />
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">@ViewData["Title"]</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Name">Tên<span style="color: red;">*</span> </label>
+                            <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Name" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Code">Code<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Description">Mô tả<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="Description" name="Description" required value="@Model.Description" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="FormAccess">Cho phép truy cập form<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="FormAccess" name="FormAccess">
+                                <!option value="true" @(Model.FormAccess == true ? "selected" : "")>Có</!option>
+                                <!option value="false" @(!Model.FormAccess == true ? "selected" : "")>Không</!option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Status">Trạng thái<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="Status" name="Status">
+                                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action" style="text-align: center;">
+                    <a href="/Permissions" class="btn btn-danger btn-sm" style="margin-right: 10px;">Huỷ</a>
+                    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="card-body">
-        <form id="Form">
-            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
-            <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" /> 
 
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Name">Tên </label>
-                        <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Name" />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Code">Code</label>
-                        <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Description">Mô tả</label>
-                        <input type="text" class="form-control form-control-sm" id="Description" name="Description" required value="@Model.Description" />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="FormAccess">Cho phép truy cập form</label>
-                        <select class="form-control form-control-sm" id="FormAccess" name="FormAccess">
-                            <!option value="true" @(Model.FormAccess == true ? "selected" : "")>Có</!option>
-                            <!option value="false" @(!Model.FormAccess == true ? "selected" : "")>Không</!option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Status">Trạng thái</label>
-                        <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status==true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(!Model.Status==true ? "selected" : "")>Không hoạt động</!option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
-        </form>
-    </div>
 </div>
 
 @section Scripts {
