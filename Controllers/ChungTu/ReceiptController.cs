@@ -1,6 +1,8 @@
-﻿using Finance_HD.Helpers;
+﻿using Finance_HD.Common;
+using Finance_HD.Helpers;
 using Finance_HD.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks.Dataflow;
 
 namespace Finance_HD.Controllers.ChungTu
 {
@@ -12,6 +14,8 @@ namespace Finance_HD.Controllers.ChungTu
         {
             _dbContext = context;
         }
+
+
         public IActionResult Index()
         {
             if (Request.Cookies["FullName"] != null)
@@ -25,13 +29,98 @@ namespace Finance_HD.Controllers.ChungTu
             var result = _dbContext.FiaPhieuThuChi.ToList();
             return View(result);
         }
-        [HttpGet]
-        public JsonResult getListReceipt()
+        [HttpPost]
+        public JsonResult getListReceipt(DateTime? TuNgay, DateTime? DenNgay, string DonViThu)
         {
-            var listReceipt = _dbContext.TblLoaiChungTu
-                              .Where(role => !(role.Deleted ?? false))
-                              .OrderByDescending(role => role.CreatedDate)
-                              .ToList();
+            DateTime? dtpTuNgay = TuNgay;
+            DateTime? dtpDenNgay = DenNgay;
+
+            var listReceipt = (from phieuthu in _dbContext.FiaPhieuThuChi
+                               join loaithuchi in _dbContext.CatLoaiThuChi
+                                   on phieuthu.MaLoaiThuChi equals loaithuchi.Ma into LoaiThuChiGroup
+                               from loaithuchi in LoaiThuChiGroup.DefaultIfEmpty()
+                               join chinhanhchi in _dbContext.SysBranch
+                                   on phieuthu.MaChiNhanhChi equals chinhanhchi.Ma into ChiNhanhChiGroup
+                               from chinhanhchi in ChiNhanhChiGroup.DefaultIfEmpty()
+                               join chinhanhthu in _dbContext.SysBranch
+                                   on phieuthu.MaChiNhanhThu equals chinhanhthu.Ma into ChiNhanhThuGroup
+                               from chinhanhthu in ChiNhanhThuGroup.DefaultIfEmpty()
+                               join phongbanchi in _dbContext.TblPhongBan
+                                   on phieuthu.MaPhongBanChi equals phongbanchi.Ma into PhongBanChiGroup
+                               from phongbanchi in PhongBanChiGroup.DefaultIfEmpty()
+                               join phongbanthu in _dbContext.TblPhongBan
+                                   on phieuthu.MaPhongBanThu equals phongbanthu.Ma into PhongBanThuGroup
+                               from phongbanthu in PhongBanThuGroup.DefaultIfEmpty()
+                               join noidungthuchi in _dbContext.CatNoiDungThuChi
+                                   on phieuthu.MaNoiDungThuChi equals noidungthuchi.Ma into NoiDungThuChiGroup
+                               from noidungthuchi in NoiDungThuChiGroup.DefaultIfEmpty()
+                               join nguoigiaodich in _dbContext.SysUser
+                                   on phieuthu.NguoiGiaoDich equals nguoigiaodich.Ma into NguoiGiaoDichGroup
+                               from nguoigiaodich in NguoiGiaoDichGroup.DefaultIfEmpty()
+                               join tiente in _dbContext.FiaTienTe
+                                   on phieuthu.MaTienTe equals tiente.Ma into TienTeGroup
+                               from tiente in TienTeGroup.DefaultIfEmpty()
+                               join hinhthuc in _dbContext.TblHinhThucThuChi
+                                   on phieuthu.MaHinhThuc equals hinhthuc.Ma into HinhThucGroup
+                               from hinhthuc in HinhThucGroup.DefaultIfEmpty()
+                               join bangke in _dbContext.FiaBangKeNopTien
+                                   on phieuthu.MaBangKeNopTien equals bangke.Ma into BangKeGroup
+                               from bangke in BangKeGroup.DefaultIfEmpty()
+                               join nguoilapphieu in _dbContext.SysUser
+                                   on phieuthu.NguoiLapPhieu equals nguoilapphieu.Ma into NguoiLapPhieuGroup
+                               from nguoilapphieu in NguoiLapPhieuGroup.DefaultIfEmpty()
+                               join phieuchi in _dbContext.FiaPhieuThuChi
+                                   on phieuthu.MaPhieuChi equals phieuchi.Ma into PhieuChiGroup
+                               from phieuchi in PhieuChiGroup.DefaultIfEmpty()
+                               join nguoinhantien in _dbContext.SysUser
+                                   on phieuthu.NguoiNhanTien equals nguoinhantien.Ma into NguoiNhanTienGroup
+                               from nguoinhantien in NguoiNhanTienGroup.DefaultIfEmpty()
+                               where !(phieuthu.Deleted ?? false) &&
+         (string.IsNullOrEmpty(DonViThu) ||
+          phieuthu.MaChiNhanhThu == DonViThu.GetGuid() ||
+          DonViThu.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID)
+         // &&
+         //(!dtpTuNgay.HasValue || phieuthu.NgayLapPhieu >= dtpTuNgay.Value) &&
+         //(!dtpDenNgay.HasValue || phieuthu.NgayLapPhieu <= dtpDenNgay.Value)
+                               select new
+                               {
+                                   Ma = phieuthu.Ma.ToString(),
+                                   MaLoaiThuChi = loaithuchi.Ma.ToString(),
+                                   TenLoaiThuChi = loaithuchi.Ten,
+                                   MaChiNhanhChi = chinhanhchi.Ma.ToString(),
+                                   TenChiNhanhChi = chinhanhchi.Ten,
+                                   MaChiNhanhThu = chinhanhthu.Ma.ToString(),
+                                   TenChiNhanhThu = chinhanhthu.Ten,
+                                   MaPhongBanChi = phongbanchi.Ma.ToString(),
+                                   TenPhongBanChi = phongbanchi.Ten,
+                                   MaPhongBanThu = phongbanthu.Ma.ToString(),
+                                   TenPhongBanThu = phongbanthu.Ten,
+                                   MaNoiDungThuChi = noidungthuchi.Ma.ToString(),
+                                   TenNoiDungThuChi = noidungthuchi.Ten,
+                                   SoPhieu = phieuthu.SoPhieu.ToString(),
+                                   NgayLapPhieu = phieuthu.NgayLapPhieu,
+                                   NgayDuyet = phieuthu.NgayDuyet,
+                                   NguoiDuyet = phieuthu.NguoiDuyet,
+                                   NguoiGiaoDich = nguoigiaodich.Ma.ToString(),
+                                   TenNguoiGiaoDich = nguoigiaodich.FullName,
+                                   MaTienTe = tiente.Ma.ToString(),
+                                   TenTienTe = tiente.Ten,
+                                   TyGia = phieuthu.TyGia ?? 0,
+                                   MaHinhThuc = hinhthuc.Ma.ToString(),
+                                   SoTien = phieuthu.SoTien ?? 0,
+                                   GhiChu = phieuthu.GhiChu,
+                                   SoHoSoKemTheo = phieuthu.SoHoSoKemTheo ?? 0,
+                                   MaBangKeNopTien = bangke.Ma.ToString(),
+                                   TenBangKeNopTien = tiente.Ten,
+                                   NguoiLapPhieu = nguoilapphieu.Ma.ToString(),
+                                   TenNguoiLapPhieu = nguoilapphieu.FullName,
+                                   TenNguoiNhanTien = nguoinhantien.FullName,
+                                   CreatedDate = phieuthu.CreatedDate,
+                                   TrangThai = phieuthu.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : phieuthu.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : phieuthu.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : phieuthu.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
+                                   HinhThuc = phieuthu.MaHinhThuc == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : phieuthu.MaHinhThuc == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : phieuthu.MaHinhThuc == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
+                               })
+                               .OrderByDescending(receipt => receipt.CreatedDate)
+                               .ToList();
 
             return Json(new { success = true, Data = listReceipt });
         }
@@ -47,20 +136,58 @@ namespace Finance_HD.Controllers.ChungTu
 
             return View("Form", new FiaPhieuThuChi());
         }
-
-        [HttpPost]
-        public JsonResult Add(string ChiNhanh, string PhongBan, string NganHang, string TienTe, string SoTaiKhoan, string DienGiai, string DongTienThu, string DongTienChi, bool Status, string LoaiTaiKhoan)
+        private int GetNextSequentialNumber(string chiNhanhCode)
         {
-            if (!ModelState.IsValid)
+            var lastRequest = _dbContext.FiaPhieuThuChi
+                .Where(x => x.SoPhieu.StartsWith($"PT/{chiNhanhCode}/"))
+                .OrderByDescending(x => x.CreatedDate)
+                .FirstOrDefault();
+
+            if (lastRequest != null)
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
+                // Lấy số thứ tự từ số phiếu hiện tại
+                var parts = lastRequest.SoPhieu.Split('/');
+                if (parts.Length > 3 && int.TryParse(parts[3], out int lastNumber))
+                {
+                    return lastNumber + 1; // Tăng số thứ tự lên 1
+                }
             }
 
-            if (string.IsNullOrWhiteSpace(ChiNhanh))
+            return 1; // Nếu không có số nào, bắt đầu từ 1
+        }
+        [HttpPost]
+        public JsonResult Add(
+    string BangKe,
+    string BoPhanChi,
+    string BoPhanThu,
+    string DonViChi,
+    string DonViThu,
+    DateTime NgayLap,
+    string NguoiThuTien,
+    string NhanVienNop,
+    string KhachHangNop,
+    string Ma,
+    string MaDongTien,
+    string SoChungTu,
+    string SoPhieuChi,
+    string SoTien,
+    string TienTe,
+    string TyGia,
+    string HinhThuc,
+    string MaPhieuChi,
+    string GhiChu)
+        {
+
+
+            if (string.IsNullOrWhiteSpace(DonViThu))
             {
                 return Json(new { success = false, message = "Tên chi nhánh không được để trống!" });
             }
-
+            SysBranch? cn = _dbContext.SysBranch.FirstOrDefault(t => t.Ma == DonViThu.GetGuid());
+            if (cn == null)
+            {
+                return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
+            }
             //var existingListReceipt = _dbContext.FiaPhieuThuChi.FirstOrDefault(x => x.SoTaiKhoan == SoTaiKhoan);
             //if (existingListReceipt != null)
             //{
@@ -73,20 +200,31 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
+            int nextSequentialNumber = GetNextSequentialNumber(cn.Code);
             var Receipt = new FiaPhieuThuChi
             {
-                //MaChiNhanh = ChiNhanh.GetGuid(),
-                //MaPhongBan = PhongBan.GetGuid(),
-                //MaNganHang = NganHang.GetGuid(),
-                //MaTienTe = TienTe.GetGuid(),
-                //SoTaiKhoan = SoTaiKhoan,
-                //MaLoai = LoaiTaiKhoan.GetGuid(),
-                //DienGiai = DienGiai,
-                //DongTienThu = DongTienThu.GetGuid(),
-                //DongTienChi = DongTienChi.GetGuid(),
-                //Status = Status,
-                //CreatedDate = DateTime.Now,
-                //UserCreated = loggedInUser.Ma,
+                MaLoaiThuChi = Guid.Parse("AB3FF94A-905D-47C3-89B4-E8F5099CDC9D"),
+                MaChiNhanhThu = DonViThu.GetGuid(),
+                MaPhongBanThu = BoPhanThu.GetGuid(),
+                MaNoiDungThuChi = MaDongTien.GetGuid(),
+                MaBangKeNopTien = BangKe.GetGuid(),
+                SoHoSoKemTheo = SoChungTu.ToInt(),
+                NgayLapPhieu = NgayLap,
+                NguoiLapPhieu = loggedInUser.Ma,
+                TrangThai = (int)TrangThaiChungTu.LapPhieu,
+                MaPhongBanChi = BoPhanChi.GetGuid(),
+                MaChiNhanhChi = DonViChi.GetGuid(),
+                MaTienTe = TienTe.GetGuid(),
+                TyGia = TyGia.ToInt(),
+                SoTien = SoTien.ToInt(),
+                MaHinhThuc = HinhThuc.ToInt(),
+                GhiChu = GhiChu,
+                MaPhieuChi = MaPhieuChi.GetGuid(),
+                SoPhieu = string.Format("PT/{0}/{1:yyyyMMdd}/{2:000}", cn.Code, DateTime.Today, nextSequentialNumber),
+                TenNguoiNhanTien = loggedInUser.FullName,
+                NguoiNhanTien = loggedInUser.Ma,
+                NguoiGiaoDich = KhachHangNop.GetGuid(),
+
             };
 
             _dbContext.FiaPhieuThuChi.Add(Receipt);

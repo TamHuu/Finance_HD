@@ -488,13 +488,8 @@ function TableDetailBangKe(maBangKe) {
 function sendFormData() {
     $("#btnSave").on('click', function () {
         var url = isEdit ? "/Receipt/Edit" : "/Receipt/Add";
-        updateThanhTien();
-
-        const formData = collectFormData();
-        console.log("dữ liệu truyền đi", formData);
-        formData.SaveDataBangKe = SaveDataBangKe;
-        formData.SaveDataNhanVien = listDataNhanVien;
-
+        var formData = collectFormData();
+        console.log("dữ liệu truyền đi", formData)
         callAPI('POST', url, formData,
             function (response) {
                 if (response.success) {
@@ -514,21 +509,24 @@ function sendFormData() {
 function collectFormData() {
     return {
         Ma: $("#Ma").val(),
-        MaChiNhanhNhan: $("#DonViThu").val(),
-        MaChiNhanhNop: $("#DonViNop").val(),
-        MaPhongBanNhan: $("#BoPhanThu").val(),
-        MaPhongBanNop: $("#BoPhanNop").val(),
-        NgayNopTien: $("#NgayNopTien").val(),
+        DonViThu: $("#DonViThu").val(),
+        DonViChi: $("#DonViChi").val(),
+        BoPhanThu: $("#BoPhanThu").val(),
+        BoPhanChi: $("#BoPhanChi").val(),
         NgayLap: $("#NgayLap").val(),
-        MaHinhThuc: $("#MaHinhThuc").val(),
-        MaTienTe: $("#TienTe").val(),
+        NguoiThuTien: $("#NguoiThuTien").val(),
+        NhanVienNop: $("#NhanVienNop").val(),
+        KhachHangNop: $("#KhachHangNop").val(),
+        BangKe: $("#BangKe").val(),
+        TienTe: $("#TienTe").val(),
         TyGia: $("#TyGia").val(),
-        NguoiNopTien: $("#NguoiNopTien").val(),
-        NguoiNhanTien: $("#NguoiNhanTien").val(),
-        MaNoiDung: $("#MaNoiDung").val(),
+        SoPhieuChi: $("#SoPhieuChi").val(),
+        SoTien: $("#SoTien").val(),
+        HinhThuc: $("#HinhThuc").val(),
+        SoChungTu: $("#SoHoSoKemTheo").val(),
         GhiChu: $("#GhiChu").val(),
-        DiaChi: $("#DiaChi").val(),
-        SoTien: TongTien,
+        MaDongTien: $("#MaDongTien").val(),
+
     };
 }
 
