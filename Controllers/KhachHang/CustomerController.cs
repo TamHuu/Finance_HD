@@ -47,7 +47,7 @@ namespace Finance_HD.Controllers.KhachHang
 
                                 }).OrderByDescending(x => x.CreatedDate).ToList();
 
-            return Json(new { Data = listCustomer });
+            return Json(new {success=true, Data = listCustomer });
         }
 
         [HttpGet]

@@ -42,7 +42,7 @@ namespace Finance_HD.Controllers.TaiChinh
                                     NoiBo = noidungthuchi.NoiBo,
                                 }).ToList();
 
-            return Json(new { Data = listIncomeContent });
+            return Json(new {success=true, Data = listIncomeContent });
         }
 
         [HttpGet]

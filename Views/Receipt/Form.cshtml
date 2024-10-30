@@ -41,7 +41,12 @@
                             </div>
                             <div class="form-group col-12 col-md-6">
                                 <label for="NgayLap">Ngày lập <span style="color: red;">*</span></label>
-                                <input class="form-control form-control-sm" type="datetime-local" id="NgayLap" name="NgayLap" value="@Model.NgayLapPhieu" />
+                                <input class="form-control form-control-sm"
+                                       type="datetime-local"
+                                       id="NgayLap"
+                                       name="NgayLap"
+                                       value="@(Model.NgayLapPhieu?.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+
                             </div>
                             <div class="form-group col-12 col-md-6">
                                 <label for="NguoiThuTien">Người thu tiền <span style="color: red;">*</span></label>
@@ -75,6 +80,7 @@
                             <div class="form-group col-12 col-md-6">
                                 <label for="SoPhieuChi">Số phiếu chi <span style="color: red;">*</span></label>
                                 <select class="form-control form-control-sm" id="SoPhieuChi" name="SoPhieuChi">
+                                    <option value="@Model.SoPhieu">Chọn...</option>
                                 </select>
                             </div>
                             <div class="form-group col-12 col-md-6">
@@ -84,6 +90,9 @@
                             <div class="form-group col-12 col-md-6">
                                 <label for="HinhThuc">Hình thức <span style="color: red;">*</span></label>
                                 <select class="form-control form-control-sm" id="HinhThuc" name="HinhThuc">
+                                    <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TienMat)" @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TienMat ? "selected" : "")>Tiền mặt</!option>
+                                    <!option value="@((int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan)" @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.TaiKhoanCaNhan ? "selected" : "")>Tài khoản cá nhân</!option>
+                                    <!option value="@((int)Finance_HD.Common.HinhThucThuChi.NganHang)" @(Model.MaHinhThuc == (int)Finance_HD.Common.HinhThucThuChi.NganHang ? "selected" : "")>Ngân hàng</!option>
                                 </select>
                             </div>
                             <div class="form-group col-12 col-md-6">
@@ -107,7 +116,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="TableBangKeNopTien" class="table table-bordered table-hover">
+                                <table id="TableChiTietBangKe" class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
                                             <th hidden>Mã Bảng Kê Chi Tiết</th>
@@ -148,6 +157,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/soquy/phieuthu/form.js"></script>
+    <script defer src="/extendFE//common/main.js"></script>
+</<link href="/css/global.css" rel="stylesheet" />
     <script>
         var defaultUID = '@defaultUID';
         // Pass the isEdit variable to JavaScript
@@ -155,4 +166,56 @@
         var maChiNhanhChi = '@Model.MaChiNhanhChi';
         var maPhongBanChi = '@Model.MaPhongBanChi'
     </script>
+    <style>
+        .table thead th {
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .table tbody td {
+            color: #333;
+        }
+
+       
+
+        .d-flex > h6 {
+            margin-right: 5px;
+        }
+
+        .d-flex > input {
+            margin-right: 5px;
+        }
+
+      
+
+        #TableChiTietBangKe tfoot {
+            background-color: #007bff;
+            font-weight: bold;
+            color: white;
+        }
+
+            #TableChiTietBangKe tfoot th {
+                border-top: 2px solid #dee2e6;
+                padding: 10px;
+            }
+
+        .total-amount {
+            font-weight: bold; /* Chữ đậm */
+            font-size: 18px; /* Kích thước chữ lớn hơn */
+            margin-top: 10px; /* Khoảng cách trên */
+        }
+
+        #currency {
+            font-weight: bold; /* Chữ đậm */
+            font-size: 18px;
+        }
+
+        .currency-unit {
+            font-style: italic; /* Chữ nghiêng */
+            color: #666; /* Màu chữ nhạt */
+        }
+    </style>
 }

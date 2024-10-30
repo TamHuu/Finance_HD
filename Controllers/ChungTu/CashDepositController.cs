@@ -66,8 +66,14 @@ namespace Finance_HD.Controllers.ChungTu
         [HttpPost]
         public JsonResult getDanhSachBangKe(string TuNgay, string DenNgay, string DonViNop)
         {
-            DateTime dtpTuNgay = TuNgay.ToDateTime2(DateTime.Now)!.Value;
-            DateTime dtpDenNgay = DenNgay.ToDateTime2(DateTime.Now)!.Value;
+            DateTime? dtpTuNgay = null;
+            DateTime? dtpDenNgay = null;
+
+            // Chuyển đổi TuNgay và DenNgay nếu có giá trị
+            if (!string.IsNullOrEmpty(TuNgay))
+                dtpTuNgay = TuNgay.ToDateTime2(DateTime.Now);
+            if (!string.IsNullOrEmpty(DenNgay))
+                dtpDenNgay = DenNgay.ToDateTime2(DateTime.Now);
 
             var listBangKe = (from bangkenoptien in _dbContext.FiaBangKeNopTien
                               join chinhanhnop in _dbContext.SysBranch
@@ -103,10 +109,11 @@ namespace Finance_HD.Controllers.ChungTu
                               from nguoinhantien in NguoiNhanTienGroup.DefaultIfEmpty()
 
                               where !(bangkenoptien.Deleted ?? false) &&
-                                             (string.IsNullOrEmpty(DonViNop) ||
-                                              bangkenoptien.MaChiNhanhNop == DonViNop.GetGuid() ||
-                                              DonViNop.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID) &&
-                                             (bangkenoptien.NgayLap >= dtpTuNgay && bangkenoptien.NgayLap <= dtpDenNgay)
+                           (string.IsNullOrEmpty(DonViNop) ||
+                            bangkenoptien.MaChiNhanhNop == DonViNop.GetGuid() ||
+                            DonViNop.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID) &&
+                           (!dtpTuNgay.HasValue || bangkenoptien.NgayLap >= dtpTuNgay) &&
+                           (!dtpDenNgay.HasValue || bangkenoptien.NgayLap <= dtpDenNgay)
                               orderby bangkenoptien.CreatedDate descending
                               select new
                               {
@@ -243,7 +250,7 @@ namespace Finance_HD.Controllers.ChungTu
                 return Json(new { success = false, message = "Không được thêm bảng kê từ chi nhánh khác!" });
             }
             var TenNguoiNopTien = _dbContext.SysUser.FirstOrDefault(x => x.Ma == NguoiNopTien.GetGuid());
-          
+
             var listBangKe = new FiaBangKeNopTien
             {
                 Ma = Ma.GetGuid(),
@@ -449,7 +456,7 @@ namespace Finance_HD.Controllers.ChungTu
             return Json(new { success = true, message = "Xoá thành công!" });
         }
         [HttpPost]
-       
+
         public async Task<JsonResult> getCashDepositById(string ma)
         {
             if (string.IsNullOrEmpty(ma))
@@ -464,37 +471,37 @@ namespace Finance_HD.Controllers.ChungTu
                 return Json(new { success = false, message = "Mã không hợp lệ." });
             }
 
-    
+
 
             var cashDeposit = await (from bangke in _dbContext.FiaBangKeNopTien
-                                      join tiente in _dbContext.FiaTienTe
-                                      on bangke.MaTienTe equals tiente.Ma
-                                      where bangke.Ma == maGuid
-                                      select new
-                                      {
-                                          Ma = bangke.Ma,
-                                          MaChiNhanhNhan = bangke.MaChiNhanhNhan,
-                                          MaChiNhanhNop = bangke.MaChiNhanhNop,
-                                          MaPhongBanNhan = bangke.MaPhongBanNhan,
-                                          MaPhongBanNop = bangke.MaPhongBanNop,
-                                          NgayLap = bangke.NgayLap,
-                                          NgayNopTien = bangke.NgayNopTien,
-                                          NguoiNopTien = bangke.NguoiNopTien,
-                                          TenNguoiNopTien = bangke.TenNguoiNopTien,
-                                          DiaChi = bangke.DiaChi,
-                                          LyDo = bangke.LyDo,
-                                          MaTienTe = tiente.Ma,
-                                          TenTienTe = tiente.Ten,
-                                          TyGia = bangke.TyGia,
-                                          SoTien = bangke.SoTien,
-                                          GhiChu = bangke.GhiChu,
-                                          NguoiNhanTien = bangke.NguoiNhanTien,
-                                          MaNoiDung = bangke.MaNoiDung,
-                                          MaHinhThuc = bangke.MaHinhThuc,
-                                          SoPhieu = bangke.SoPhieu,
-                                          TrangThai = bangke.TrangThai,
-                                          CreatedDate = bangke.CreatedDate,
-                                      }).OrderByDescending(x => x.CreatedDate).ToListAsync();
+                                     join tiente in _dbContext.FiaTienTe
+                                     on bangke.MaTienTe equals tiente.Ma
+                                     where bangke.Ma == maGuid
+                                     select new
+                                     {
+                                         Ma = bangke.Ma,
+                                         MaChiNhanhNhan = bangke.MaChiNhanhNhan,
+                                         MaChiNhanhNop = bangke.MaChiNhanhNop,
+                                         MaPhongBanNhan = bangke.MaPhongBanNhan,
+                                         MaPhongBanNop = bangke.MaPhongBanNop,
+                                         NgayLap = bangke.NgayLap,
+                                         NgayNopTien = bangke.NgayNopTien,
+                                         NguoiNopTien = bangke.NguoiNopTien,
+                                         TenNguoiNopTien = bangke.TenNguoiNopTien,
+                                         DiaChi = bangke.DiaChi,
+                                         LyDo = bangke.LyDo,
+                                         MaTienTe = tiente.Ma,
+                                         TenTienTe = tiente.Ten,
+                                         TyGia = bangke.TyGia,
+                                         SoTien = bangke.SoTien,
+                                         GhiChu = bangke.GhiChu,
+                                         NguoiNhanTien = bangke.NguoiNhanTien,
+                                         MaNoiDung = bangke.MaNoiDung,
+                                         MaHinhThuc = bangke.MaHinhThuc,
+                                         SoPhieu = bangke.SoPhieu,
+                                         TrangThai = bangke.TrangThai,
+                                         CreatedDate = bangke.CreatedDate,
+                                     }).OrderByDescending(x => x.CreatedDate).ToListAsync();
 
             // Truy vấn chi tiết bảng kê và loại tiền
             var listChiTietBangKe = await (from bangke in _dbContext.FiaChiTietBangKeNopTien
@@ -510,22 +517,22 @@ namespace Finance_HD.Controllers.ChungTu
                                                ThanhTien = bangke.ThanhTien,
                                                GhiChu = bangke.GhiChu,
                                                TenLoaiTien = loaitien.GiaTri
-                                           }).OrderByDescending(x=>x.TenLoaiTien).ToListAsync();
+                                           }).OrderByDescending(x => x.TenLoaiTien).ToListAsync();
 
             // Truy vấn nhân viên
             var listNhanVien = await (from nhanvien in _dbContext.FiaChiTietBangKeNhanVien
-                                           join user in _dbContext.SysUser
-                                           on nhanvien.MaNhanVien equals user.Ma
-                                           where nhanvien.MaBangKe == maGuid
-                                           select new
-                                           {
-                                               Ma = nhanvien.Ma,
-                                               MaBangKe = nhanvien.MaBangKe,
-                                               MaNhanVien = nhanvien.MaNhanVien,
-                                               SoTien = nhanvien.SoTien,
-                                               TenNhanVien = user.FullName,
-                                               CreatedDate = nhanvien.CreatedDate,
-                                           }).OrderByDescending(x => x.CreatedDate).ToListAsync();
+                                      join user in _dbContext.SysUser
+                                      on nhanvien.MaNhanVien equals user.Ma
+                                      where nhanvien.MaBangKe == maGuid
+                                      select new
+                                      {
+                                          Ma = nhanvien.Ma,
+                                          MaBangKe = nhanvien.MaBangKe,
+                                          MaNhanVien = nhanvien.MaNhanVien,
+                                          SoTien = nhanvien.SoTien,
+                                          TenNhanVien = user.FullName,
+                                          CreatedDate = nhanvien.CreatedDate,
+                                      }).OrderByDescending(x => x.CreatedDate).ToListAsync();
             // Đóng gói dữ liệu trả về
             var responseData = new
             {
