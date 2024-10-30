@@ -49,13 +49,15 @@
         </div>
     </div>
     <footer style="background-color:#1e63e9" class="main-footer d-flex align-items-center text-white py-3 justify-content-between">
-        <span class="fs-16 fw-700 mx-auto login-footer" title="Tổng Công Ty">Tổng Công Ty</span>
-        <div class="d-flex align-items-center">
-            <a href="/login/logout" class="logout-icon" title="Đăng xuất">
-                <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+        <h4 class="fs-16 fw-700 mx-auto login-footer" title="@ViewData["ChiNhanhDangNhap"]">@ViewData["ChiNhanhDangNhap"]</h4>
+        @if (ViewData["IsLoggedIn"] != null && (bool)ViewData["IsLoggedIn"])
+        {
+            <a  href="/Account/Logout" class="logout-icon" title="Đăng xuất">
+                <i class="fa-solid fa-right-from-bracket fa-lg"></i> Đăng xuất
             </a>
+        }
+      
 
-        </div>
     </footer>
     <style>
         .main-footer {
@@ -70,22 +72,27 @@
         }
 
         .logout-icon {
-            color: #ffcc00; /* Màu khác cho icon đăng xuất */
-            margin-left: 10px; /* Khoảng cách giữa tên và icon */
+            position: absolute;
+            right: 5%;
+            background-color: rgb(0, 0, 128);
+            display: inline-flex;
+            align-items: center;
+            color: #fff; /* Màu chữ */
+            text-decoration: none; /* Bỏ gạch chân */
+            padding: 10px 15px; /* Khoảng cách bên trong */
+            border-radius: 5px; /* Bo góc */
+            transition: background-color 0.3s ease; /* Hiệu ứng chuyển tiếp */
         }
 
             .logout-icon:hover {
-                color: #ffc107; /* Thay đổi màu khi hover */
+                background-color: #007bff; /* Màu nền khi di chuột */
+                color: #fff; /* Màu chữ khi di chuột */
             }
 
-        .logout-icon {
-            color: #ffffff; /* Đặt màu trắng cho icon đăng xuất */
-            margin-left: 10px; /* Khoảng cách giữa tên và icon */
-        }
-
-            .logout-icon:hover {
-                color: #ffc107; /* Thay đổi màu khi hover */
+            .logout-icon i {
+                margin-right: 5px; /* Khoảng cách giữa biểu tượng và chữ */
             }
+
 
     </style>
    

@@ -12,6 +12,8 @@ namespace Finance_HD.Controllers
         [CustomAuthorize]
         public IActionResult Index()
         {
+            bool isLoggedIn = Request.Cookies["FullName"] != null; // Check if the user is logged in
+            ViewData["IsLoggedIn"] = isLoggedIn;
             if (Request.Cookies["FullName"] != null)
             {
                 if (Request.Cookies["ExpireTime"] != null)
@@ -24,6 +26,7 @@ namespace Finance_HD.Controllers
                             Response.Cookies.Delete("UserName");
                             Response.Cookies.Delete("FullName");
                             Response.Cookies.Delete("SDT");
+                            Response.Cookies.Delete("ChiNhanhDangNhap");
                             Response.Cookies.Delete("ExpireTime");
 
                             return RedirectToAction("Login", "Account");
@@ -32,6 +35,7 @@ namespace Finance_HD.Controllers
                 }
 
                 ViewData["FullName"] = Request.Cookies["FullName"];
+                ViewData["ChiNhanhDangNhap"] = Request.Cookies["ChiNhanhDangNhap"];
             }
             else
             {

@@ -2,7 +2,7 @@
     $('#Logout').on('click', function (e) {
         e.preventDefault();
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: '/Account/Logout',
             contentType: "application/json",
             success: function (response) {

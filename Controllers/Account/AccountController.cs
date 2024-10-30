@@ -40,7 +40,20 @@ namespace Finance_HD.Controllers.Account
             {
                 return Json(new { success = false, message = "Mật khẩu không hợp lệ." });
             }
-            var user = _dbContext.SysUser.FirstOrDefault(x => x.Username == model.Username);
+            var user = (from userLogin in _dbContext.SysUser
+                        join chinhanh in _dbContext.SysBranch
+                        on userLogin.BranchId equals chinhanh.Ma
+                        select new
+                        {
+                            Ma = userLogin.Ma + "",
+                            Username = userLogin.Username + "",
+                            Password = userLogin.Password + "",
+                            TenChiNhanhDangNhap = chinhanh.Ten + "",
+                            FullName = userLogin.FullName + "",
+                            SoDienThoai = userLogin.SoDienThoai + "",
+
+                        }
+                       ).FirstOrDefault(x => x.Username == model.Username);
 
             if (user == null || user.Password != model.Password)
             {
@@ -62,7 +75,8 @@ namespace Finance_HD.Controllers.Account
         {
             new Claim(ClaimTypes.Name, user.Username),
             new Claim("FullName", user.FullName), // Thêm FullName vào Claims
-            new Claim("SDT", user.SoDienThoai) // Thêm SDT vào Claims
+            new Claim("SDT", user.SoDienThoai),
+             new Claim("ChiNhanhDangNhap", user.TenChiNhanhDangNhap) 
         }),
                 Expires = DateTime.UtcNow.AddMinutes(10),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature)
@@ -82,10 +96,11 @@ namespace Finance_HD.Controllers.Account
             Response.Cookies.Append("UserName", user.Username, cookieOptions);
             Response.Cookies.Append("FullName", user.FullName, cookieOptions);
             Response.Cookies.Append("SDT", user.SoDienThoai, cookieOptions);
+            Response.Cookies.Append("ChiNhanhDangNhap", user.TenChiNhanhDangNhap, cookieOptions);
             return Json(new { success = true, message = "Đăng nhập thành công" });
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult Logout()
         {
             if (Request.Cookies.ContainsKey("UserName"))
@@ -102,8 +117,12 @@ namespace Finance_HD.Controllers.Account
             {
                 Response.Cookies.Delete("SDT");
             }
+            if (Request.Cookies.ContainsKey("ChiNhanhDangNhap"))
+            {
+                Response.Cookies.Delete("ChiNhanhDangNhap");
+            }
 
-            return Json(new { success = true, message = "Đăng xuất thành công" });
+            return RedirectToAction("Login", "Account");
         }
 
 
