@@ -1,6 +1,8 @@
-﻿using Finance_HD.Helpers;
+﻿using Finance_HD.Common;
+using Finance_HD.Helpers;
 using Finance_HD.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Finance_HD.Controllers.QuanLyTaiKhoan
 {
@@ -42,7 +44,7 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                                 CCCD = user.Cccd + "",
                                 SoDienThoai = user.SoDienThoai + "",
                                 GioiTinh = user.GioiTinh + "",
-                                Status = user.Status==true?"Hoạt động":"Hết hoạt động",
+                                Status = user.Status == true ? "Hoạt động" : "Hết hoạt động",
                                 FullName = user.FullName + "",
                                 MaDinhDanh = user.MaDinhDanh + "",
                                 NgaySinh = user.NgaySinh + "",
@@ -68,39 +70,27 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
         }
 
         [HttpPost]
-        public JsonResult Add(SysUser model)
+        public JsonResult Add(
+    string Username,
+    string Msnv,
+    string MaDinhDanh,
+    string BranchId,
+    string MaPhongBan,
+    string Password,
+    string CCCD,
+    string FullName,
+    string DiaChi,
+    string Department,
+    int GioiTinh,
+    DateTime NgaySinh,
+    DateTime NgayVaoLam,
+    string SoDienThoai,
+    DateTime NgayKetThuc,
+    bool Status)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
-            }
 
-            if (string.IsNullOrWhiteSpace(model.Username))
-            {
-                return Json(new { success = false, message = "Tên đăng nhập không được để trống!" });
-            }
-            if (string.IsNullOrWhiteSpace(model.Password))
-            {
-                return Json(new { success = false, message = "Mật khẩu không được để trống!" });
-            }
-            if (string.IsNullOrWhiteSpace(model.FullName))
-            {
-                return Json(new { success = false, message = "Họ tên không được để trống!" });
-            }
-            if (model.BranchId == Guid.Empty)
-            {
-                return Json(new { success = false, message = "Chi nhánh không được để trống!" });
-            }
-            if (model.MaPhongBan == Guid.Empty)
-            {
-                return Json(new { success = false, message = "Phòng ban không được để trống!" });
-            }
-            if (!model.NgaySinh.HasValue)
-            {
-                return Json(new { success = false, message = "Ngày sinh không được để trống!" });
-            }
 
-            var existingUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == model.Username);
+            var existingUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == Username);
             if (existingUser != null)
             {
                 return Json(new { success = false, message = "Tên người dùng đã tồn tại!" });
@@ -114,23 +104,24 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
             }
             var user = new SysUser
             {
-                Username = model.Username,
-                Msnv = model.Msnv,
-                Password = model.Password,
-                MaDinhDanh = model.MaDinhDanh,
-                BranchId = model.BranchId,
-                MaPhongBan = model.MaPhongBan,
-                Cccd = model.Cccd,
-                Status = model.Status,
-                FullName = model.FullName,
-                DiaChi = model.DiaChi,
-                GioiTinh = model.GioiTinh,
-                NgaySinh = model.NgaySinh,
-                NgayVaoLam = model.NgayVaoLam,
-                SoDienThoai = model.SoDienThoai,
-                NgayKetThuc = model.NgayKetThuc,
+                Username = Username,
+                Msnv = Msnv,
+                Password = Password,
+                MaDinhDanh = MaDinhDanh,
+                BranchId = BranchId.GetGuid(),
+                MaPhongBan = MaPhongBan.GetGuid(),
+                Cccd = CCCD,
+                Status = Status,
+                FullName = FullName,
+                DiaChi = DiaChi,
+                GioiTinh = GioiTinh,
+                NgaySinh = NgaySinh,
+                NgayVaoLam = NgayVaoLam,
+                SoDienThoai = SoDienThoai,
+                NgayKetThuc = NgayKetThuc,
                 UserCreated = loggedInUser.Ma,
-                CreatedDate = model.CreatedDate ?? DateTime.Now,
+                CreatedDate = DateTime.Now,
+
             };
 
             _dbContext.SysUser.Add(user);
@@ -144,6 +135,7 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
         public IActionResult Edit(string Ma)
         {
             var user = _dbContext.SysUser.FirstOrDefault(c => c.Ma == Ma.GetGuid());
+       
             if (user == null)
             {
                 return NotFound();
@@ -151,13 +143,27 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
             return View("Form", user);
         }
         [HttpPost]
-        public JsonResult Edit(SysUser model)
+        public JsonResult Edit(
+    string Ma,
+    string Username,
+    string Msnv,
+    string MaDinhDanh,
+    string BranchId,
+    string MaPhongBan,
+    string Password,
+    string CCCD,
+    string FullName,
+    string DiaChi,
+    string Department,
+    int GioiTinh,
+    DateTime NgaySinh,
+    DateTime NgayVaoLam,
+    string SoDienThoai,
+    DateTime NgayKetThuc,
+    bool Status
+ )
         {
-            var user = _dbContext.SysUser.FirstOrDefault(x => x.Ma == model.Ma);
-            if (user == null)
-            {
-                return Json(new { success = false, message = "người dùng này này không tồn tại!" });
-            }
+
 
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
@@ -167,22 +173,27 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
 
-            user.Username = model.Username;
-            user.Msnv = model.Msnv;
-            user.MaDinhDanh = model.MaDinhDanh;
-            user.BranchId = model.BranchId;
-            user.MaPhongBan = model.MaPhongBan;
-            user.Cccd = model.Cccd;
-            user.FullName = model.FullName;
-            user.DiaChi = model.DiaChi;
-            user.GioiTinh = model.GioiTinh;
-            user.NgaySinh = model.NgaySinh;
-            user.NgayVaoLam = model.NgayVaoLam;
-            user.SoDienThoai = model.SoDienThoai;
-            user.NgayKetThuc = model.NgayKetThuc;
-            user.Status = model.Status;
-            user.UserModified = loggedInUser.Ma;
-            user.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
+            var user = new SysUser
+            {
+                Username = Username,
+                Msnv = Msnv,
+                Password = Password,
+                MaDinhDanh = MaDinhDanh,
+                BranchId = BranchId.GetGuid(),
+                MaPhongBan = MaPhongBan.GetGuid(),
+                Cccd = CCCD,
+                Status = Status,
+                FullName = FullName,
+                DiaChi = DiaChi,
+                GioiTinh = GioiTinh,
+                NgaySinh = NgaySinh,
+                NgayVaoLam = NgayVaoLam,
+                SoDienThoai = SoDienThoai,
+                NgayKetThuc = NgayKetThuc,
+                UserModified = loggedInUser.Ma,
+                ModifiedDate = DateTime.Now,
+
+            };
             _dbContext.SysUser.Update(user);
             _dbContext.SaveChanges();
 

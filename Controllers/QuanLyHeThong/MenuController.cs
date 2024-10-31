@@ -161,36 +161,40 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         [HttpPost]
         public JsonResult Edit(string Ma, string UsingFor, string Code, string MenuCha, string Name, int STT, string Url, string Icon, string MenuCon, bool Status)
         {
-
-
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
-
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+
             if (loggedInUser == null)
             {
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
 
-            var menu = new SysMenu
-            {
-                Code = Code,
-                ParentId = MenuCha.GetGuid(),
-                Name = Name,
-                Sequence = STT,
-                Link = Url,
-                Icon = Icon,
-                ChildOfMenu = MenuCon.GetGuid(),
-                Status = Status,
-                UsingFor = UsingFor,
-                UserModified = loggedInUser.Ma,
-                ModifiedDate = DateTime.Now,
-            };
+            // Tìm menu hiện tại trong cơ sở dữ liệu dựa trên mã
+            var existingMenu = _dbContext.SysMenu.FirstOrDefault(m => m.Code == Code); // Hoặc dựa trên thuộc tính duy nhất khác
 
-            _dbContext.SysMenu.Update(menu);
+            if (existingMenu == null)
+            {
+                return Json(new { success = false, message = "Menu không tồn tại!" });
+            }
+
+            // Cập nhật thuộc tính của menu đã tồn tại
+            existingMenu.ParentId = MenuCha.GetGuid();
+            existingMenu.Name = Name;
+            existingMenu.Sequence = STT;
+            existingMenu.Link = Url;
+            existingMenu.Icon = Icon;
+            existingMenu.ChildOfMenu = MenuCon.GetGuid();
+            existingMenu.Status = Status;
+            existingMenu.UsingFor = UsingFor;
+            existingMenu.UserModified = loggedInUser.Ma;
+            existingMenu.ModifiedDate = DateTime.Now;
+
+            _dbContext.SysMenu.Update(existingMenu); // Cập nhật đối tượng hiện có
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Cập nhật người dùng thành công!" });
         }
+
         [HttpDelete]
         public IActionResult Delete(string Id)
         {

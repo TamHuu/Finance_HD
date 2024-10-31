@@ -2,171 +2,145 @@
 
 @{
     bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
-    ViewData["Title"] = isEdit ? "Chỉnh sửa người dùng" : "Thêm mới người dùng";
+    ViewData["Title"] = isEdit ? "Chỉnh sửa người dùng" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+
 }
+<div class="col-12 col-md-6">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body">
+            <form id="Form">
+                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">@ViewData["Title"]</h5>
-    </div>
-    <div class="card-body">
-<form id="Form">
-    <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Username">Tên đăng nhập<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="Username" name="Username" required value="@Model.Username" placeholder="Nhập tên đăng nhập"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="FullName">Họ tên<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="FullName" name="FullName" required value="@Model.FullName" placeholder="Nhập họ và tên"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="SoDienThoai">Số điện thoại<span style="color: red;">*</span></label>
+                            <input type="number" class="form-control form-control-sm" id="SoDienThoai" name="SoDienThoai" required value="@Model.SoDienThoai" placeholder="Nhập số điện thoại"/>
+                        </div>
+                    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Username">Tên đăng nhập</label>
-                <input type="text" class="form-control form-control-sm" id="Username" name="Username" required value="@Model.Username" />
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="FullName">Họ tên</label>
-                <input type="text" class="form-control form-control-sm" id="FullName" name="FullName" required value="@Model.FullName" />
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="SoDienThoai">Số điện thoại</label>
-                <input type="number" class="form-control form-control-sm" id="SoDienThoai" name="SoDienThoai" required value="@Model.SoDienThoai" />
-            </div>
-        </div>
-    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Msnv">MSNV<span style="color: red;">*</span></label>
+                            <input type="number" class="form-control form-control-sm" id="Msnv" name="Msnv" required value="@Model.Msnv" placeholder="Nhập Mã nhân viên"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="MaDinhDanh">Mã định danh<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="MaDinhDanh" name="MaDinhDanh" required value="@Model.MaDinhDanh" placeholder="Nhập mã định danh" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="CCCD">CCCD<span style="color: red;">*</span></label>
+                            <input type="number" class="form-control form-control-sm" id="CCCD" name="CCCD" required value="@Model.Cccd" placeholder="Nhập căn cước công dân"/>
+                        </div>
+                    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Msnv">MSNV</label>
-                <input type="number" class="form-control form-control-sm" id="Msnv" name="Msnv" required value="@Model.Msnv" />
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="MaDinhDanh">Mã định danh</label>
-                <input type="text" class="form-control form-control-sm" id="MaDinhDanh" name="MaDinhDanh" required value="@Model.MaDinhDanh" />
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="CCCD">CCCD</label>
-                <input type="number" class="form-control form-control-sm" id="CCCD" name="CCCD" required value="@Model.Cccd" />
-            </div>
-        </div>
-    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Password">Mật khẩu<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="Password" name="Password" value="@Model.Password" required placeholder="Nhập Password"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Branch">Tên chi nhánh<span style="color: red;">*</span></label>
+                            <select class="form-control" id="Branch" name="Branch">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Department">Tên phòng ban<span style="color: red;">*</span></label>
+                            <select class="form-control" id="Department" name="Department">
+                            </select>
+                        </div>
+                    </div>
+                  
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="GioiTinh">Giới tính<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="GioiTinh" name="GioiTinh">
+                                <!option value="1" @(Model.GioiTinh == 1 ? "selected" : "")>Nam</!option>
+                                <!option value="0" @(Model.GioiTinh == 0 ? "selected" : "")>Nữ</!option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="NgaySinh">Ngày Sinh<span style="color: red;">*</span></label>
+                            <input class="form-control form-control-sm" type="datetime-local" id="NgaySinh" value="@(Model.NgaySinh?.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Password">Mật khẩu</label>
-                <input type="text" class="form-control form-control-sm" id="Password" name="Password" value="@Model.Password" required />
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Branch">Tên chi nhánh:</label>
-                <select class="form-control" id="Branch" name="Branch">
-                   
-                </select>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Department">Tên phòng ban:</label>
-                <select class="form-control" id="Department" name="Department">
-           
-                </select>
-            </div>
-        </div>
-    </div>
-@* 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="ChucDanh">Chức danh</label>
-                <input type="text" class="form-control form-control-sm" id="ChucDanh" name="ChucDanh" required value="@Model.MaChucDanh" />
-            </div>
-        </div>
-       @*  <div class="col-md-4">
-            <div class="form-group">
-                <label for="ChucVu">Chức vụ</label>
-                <input type="text" class="form-control form-control-sm" id="ChucVu" name="ChucVu" required value="@Model.MaChucVu" />
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Status">Trạng thái</label>
-                <select class="form-control form-control-sm" id="Status" name="Status">
-                    <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
-                    <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
-                </select>
-            </div>
-        </div> *@
- 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="GioiTinh">Giới tính</label>
-                <select class="form-control form-control-sm" id="GioiTinh" name="GioiTinh">
-                    <!option value="1" @(Model.GioiTinh == 1 ? "selected" : "")>Nam</!option>
-                    <!option value="0" @(Model.GioiTinh == 0 ? "selected" : "")>Nữ</!option>
-                </select>
-            </div>
-        </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="NgaySinh">Ngày Sinh</label>
-                        <input type="datetime-local" class="form-control form-control-sm" id="NgaySinh" name="NgaySinh" required value="@(Model.NgaySinh != null ? Model.NgaySinh.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
-
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="NgayVaoLam">Ngày vào làm<span style="color: red;">*</span></label>
+                            <input type="datetime-local" class="form-control form-control-sm" id="NgayVaoLam" name="NgayVaoLam" required value="@(Model.NgayVaoLam?.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="NgayKetThuc">Ngày kết thúc<span style="color: red;">*</span></label>
+                            <input type="datetime-local" class="form-control form-control-sm" id="NgayKetThuc" name="NgayKetThuc" required value="@(Model.NgayKetThuc?.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Status">Trạng thái<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="Status" name="Status">
+                                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="DiaChi">Địa chỉ<span style="color: red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="DiaChi" name="DiaChi" required value="@Model.DiaChi" placeholder="Nhập địa chỉ"/>
+                        </div>
                     </div>
                 </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="NgayVaoLam">Ngày vào làm</label>
-                <input type="datetime-local" class="form-control form-control-sm" id="NgayVaoLam" name="NgayVaoLam" required value="@(Model.NgayVaoLam != null ? Model.NgayVaoLam.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="NgayKetThuc">Ngày kết thúc</label>
-                        <input type="datetime-local" class="form-control form-control-sm" id="NgayKetThuc" name="NgayKetThuc" required value="@(Model.NgayKetThuc != null ? Model.NgayKetThuc.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
-            </div>
-        </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="Status">Trạng thái</label>
-                        <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
-                        </select>
+                    <div class="action" style="text-align: center;">
+                        <a href="/User" class="btn btn-danger btn-sm" style="margin-right: 10px;">Huỷ</a>
+                        <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
                     </div>
-                </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="DiaChi">Địa chỉ</label>
-                <input type="text" class="form-control form-control-sm" id="DiaChi" name="DiaChi" required value="@Model.DiaChi" />
-            </div>
+            </form>
+
         </div>
-    </div>
-
-    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
-</form>
-
     </div>
 </div>
+
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/quanlyhethong/user/form.js"></script>
+    <script defer src="/extendFE/common/main.js"></script>
     <script>
         var defaultUID = '@defaultUID';
-        var maCN = '@Model.BranchId';
-        var MaPhongBan = '@Model.MaPhongBan'
+        var maChiNhanh = '@Model.BranchId';
+        var maPhongBan = '@Model.MaPhongBan'
+        var isEdit = '@isEdit';
     </script>
 }

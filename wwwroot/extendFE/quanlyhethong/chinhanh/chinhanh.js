@@ -4,9 +4,9 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0 },
-            { width: '100px', className: 'text-center', targets: [1, 3, 6, 7] },
+            { width: '100px', className: 'text-center', targets: [6, 7] },
             { width: '150px', className: 'text-center', targets: [5] },
-            { width: '300px', orderable: false, targets: [2, 4], className: 'dt-left dt-head-center' },
+            { width: '300px', orderable: false, targets: [1,2,3, 4], className: 'dt-left dt-head-center' },
         ],
 
         language: {

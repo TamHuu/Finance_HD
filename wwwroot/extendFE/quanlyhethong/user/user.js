@@ -53,7 +53,7 @@ function drawDanhSach(data) {
     table.clear().draw();
     console.table(data)
     data.forEach(function (item, index) {
-        let ma = item.maUser;
+        let ma = item.ma;
         let hoten = item.fullName ?? "";
         let tendangnhap = item.userName ?? "";
         let phongban = item.tenPhongBan ?? "";
