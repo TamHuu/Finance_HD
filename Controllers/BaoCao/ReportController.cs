@@ -55,14 +55,14 @@ namespace Finance_HD.Controllers.BaoCao
         }
 
         [HttpPost]
-        public JsonResult Add(TblDanhSachBaoCao model)
+        public JsonResult Add(string Name, string Code, string Menu, string Status)
         {
             if (!ModelState.IsValid)
             {
                 return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
             }
 
-            if (string.IsNullOrWhiteSpace(model.Ten))
+            if (string.IsNullOrWhiteSpace(Name))
             {
                 return Json(new { success = false, message = "Tên báo cáo không được để trống!" });
             }
@@ -73,7 +73,7 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
-            var existingReport = _dbContext.TblDanhSachBaoCao.FirstOrDefault(x => x.Ten == model.Ten);
+            var existingReport = _dbContext.TblDanhSachBaoCao.FirstOrDefault(x => x.Ten == Name);
             if (existingReport != null)
             {
                 return Json(new { success = false, message = "Tên báo cáo đã tồn tại!" });
@@ -81,12 +81,12 @@ namespace Finance_HD.Controllers.BaoCao
 
             var report = new TblDanhSachBaoCao
             {
-                Ten = model.Ten,
-                Code = model.Code,
-                MenuId = model.MenuId,
-                Status = model.Status,
-                UserCreated = model.UserCreated,
-                CreatedDate = model.CreatedDate ?? DateTime.Now,
+                MenuId = Menu.GetGuid(),
+                Code = Code,
+                Ten = Name,
+                UserCreated=loggedInUser.Ma,
+                CreatedDate = DateTime.Now,
+
             };
 
             _dbContext.TblDanhSachBaoCao.Add(report);
