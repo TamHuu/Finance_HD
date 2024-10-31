@@ -36,8 +36,9 @@ function loadDanhSach() {
         url: "/Menu/getListMenu",
         method: "GET",
         success: function (response) {
-            if (response && response.data) {
-                drawDanhSach(response.data);
+            if (response && response.success) {
+                // Gọi hàm drawDanhSach với danh sách parentMenus
+                drawDanhSach(response.menus.allMenus);
             } else {
                 console.error("Dữ liệu không hợp lệ.");
             }
@@ -47,46 +48,51 @@ function loadDanhSach() {
         }
     });
 }
+
 function drawDanhSach(data) {
     table.clear().draw();
-    console.table(data)
+    console.table(data);
+
     data.forEach(function (item, index) {
-        let ma = item.ma;
-        let website = item.website;
-        let code = item.code;
-        let menuCha = item.menuCha;
-        let ten = item.ten;
-        let soThuTu = item.soThuTu;
-        let url = item.url;
-        let icon = item.icon;
-        let menuCon = item.menuCon;
+        let ma = item.ma + "";
+        let website = item.website + "";
+        let code = item.code + "";
+        let ten = item.ten + "";
+        let soThuTu = item.stt + "";
+        let url = item.url + "";
+        let icon = item.icon + "";
         let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
+        let tenMenuCha = item.tenMenuCha + "";
+        let tenMenuCon = item.tenMenuCon + "";
+
         let rowContent = [
             `<td>${ma}</td>`,
             `<td>${website}</td>`,
             `<td>${code}</td>`,
-            `<td>${menuCha}</td>`,
+            `<td>${tenMenuCha}</td>`,
             `<td>${ten}</td>`,
             `<td>${soThuTu}</td>`,
             `<td>${url}</td>`,
             `<td>${icon}</td>`,
-            `<td>${menuCon}</td>`,
+            `<td>${tenMenuCon}</td>`, 
             `<td>${tentrangthai}</td>`,
         ];
-        let tdChucNang = `
-    <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
-        <i class="fas fa-edit"></i>
-    </button>
-    <span>|</span>
-    <button class="btn btn-danger btn-sm btnDelete" data-id="${ma}" title="Xóa">
-                <i class="fas fa-trash"></i>
-    </button>
 
-    `;
+        let tdChucNang = `
+            <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">
+                <i class="fas fa-edit"></i>
+            </button>
+            <span>|</span>
+            <button class="btn btn-danger btn-sm btnDelete" data-id="${ma}" title="Xóa">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+
         rowContent.push(tdChucNang);
         table.row.add(rowContent).draw();
     });
 }
+
 
 function Edit(row) {
     var rowData = table.row($(row).parents('tr')).data();

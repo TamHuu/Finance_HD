@@ -1,5 +1,7 @@
-﻿using Finance_HD.Helpers;
+﻿using Finance_HD.Common;
+using Finance_HD.Helpers;
 using Finance_HD.Models;
+using Humanizer.Localisation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance_HD.Controllers.QuanLyHeThong
@@ -28,38 +30,88 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         [HttpGet]
         public JsonResult getListMenu()
         {
-            var listMenu = (from user in _dbContext.SysUser
-                            join chinhanh in _dbContext.SysBranch on user.BranchId equals chinhanh.Ma
-                            join phongban in _dbContext.TblPhongBan on user.MaPhongBan equals phongban.Ma into banGroup
-                            from ban in banGroup.DefaultIfEmpty()
-                            where !(user.Deleted ?? false)
-                            select new
-                            {
-                                MaUser = user.Ma + "",
-                                UserName = user.Username + "",
-                                Msnv = user.Msnv + "",
-                                CCCD = user.Cccd + "",
-                                SoDienThoai = user.SoDienThoai + "",
-                                GioiTinh = user.GioiTinh + "",
-                                FullName = user.FullName + "",
-                                MaDinhDanh = user.MaDinhDanh + "",
-                                NgaySinh = user.NgaySinh + "",
-                                DiaChi = user.DiaChi + "",
-                                NgayVaoLam = user.NgayVaoLam + "",
-                                NgayKetThuc = user.NgayKetThuc + "",
-                                MaChiNhanh = chinhanh.Ma + "",
-                                TenChiNhanh = chinhanh.Ten + "",
-                                MaPhongBan = ban.Ma + "",
-                                TenPhongBan = ban.Ten + "",
-                                Status = user.Status == true ? "Hoạt động" : "Hết hoạt động",
-                                CreatedDate = DateTime.Now,
-                            })
+            // Lấy tất cả menu
+            var allMenus = _dbContext.SysMenu
+                .Where(menu => !(menu.Deleted ?? false))
+                .Select(menu => new
+                {
+                    website = menu.UsingFor,
+                    ma = menu.Ma,
+                    code = menu.Code,
+                    ten = menu.Name,
+                    maMenuCha = menu.ParentId,
+                    stt = menu.Sequence,
+                    url = menu.Link,
+                    icon = menu.Icon,
+                    status = menu.Status,
+                    tenMenuCha = _dbContext.SysMenu
+            .Where(parent => parent.Ma == menu.ParentId)
+            .Select(parent => parent.Name)
+           .FirstOrDefault() ?? "" ,
 
-                             .OrderByDescending(role => role.CreatedDate)
-                             .ToList();
+                    tenMenuCon = _dbContext.SysMenu
+            .Where(child => child.ParentId == menu.Ma) // Lọc menu con theo ma
+            .Select(parent => parent.Name)
+            .FirstOrDefault() ?? "",
+                
+                })
+                .ToList();
 
-            return Json(new { success = true, Data = listMenu });
+            // Lấy danh sách menu cha
+            var parentMenus = allMenus
+                .Where(menu => menu.maMenuCha == Guid.Empty) // Lọc menu cha
+                .Select(menu => new
+                {
+                    website = menu.website,
+                    ma = menu.ma,
+                    code = menu.code,
+                    ten = menu.ten,
+                    stt = menu.stt,
+                    url = menu.url,
+                    icon = menu.icon,
+                    status = menu.status,
+                    danhSachMenuCon = allMenus
+                        .Where(child => child.maMenuCha == menu.ma) // Lọc menu con theo maMenuCha
+                        .Select(child => new
+                        {
+                            ma = child.ma,
+                            ten = child.ten,
+                            url = child.url,
+                            icon = child.icon
+                        })
+                        .ToList()
+                })
+                .ToList();
+
+            // Lấy danh sách menu con (không lặp lại cha)
+            var childMenus = allMenus
+                .Where(menu => menu.maMenuCha != Guid.Empty) // Lọc menu con
+                .Select(menu => new
+                {
+                    ma = menu.ma,
+                    ten = menu.ten,
+                    url = menu.url,
+                    icon = menu.icon,
+                    maMenuCha = menu.maMenuCha
+                })
+                .ToList();
+
+            // Gộp tất cả vào một biến
+            var result = new
+            {
+                success = true,
+                menus = new
+                {
+                    allMenus,
+                    parentMenus,
+                    childMenus
+                }
+            };
+
+            return Json(result);
         }
+
+
 
         public IActionResult Add()
         {
@@ -68,27 +120,28 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         }
 
         [HttpPost]
-        public JsonResult Add( string UsingFor, string Code, string MenuCha, string Name, string STT, string Url, string Icon, string MenuCon, bool Status)
+        public JsonResult Add(string UsingFor, string Code, string MenuCha, string Name, int STT, string Url, string Icon, string MenuCon, bool Status)
         {
 
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
-            var user = new SysMenu
+            var MENU = new SysMenu
             {
                 Code = Code,
                 ParentId = MenuCha.GetGuid(),
                 Name = Name,
                 Link = Url,
                 Icon = Icon,
-                ChildOfMenu = MenuCon.GetGuid(),
+                //ChildOfMenu = MenuCon.GetGuid(),
                 UsingFor = UsingFor,
                 Status = Status,
+                Sequence = STT,
                 UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
             };
 
-            _dbContext.SysMenu.Add(user);
+            _dbContext.SysMenu.Add(MENU);
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Đã thêm thành công!" });
@@ -98,21 +151,17 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         [HttpGet]
         public IActionResult Edit(string Ma)
         {
-            var user = _dbContext.SysUser.FirstOrDefault(c => c.Ma == Ma.GetGuid());
-            if (user == null)
+            var menu = _dbContext.SysMenu.FirstOrDefault(c => c.Ma == Ma.GetGuid());
+            if (menu == null)
             {
                 return NotFound();
             }
-            return View("Form", user);
+            return View("Form", menu);
         }
         [HttpPost]
-        public JsonResult Edit(SysUser model)
+        public JsonResult Edit(string Ma, string UsingFor, string Code, string MenuCha, string Name, int STT, string Url, string Icon, string MenuCon, bool Status)
         {
-            var user = _dbContext.SysUser.FirstOrDefault(x => x.Ma == model.Ma);
-            if (user == null)
-            {
-                return Json(new { success = false, message = "người dùng này này không tồn tại!" });
-            }
+
 
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
@@ -122,23 +171,22 @@ namespace Finance_HD.Controllers.QuanLyHeThong
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
 
-            user.Username = model.Username;
-            user.Msnv = model.Msnv;
-            user.MaDinhDanh = model.MaDinhDanh;
-            user.BranchId = model.BranchId;
-            user.MaPhongBan = model.MaPhongBan;
-            user.Cccd = model.Cccd;
-            user.FullName = model.FullName;
-            user.DiaChi = model.DiaChi;
-            user.GioiTinh = model.GioiTinh;
-            user.NgaySinh = model.NgaySinh;
-            user.NgayVaoLam = model.NgayVaoLam;
-            user.SoDienThoai = model.SoDienThoai;
-            user.NgayKetThuc = model.NgayKetThuc;
-            user.Status = model.Status;
-            user.UserModified = loggedInUser.Ma;
-            user.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
-            _dbContext.SysUser.Update(user);
+            var menu = new SysMenu
+            {
+                Code = Code,
+                ParentId = MenuCha.GetGuid(),
+                Name = Name,
+                Sequence = STT,
+                Link = Url,
+                Icon = Icon,
+                ChildOfMenu = MenuCon.GetGuid(),
+                Status = Status,
+                UsingFor = UsingFor,
+                UserModified = loggedInUser.Ma,
+                ModifiedDate = DateTime.Now,
+            };
+
+            _dbContext.SysMenu.Update(menu);
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Cập nhật người dùng thành công!" });
@@ -146,10 +194,10 @@ namespace Finance_HD.Controllers.QuanLyHeThong
         [HttpDelete]
         public IActionResult Delete(string Id)
         {
-            var user = _dbContext.SysUser.FirstOrDefault(x => x.Ma == Id.GetGuid());
+            var user = _dbContext.SysMenu.FirstOrDefault(x => x.Ma == Id.GetGuid());
             if (user == null)
             {
-                return Json(new { success = false, message = "Người dùng không tồn tại!" });
+                return Json(new { success = false, message = "Menu không tồn tại!" });
             }
 
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
@@ -164,10 +212,10 @@ namespace Finance_HD.Controllers.QuanLyHeThong
             user.DeletedDate = DateTime.Now;
             user.UserDeleted = loggedInUser.Ma;
 
-            _dbContext.SysUser.Update(user);
+            _dbContext.SysMenu.Update(user);
             _dbContext.SaveChanges();
 
-            return Json(new { success = true, message = "Xoá người dùng thành công!" });
+            return Json(new { success = true, message = "Xoá thành công!" });
         }
 
 

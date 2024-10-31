@@ -46,6 +46,77 @@
             }
         });
     });
-
-
+    MenuCha();
+    MenuCon();
 });
+function MenuCha() {
+    callAPI('GET', '/Menu/getListMenu', null,
+        function (response) {
+            if (response.success) {
+                selectMenuCha(response.menus.parentMenus);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách:', error);
+        }
+    );
+}
+function selectMenuCha(data) {
+    var InitialSelectMenu = $("#MenuCha");
+    InitialSelectMenu.empty();
+
+    const defaultOption = $('<option>', {
+        value: '',
+        text: "Chọn...",
+        selected: true
+    });
+    InitialSelectMenu.append(defaultOption);
+    if (data.length > 0) {
+        data.forEach(function (branch) {
+            const option = $('<option>', {
+                value: branch.ma,
+                text: branch.ten
+            });
+            InitialSelectMenu.append(option);
+        });
+    }
+}
+function MenuCon() {
+    callAPI('GET', '/Menu/getListMenu', null,
+        function (response) {
+            if (response.success) {
+                selectMenuCon(response.menus.childMenus); // Gọi hàm selectMenuCon với dữ liệu nhận được
+            } else {
+                console.log("Lỗi khi lấy dữ liệu ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách:', error);
+        }
+    );
+}
+
+function selectMenuCon(data) {
+    var InitialSelectMenuCon = $("#MenuCon");
+    InitialSelectMenuCon.empty(); // Xóa các tùy chọn cũ
+
+    const defaultOption = $('<option>', {
+        value: '',
+        text: "Chọn...",
+        selected: true // Đặt tùy chọn mặc định là "Chọn..."
+    });
+    InitialSelectMenuCon.append(defaultOption); // Thêm tùy chọn mặc định
+
+    // Lặp qua từng menu trong data để lấy danh sách menu con
+    if (data.length > 0) {
+        data.forEach(function (branch) {
+            const option = $('<option>', {
+                value: branch.ma,
+                text: branch.ten
+            });
+            InitialSelectMenuCon.append(option);
+        });
+    }
+}
