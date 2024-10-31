@@ -28,7 +28,7 @@
                         text: response.message,
                         icon: 'success'
                     }).then(() => {
-                        window.location.href = "/Role";
+                        window.location.href = "/Report";
                     });
                 } else {
                     Swal.fire({
@@ -48,6 +48,38 @@
             }
         });
     });
-
+    MenuCha();
 
 });
+
+function MenuCha() {
+    callAPI('GET', '/Menu/getListMenu', null,
+        function (response) {
+            if (response.success) {
+                selectMenu(response.menus.childMenus);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách:', error);
+        }
+    );
+}
+
+function selectMenu(data) {
+    var InitialSelectMenu = $("#Menu");
+    InitialSelectMenu.empty();
+
+    if (data.length > 0) {
+        data.forEach(function (branch) {
+            const optionValue = isEdit ? maDanhSachBaoCao : branch.ma; // Kiểm tra `isEdit`
+            const option = $('<option>', {
+                value: optionValue,  // Gán giá trị dựa trên chế độ `isEdit`
+                text: branch.ten,
+                selected: isEdit && branch.ma === maDanhSachBaoCao // Đánh dấu `selected` nếu là chế độ edit và `ma` khớp với `maDanhSachBaoCao`
+            });
+            InitialSelectMenu.append(option);
+        });
+    }
+}

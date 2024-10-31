@@ -30,7 +30,7 @@ namespace Finance_HD.Controllers.BaoCao
         {
             var listReport = (from dsBaoCao in _dbContext.TblDanhSachBaoCao
                               join menu in _dbContext.SysMenu on dsBaoCao.MenuId equals menu.Ma
-                              where !(dsBaoCao.Deleted ?? false) 
+                              where !(dsBaoCao.Deleted ?? false)
                               select new
                               {
                                   Ma = dsBaoCao.Ma,
@@ -39,9 +39,9 @@ namespace Finance_HD.Controllers.BaoCao
                                   TenMenu = menu.Name,
                                   Status = dsBaoCao.Status,
                                   Code = dsBaoCao.Code,
-                                  CreatedDate = dsBaoCao.CreatedDate 
+                                  CreatedDate = dsBaoCao.CreatedDate
                               })
-                              .OrderByDescending(dsBaoCao => dsBaoCao.CreatedDate) 
+                              .OrderByDescending(dsBaoCao => dsBaoCao.CreatedDate)
                               .ToList();
 
             return Json(new { success = true, Data = listReport });
@@ -55,13 +55,8 @@ namespace Finance_HD.Controllers.BaoCao
         }
 
         [HttpPost]
-        public JsonResult Add(string Name, string Code, string Menu, string Status)
+        public JsonResult Add(string Name, string Code, string Menu, bool Status)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
-            }
-
             if (string.IsNullOrWhiteSpace(Name))
             {
                 return Json(new { success = false, message = "Tên báo cáo không được để trống!" });
@@ -81,10 +76,11 @@ namespace Finance_HD.Controllers.BaoCao
 
             var report = new TblDanhSachBaoCao
             {
+                Status = Status,
                 MenuId = Menu.GetGuid(),
                 Code = Code,
                 Ten = Name,
-                UserCreated=loggedInUser.Ma,
+                UserCreated = loggedInUser.Ma,
                 CreatedDate = DateTime.Now,
 
             };
@@ -99,6 +95,8 @@ namespace Finance_HD.Controllers.BaoCao
         [HttpGet]
         public IActionResult Edit(string Ma)
         {
+            ViewData["listMenu"] = _dbContext.SysMenu.ToList();
+            ViewBag.MaDanhMuc = _dbContext.TblDanhSachBaoCao.FirstOrDefault()?.MenuId;
             var report = _dbContext.TblDanhSachBaoCao.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (report == null)
             {
@@ -107,13 +105,9 @@ namespace Finance_HD.Controllers.BaoCao
             return View("Form", report);
         }
         [HttpPost]
-        public JsonResult Edit(TblDanhSachBaoCao model)
+        public JsonResult Edit(string Ma, string Name, string Code, string Menu, bool Status)
         {
-            var report = _dbContext.TblDanhSachBaoCao.FirstOrDefault(x => x.Ma == model.Ma);
-            if (report == null)
-            {
-                return Json(new { success = false, message = "Báo cáo này không tồn tại!" });
-            }
+
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -121,13 +115,16 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
+            var report = new TblDanhSachBaoCao
+            {
+                Status = Status,
+                MenuId = Menu.GetGuid(),
+                Code = Code,
+                Ten = Name,
+                UserModified = loggedInUser.Ma,
+                ModifiedDate = DateTime.Now,
 
-            report.Ten = model.Ten;
-            report.Code = model.Code;
-            report.MenuId = model.MenuId;
-            report.Status = model.Status;
-            report.UserModified =loggedInUser.Ma;
-            report.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
+            };
             _dbContext.TblDanhSachBaoCao.Update(report);
             _dbContext.SaveChanges();
 

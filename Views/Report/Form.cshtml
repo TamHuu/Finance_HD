@@ -5,7 +5,9 @@
     ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
-    var menus = ViewData["listMenu"] as List<Finance_HD.Models.SysMenu>;
+  
+    var maDanhMuc = ViewBag.MaDanhMuc;
+
 }
 <div class="col-12 col-md-6">
     <div class="card">
@@ -20,24 +22,22 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="Name">Tên<span style="color: red;">*</span> </label>
-                            <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Ten" placeholder="Nhập tên"/>
+                            <input type="text" class="form-control form-control-sm" id="Name" name="Name" required value="@Model.Ten" placeholder="Nhập tên" />
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="Code">Code<span style="color: red;">*</span></label>
-                            <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" placeholder="Nhập code"/>
+                            <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" placeholder="Nhập code" />
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="Menu">Tên menu<span style="color: red;">*</span></label>
                             <select class="form-control" id="Menu" name="Menu">
-                                @foreach (var menu in menus)
-                                {
-                                    <option value="@menu.Ma">@menu.Name</option>
-                                }
+                            
                             </select>
+
                         </div>
                     </div>
 
@@ -67,11 +67,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/quanlyhethong/danhsachbaocao/form.js"></script>
+    <script defer src="/extendFE/common/main.js"></script>
+
     <script>
         // Pass the isEdit variable to JavaScript
         var isEdit = @Html.Raw(Json.Serialize(isEdit));
-        var defaultUID = '@defaultUID'; // Truyền defaultUID vào JavaScript
-        console.log("Is Edit:", isEdit);
-        console.log("Default UID:", defaultUID);
+        var defaultUID = '@defaultUID';
+        var maDanhSachBaoCao = '@maDanhMuc'
     </script>
 }

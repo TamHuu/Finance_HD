@@ -55,8 +55,8 @@ function drawDanhSach(data) {
     data.forEach(function (item, index) {
         let ma = item.ma;
         let code = item.code;
-        let ten = item.name;
-        let menu = item.menu??"";
+        let ten = item.tenBaoCao;
+        let menu = item.tenMenu??"";
         let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
         let rowContent = [
             `<td>${ma}</td>`,
