@@ -137,6 +137,8 @@ namespace Finance_HD.Controllers.NganHang
         [HttpGet]
         public IActionResult Edit(string Ma)
         {
+            ViewBag.DongTienThu = _dbContext.CatNoiDungThuChi.ToList();
+            ViewBag.DongTienChi = _dbContext.CatNoiDungThuChi.ToList();
             var listBankAccount = _dbContext.FiaTaiKhoanNganHang.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (listBankAccount == null)
             {
@@ -145,39 +147,42 @@ namespace Finance_HD.Controllers.NganHang
             return View("Form", listBankAccount);
         }
         [HttpPost]
-        //public JsonResult Edit(FiaTaiKhoanNganHang model)
-        //{
-        //    var listBankAccount = _dbContext.FiaTaiKhoanNganHang.FirstOrDefault(x => x.Ma == model.Ma);
-        //    if (listBankAccount == null)
-        //    {
-        //        return Json(new { success = false, message = "Tiền tệ này không tồn tại!" });
-        //    }
-        //    string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+        public JsonResult Edit(string ChiNhanh, string PhongBan, string NganHang, string TienTe, string SoTaiKhoan, string DienGiai, string DongTienThu, string DongTienChi, bool Status, string LoaiTaiKhoan)
+        {
+          
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
-        //    var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
-        //    if (loggedInUser == null)
-        //    {
-        //        return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
-        //    }
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
 
-        //    listBankAccount.Ten = model.Ten;
-        //    listBankAccount.Code = model.Code;
-        //    listBankAccount.Status = model.Status;
-        //    listBankAccount.UserModified = loggedInUser.Ma;
-        //    listBankAccount.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
-        //    _dbContext.FiaTaiKhoanNganHang.Update(listBankAccount);
-        //    _dbContext.SaveChanges();
+            var BankAccount = new FiaTaiKhoanNganHang
+            {
+                MaChiNhanh = ChiNhanh.GetGuid(),
+                MaPhongBan = PhongBan.GetGuid(),
+                MaNganHang = NganHang.GetGuid(),
+                MaTienTe = TienTe.GetGuid(),
+                SoTaiKhoan = SoTaiKhoan,
+                MaLoai = LoaiTaiKhoan.GetGuid(),
+                DienGiai = DienGiai,
+                DongTienThu = DongTienThu.GetGuid(),
+                DongTienChi = DongTienChi.GetGuid(),
+                Status = Status,
+                ModifiedDate = DateTime.Now,
+                UserModified = loggedInUser.Ma,
+            };
+            _dbContext.FiaTaiKhoanNganHang.Update(BankAccount);
+            _dbContext.SaveChanges();
 
-        //    return Json(new { success = true, message = "Cập nhật tiền tệ thành công!" });
-        //}
+            return Json(new { success = true, message = "Cập nhật thành công!" });
+        }
         [HttpDelete]
         public IActionResult Delete(string Id)
         {
             var listBankAccount = _dbContext.FiaTaiKhoanNganHang.FirstOrDefault(x => x.Ma == Id.GetGuid());
-            if (listBankAccount == null)
-            {
-                return Json(new { success = false, message = "Tiền tệ không tồn tại!" });
-            }
+          
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);

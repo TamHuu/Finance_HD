@@ -8,6 +8,7 @@ function eventHandler() {
     loadChiNhanh();
     loadNganHang();
     loadTienTe();
+    loadTaiKhoanNganHang();
 }
 
 function loadChiNhanh() {
@@ -166,6 +167,44 @@ function selectTienTe(data) {
         InitialSelectTienTe.append(option);
     });
 }
+
+function loadTaiKhoanNganHang() {
+    callAPI('GET', '/BankAccountType/getListBankAccountType', null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                selectTaiKhoanNganHang(result);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách:', error);
+        }
+    );
+}
+function selectTaiKhoanNganHang(data) {
+    var InitialSelectNganHang = $("#LoaiTaiKhoan");
+    InitialSelectNganHang.empty();
+
+    const defaultOption = $('<option>', {
+        value: "",
+        text: "Chọn loại tài khoản ngân hàng",
+        selected: true,
+        disabled: true
+    });
+    InitialSelectNganHang.append(defaultOption);
+
+    // Thêm các options từ dữ liệu
+    data.forEach(function (branch) {
+        const option = $('<option>', {
+            value: branch.ma,
+            text: branch.ten,
+        });
+        InitialSelectNganHang.append(option);
+    });
+}
+
 function sendFormData() {
     $('#btnSave').on('click', function (e) {
         e.preventDefault();

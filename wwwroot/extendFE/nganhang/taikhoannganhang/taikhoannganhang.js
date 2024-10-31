@@ -95,7 +95,7 @@ function drawDanhSach(data) {
 function Edit(row) {
     var rowData = table.row($(row).parents('tr')).data();
     var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
-    window.open('/Bank/Edit?ma=' + firstCellValue, '_blank');
+    window.open('/BankAccount/Edit?ma=' + firstCellValue, '_blank');
 
 }
 $('#Table').on('click', '.btnDelete', function (e) {
@@ -125,7 +125,7 @@ function handleDelete(Id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Bank/Delete',
+                url: '/BankAccount/Delete',
                 type: 'DELETE',
                 data: { Id: Id },
                 success: function (response) {
