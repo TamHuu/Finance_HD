@@ -209,47 +209,55 @@ function ExportDataPDF(fileType) {
     let TuNgay = $("#TuNgay").val();
     let DenNgay = $("#DenNgay").val();
     var branch = $('#Branch').val();
+
+    // Validate the inputs before sending
+    if (!TuNgay || !DenNgay || !branch) {
+        alert("Vui lòng nhập đầy đủ thông tin.");
+        return;
+    }
+
     var formdata = {
         TuNgay: TuNgay,
         DenNgay: DenNgay,
         ChiNhanhDeNghi: branch,
         fileType: fileType
     };
+
     console.table(formdata);
 
     $.ajax({
-        url: "ExpenseRequest/ExportToPdf",
-        type: 'POST',
+        type: "POST",
+        url: "/ExpenseRequest/ExportToPdf",
         data: formdata,
-        xhr: function () {
-            var xhr = new window.XMLHttpRequest();
-            xhr.responseType = 'blob'; // Set response type to blob for file download
-            return xhr;
+        xhrFields: {
+            responseType: 'blob' // yêu cầu Blob phản hồi
         },
-        success: function (data, status, xhr) {
-            // Create a URL for the blob
-            var blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
-            var link = document.createElement('a');
-            var contentDisposition = xhr.getResponseHeader('Content-Disposition');
-
-            // Extract the filename correctly
-            var filename = contentDisposition
-                .split('filename=')[1]
-                ?.replace(/['"]/g, '') // Remove any surrounding quotes
-                .split(';')[0] // Get the first part before any other parameters
-                .trim(); // Trim whitespace
-
-            link.href = URL.createObjectURL(blob);
-            link.download = filename || 'download.xlsx'; // Fallback filename if extraction fails
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        success: function (data) {
+            // Kiểm tra xem dữ liệu có phải là Blob không
+            if (data instanceof Blob) {
+                // Tạo URL đối với Blob
+                var url = window.URL.createObjectURL(data);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'DeNghiChi.pdf'; // tên tệp
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url); // giải phóng URL blob
+            } else {
+                console.error("Expected a Blob, but received:", data);
+            }
         },
-        error: function (xhr, status, error) {
-            console.error("Error occurred:", error);
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error occurred:", textStatus, errorThrown);
+            if (jqXHR.responseText) {
+                console.error("Response Text:", jqXHR.responseText);
+            }
+            alert("Có lỗi xảy ra khi tải tệp. Vui lòng kiểm tra thông tin đã nhập.");
         }
     });
 }
+
 
 function drawDanhSach(data) {
     table.clear().draw();
