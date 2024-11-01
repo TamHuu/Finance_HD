@@ -34,8 +34,8 @@ function ConfigTable() {
             { className: "txt-left", "targets": [1, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14] },
             { className: "txt-right", "targets": [10, 11] },
         ],
-        searching: false,
-        ordering: false,
+        searching: true,
+        ordering: true,
         lengthChange: false,
         language: commonLanguage,
     });
@@ -48,7 +48,8 @@ function ConfigTable() {
             { width: '150px', className: "txt-center dt-head-center", "targets": [14, 15] },
         ],
         scrollX: true,
-        searching: false,
+        searching: true,
+        ordering: true,
         lengthChange: false,
         language: commonLanguage,
     });

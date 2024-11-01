@@ -216,7 +216,6 @@ function selectBoPhanChi(data) {
     }
 }
 
-
 function NguoiThuTien() {
     callAPI('GET', '/User/getListUser', null,
         function (response) {
