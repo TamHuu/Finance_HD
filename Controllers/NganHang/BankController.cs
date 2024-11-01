@@ -99,10 +99,7 @@ namespace Finance_HD.Controllers.NganHang
         public JsonResult Edit(FiaNganHang model)
         {
             var listBank = _dbContext.FiaNganHang.FirstOrDefault(x => x.Ma == model.Ma);
-            if (listBank == null)
-            {
-                return Json(new { success = false, message = "Tiền tệ này không tồn tại!" });
-            }
+          
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -119,16 +116,13 @@ namespace Finance_HD.Controllers.NganHang
             _dbContext.FiaNganHang.Update(listBank);
             _dbContext.SaveChanges();
 
-            return Json(new { success = true, message = "Cập nhật tiền tệ thành công!" });
+            return Json(new { success = true, message = "Cập nhật thành công!" });
         }
         [HttpDelete]
         public IActionResult Delete(string Id)
         {
             var listBank = _dbContext.FiaNganHang.FirstOrDefault(x => x.Ma == Id.GetGuid());
-            if (listBank == null)
-            {
-                return Json(new { success = false, message = "Tiền tệ không tồn tại!" });
-            }
+          
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -144,7 +138,7 @@ namespace Finance_HD.Controllers.NganHang
             _dbContext.FiaNganHang.Update(listBank);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 
-            return Json(new { success = true, message = "Xoá tiền tệ thành công!" });
+            return Json(new { success = true, message = "Xoá thành công!" });
         }
 
     }

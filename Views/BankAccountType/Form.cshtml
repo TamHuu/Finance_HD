@@ -19,10 +19,7 @@
                     <div class="form-group col-md-4">
                         <label for="Bank">Ngân hàng <span style="color: red;">*</span></label>
                         <select class="form-control form-control-sm" id="Bank" name="Bank">
-                            @foreach (var item in ViewBag.NganHang)
-                            {
-                                <option value="@item.Ma">@item.Ten</option>
-                            }
+                          
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -48,9 +45,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="button-container">
+                <div class="button-container" style="text-align:center">
+                    <button type="button" class="btn btn-danger btn-custom" onclick="window.location.href='/BankAccountType'">Huỷ</button>
                     <button type="button" id="btnSave" class="btn btn-primary btn-custom">@ViewData["Title"]</button>
-                    <button type="button" class="btn btn-danger btn-custom" onclick="window.location.href='/Bank'">Huỷ</button>
                 </div>
                
 
@@ -67,41 +64,8 @@
     <script>
         // Pass the isEdit variable to JavaScript
         var isEdit = @Html.Raw(Json.Serialize(isEdit));
-        var defaultUID = '@defaultUID'; // Truyền defaultUID vào JavaScript
-        console.log("Is Edit:", isEdit);
-        console.log("Default UID:", defaultUID);
+        var defaultUID = '@defaultUID'; 
+        var maNganHang = '@Model.MaNganHang';
     </script>
-    <style>
-    .button-container {
-        display: flex; /* Sử dụng Flexbox */
-        justify-content: center; /* Căn giữa */
-        gap: 10px; /* Khoảng cách giữa các nút */
-        margin-top: 20px; /* Khoảng cách trên cùng */
-    }
-
-    .btn-custom {
-        padding: 10px 20px; /* Padding cho nút */
-        border-radius: 5px; /* Bo tròn các góc */
-        transition: background-color 0.3s, box-shadow 0.3s; /* Hiệu ứng chuyển tiếp */
-        font-size: 14px; /* Kích thước chữ */
-        font-weight: bold; /* Chữ đậm */
-    }
-
-    .btn-primary {
-        background-color: #007bff; /* Màu nền */
-        border: none; /* Không viền */
-        color: white; /* Màu chữ */
-    }
-
-    .btn-danger {
-        background-color: #dc3545; /* Màu nền cho nút Huỷ */
-        border: none; /* Không viền */
-        color: white; /* Màu chữ */
-    }
-
-    .btn-primary:hover, .btn-danger:hover {
-        opacity: 0.8; /* Hiệu ứng giảm độ sáng khi hover */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng */
-    }
-</style>
+    <script defer src="/extendFE/common/main.js"></script>
 }

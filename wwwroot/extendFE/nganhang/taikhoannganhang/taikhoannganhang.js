@@ -4,10 +4,12 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '300px', className: 'dt-left dt-head-center', targets: [1, 2,3,4,5,6,7,8,9], orderable: false },
-            { width: '150px', className: 'dt-center dt-head-center', targets: [ 10], orderable: false },
-            { width: '150px', className: 'text-center', targets: [11], orderable: false },
+            { width:"220px", className: 'dt-left dt-head-center', targets: [1, 2], orderable: false },
+            { className: 'dt-left dt-head-center', targets: [ 3, 4, 5, 6,], orderable: false },
+            { className: 'dt-left dt-head-center', targets: [7, 8, 9], orderable: false },
+            { minWidth: "150px", width: '150px', className: 'text-center', targets: [10, 11], orderable: false },
         ],
+        scrollY:true,
         sorting: true,
         language: {
             "decimal": "",
@@ -50,7 +52,6 @@ function loadDanhSach() {
 }
 function drawDanhSach(data) {
     table.clear().draw();
-    console.log("data", data)
     data.forEach(function (item, index) {
         let ma = item.ma;
         let tenChiNhanh = item.tenChiNhanh;
@@ -62,7 +63,7 @@ function drawDanhSach(data) {
         let dienGiai = item.dienGiai;
         let dongTienThu = item.tenDongTienThu;
         let dongTienChi = item.tenDongTienChi;
-        let tentrangthai = item.status == true ? "Hoạt động" : "Hết hoạt động";
+        let tentrangthai = item.status;
         let rowContent = [
             `<td>${ma}</td>`,
             `<td>${tenChiNhanh}</td>`,

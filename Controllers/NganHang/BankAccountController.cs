@@ -63,9 +63,10 @@ namespace Finance_HD.Controllers.NganHang
                                        TenDongTienThu = dongtienthu.Ten + "",
                                        TenDongTienChi = dongtienchi.Ten + "",
                                        MaChiNhanh = chinhanh.Ma + "",
-                                       TenChiNhanh = chinhanh.Ten +"",
+                                       TenChiNhanh = chinhanh.Ten + "",
                                        MaPhongBan = phongban.Ma + "",
-                                       TenPhongBan = phongban.Ten +"",
+                                       TenPhongBan = phongban.Ten + "",
+                                       Status = taikhoan.Status == true ? "Hoạt động" : "Hết hoạt động",
                                        CreatedDate = taikhoan.CreatedDate,
                                    })
                              .OrderByDescending(role => role.CreatedDate)
@@ -89,10 +90,7 @@ namespace Finance_HD.Controllers.NganHang
         [HttpPost]
         public JsonResult Add(string ChiNhanh, string PhongBan, string NganHang, string TienTe, string SoTaiKhoan, string DienGiai, string DongTienThu, string DongTienChi, bool Status, string LoaiTaiKhoan)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
-            }
+           
 
             if (string.IsNullOrWhiteSpace(ChiNhanh))
             {
@@ -137,8 +135,6 @@ namespace Finance_HD.Controllers.NganHang
         [HttpGet]
         public IActionResult Edit(string Ma)
         {
-            ViewBag.DongTienThu = _dbContext.CatNoiDungThuChi.ToList();
-            ViewBag.DongTienChi = _dbContext.CatNoiDungThuChi.ToList();
             var listBankAccount = _dbContext.FiaTaiKhoanNganHang.FirstOrDefault(c => c.Ma == Ma.GetGuid());
             if (listBankAccount == null)
             {
@@ -147,9 +143,9 @@ namespace Finance_HD.Controllers.NganHang
             return View("Form", listBankAccount);
         }
         [HttpPost]
-        public JsonResult Edit(string ChiNhanh, string PhongBan, string NganHang, string TienTe, string SoTaiKhoan, string DienGiai, string DongTienThu, string DongTienChi, bool Status, string LoaiTaiKhoan)
+        public JsonResult Edit(string Ma, string ChiNhanh, string PhongBan, string NganHang, string TienTe, string SoTaiKhoan, string DienGiai, string DongTienThu, string DongTienChi, bool Status, string LoaiTaiKhoan)
         {
-          
+
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -157,23 +153,22 @@ namespace Finance_HD.Controllers.NganHang
             {
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
+            var bankAccount = _dbContext.FiaTaiKhoanNganHang.FirstOrDefault(x => x.Ma == Ma.GetGuid());
 
-            var BankAccount = new FiaTaiKhoanNganHang
-            {
-                MaChiNhanh = ChiNhanh.GetGuid(),
-                MaPhongBan = PhongBan.GetGuid(),
-                MaNganHang = NganHang.GetGuid(),
-                MaTienTe = TienTe.GetGuid(),
-                SoTaiKhoan = SoTaiKhoan,
-                MaLoai = LoaiTaiKhoan.GetGuid(),
-                DienGiai = DienGiai,
-                DongTienThu = DongTienThu.GetGuid(),
-                DongTienChi = DongTienChi.GetGuid(),
-                Status = Status,
-                ModifiedDate = DateTime.Now,
-                UserModified = loggedInUser.Ma,
-            };
-            _dbContext.FiaTaiKhoanNganHang.Update(BankAccount);
+            bankAccount.MaChiNhanh = ChiNhanh.GetGuid();
+            bankAccount.MaPhongBan = PhongBan.GetGuid();
+            bankAccount.MaNganHang = NganHang.GetGuid();
+            bankAccount.MaTienTe = TienTe.GetGuid();
+            bankAccount.SoTaiKhoan = SoTaiKhoan;
+            bankAccount.MaLoai = LoaiTaiKhoan.GetGuid();
+            bankAccount.DienGiai = DienGiai;
+            bankAccount.DongTienThu = DongTienThu.GetGuid();
+            bankAccount.DongTienChi = DongTienChi.GetGuid();
+            bankAccount.Status = Status;
+            bankAccount.ModifiedDate = DateTime.Now;
+            bankAccount.UserModified = loggedInUser.Ma;
+            
+            _dbContext.FiaTaiKhoanNganHang.Update(bankAccount);
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Cập nhật thành công!" });
@@ -182,7 +177,7 @@ namespace Finance_HD.Controllers.NganHang
         public IActionResult Delete(string Id)
         {
             var listBankAccount = _dbContext.FiaTaiKhoanNganHang.FirstOrDefault(x => x.Ma == Id.GetGuid());
-          
+
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -198,7 +193,7 @@ namespace Finance_HD.Controllers.NganHang
             _dbContext.FiaTaiKhoanNganHang.Update(listBankAccount);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 
-            return Json(new { success = true, message = "Xoá tiền tệ thành công!" });
+            return Json(new { success = true, message = "Xoá thành công!" });
         }
 
     }

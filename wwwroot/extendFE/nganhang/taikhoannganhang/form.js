@@ -1,98 +1,83 @@
 ﻿let data
 $(document).ready(function () {
-    sendFormData();
     eventHandler();
+    sendFormData();
 });
 
 function eventHandler() {
-    loadChiNhanh();
+    DonViNhan();
     loadNganHang();
     loadTienTe();
-    loadTaiKhoanNganHang();
+    loadLoaiTaiKhoanNganHang();
+    loadDongTienThu();
+    loadDongTienChi();
 }
 
-function loadChiNhanh() {
+function DonViNhan() {
     callAPI('GET', '/Branch/getListBranch', null,
         function (response) {
             if (response.success) {
-                var result = response.data;
-                var maChiNhanh = result.filter(x => x.Ma);
-                loadPhongBan(maChiNhanh)
-                selectChiNhanh(result);
+                selectDonViNhan(response.data);
             } else {
-                console.log("Lỗi khi lấy dữ liệu ");
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
             }
         },
         function (xhr, status, error) {
-            console.error('Lỗi khi lấy danh sách:', error);
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
         }
     );
 }
-function selectChiNhanh(data) {
-    var InitialSelectChiNhanh = $("#Branch");
-    InitialSelectChiNhanh.empty();
-
-    const defaultOption = $('<option>', {
-        value: "",
-        text: "Chọn chi nhánh",
-        selected: true,
-        disabled: true
-    });
-    InitialSelectChiNhanh.append(defaultOption);
-
-    // Thêm các options từ dữ liệu
+function selectDonViNhan(data) {
+    var InitialSelectDonViNhan = $("#Branch");
     data.forEach(function (branch) {
         const option = $('<option>', {
             value: branch.ma,
             text: branch.ten,
+            selected: branch.ma === MaChiNhanh,
         });
-        InitialSelectChiNhanh.append(option);
+        InitialSelectDonViNhan.append(option);
     });
+    var maDonViNhan = $("#Branch").val();
+    BoPhanNhan(maDonViNhan)
 }
-function loadPhongBan(Ma) {
+function BoPhanNhan(Ma) {
     callAPI('GET', '/Department/getListDepartment', null,
         function (response) {
             if (response.success) {
                 var result = response.data;
-                var filterPhongBanTheoChiNhanh = result.filter(x => x.maChiNhanh == Ma)
-                selectPhongBan(filterPhongBanTheoChiNhanh);
+                var filteredBoPhanNhan = result.filter(x => x.maChiNhanh == Ma)
+                console.log("mã chi nhánh thay đổi", filteredBoPhanNhan)
+                selectBoPhanNhan(filteredBoPhanNhan);
             } else {
-                console.log("Lỗi khi lấy dữ liệu ");
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
             }
         },
         function (xhr, status, error) {
-            console.error('Lỗi khi lấy danh sách:', error);
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
         }
     );
 }
-function selectPhongBan(data) {
-    var InitialSelectPhongBan = $("#Department");
-    InitialSelectPhongBan.empty();
-
-    const defaultOption = $('<option>', {
-        value: "",
-        text: "Chọn phòng ban",
-        selected: true,
-        disabled: true
-    });
-    InitialSelectPhongBan.append(defaultOption);
-
-    // Thêm các options từ dữ liệu
+function selectBoPhanNhan(data) {
+    var InitialSelectBoPhanNhan = $("#Department");
+    InitialSelectBoPhanNhan.empty(); // Xóa tất cả các tùy chọn cũ
     data.forEach(function (department) {
         const option = $('<option>', {
             value: department.maPhongBan,
             text: department.tenPhongBan,
-            selected: department.maPhongBan,
+            selected: department.maPhongBan === MaPhongBan,
         });
-        InitialSelectPhongBan.append(option);
+        InitialSelectBoPhanNhan.append(option);
     });
 }
 
+
 $("#Branch").on('change', function () {
-    var maChiNhanhChange = $("#Branch").val();
-    console.log("mã chi nhánh change", maChiNhanhChange)
-    loadPhongBan(maChiNhanhChange)
-})
+    var maDonViNopChange = $(this).val();
+    console.log("mã đơn vị nộp change", maDonViNopChange);
+    BoPhanNhan(maDonViNopChange);
+});
+
+
 
 function loadNganHang() {
     callAPI('GET', '/Bank/getListBank', null,
@@ -122,10 +107,12 @@ function selectNganHang(data) {
     InitialSelectNganHang.append(defaultOption);
 
     // Thêm các options từ dữ liệu
-    data.forEach(function (branch) {
+    data.forEach(function (bank) {
+        const optionValue = isEdit ? maNganHang : bank.ma; 
         const option = $('<option>', {
-            value: branch.ma,
-            text: branch.ten,
+            value: optionValue,
+            text: bank.ten,
+            selected: isEdit && bank.ma === maNganHang
         });
         InitialSelectNganHang.append(option);
     });
@@ -163,17 +150,18 @@ function selectTienTe(data) {
         const option = $('<option>', {
             value: tiente.ma,
             text: tiente.ten,
+            selected: isEdit && tiente.ma === maTienTe
         });
         InitialSelectTienTe.append(option);
     });
 }
 
-function loadTaiKhoanNganHang() {
+function loadLoaiTaiKhoanNganHang() {
     callAPI('GET', '/BankAccountType/getListBankAccountType', null,
         function (response) {
             if (response.success) {
                 var result = response.data;
-                selectTaiKhoanNganHang(result);
+                selectLoaiTaiKhoanNganHang(result);
             } else {
                 console.log("Lỗi khi lấy dữ liệu ");
             }
@@ -183,7 +171,7 @@ function loadTaiKhoanNganHang() {
         }
     );
 }
-function selectTaiKhoanNganHang(data) {
+function selectLoaiTaiKhoanNganHang(data) {
     var InitialSelectNganHang = $("#LoaiTaiKhoan");
     InitialSelectNganHang.empty();
 
@@ -196,15 +184,89 @@ function selectTaiKhoanNganHang(data) {
     InitialSelectNganHang.append(defaultOption);
 
     // Thêm các options từ dữ liệu
-    data.forEach(function (branch) {
+    data.forEach(function (account) {
         const option = $('<option>', {
-            value: branch.ma,
-            text: branch.ten,
+            value: account.ma,
+            text: account.ten,
+            selected: isEdit && account.ma === maLoaiTaiKhoan
         });
         InitialSelectNganHang.append(option);
     });
 }
+function loadDongTienThu() {
+    callAPI('GET', '/IncomeContent/getListIncomeContent', null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                selectDongTienThu(result);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách:', error);
+        }
+    );
+}
+function selectDongTienThu(data) {
+    var InitialSelectDongTienThu = $("#DongTienThu");
+    InitialSelectDongTienThu.empty();
 
+    const defaultOption = $('<option>', {
+        value: "",
+        text: "Chọn",
+        selected: true,
+        disabled: true
+    });
+    InitialSelectDongTienThu.append(defaultOption);
+
+    // Thêm các options từ dữ liệu
+    data.forEach(function (money) {
+        const option = $('<option>', {
+            value: money.ma,
+            text: money.ten,
+            selected: isEdit && money.ma === maDongTienThu
+        });
+        InitialSelectDongTienThu.append(option);
+    });
+}
+function loadDongTienChi() {
+    callAPI('GET', '/IncomeContent/getListIncomeContent', null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                selectDongTienChi(result);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách:', error);
+        }
+    );
+}
+function selectDongTienChi(data) {
+    var InitialSelectDongTienChi = $("#DongTienChi");
+    InitialSelectDongTienChi.empty();
+
+    const defaultOption = $('<option>', {
+        value: "",
+        text: "Chọn",
+        selected: true,
+        disabled: true
+    });
+    InitialSelectDongTienChi.append(defaultOption);
+
+    // Thêm các options từ dữ liệu
+    data.forEach(function (money) {
+        const option = $('<option>', {
+            value: money.ma,
+            text: money.ten,
+            selected: isEdit && money.ma === maDongTienChi
+        });
+        InitialSelectDongTienChi.append(option);
+    });
+}
 function sendFormData() {
     $('#btnSave').on('click', function (e) {
         e.preventDefault();

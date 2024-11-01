@@ -31,8 +31,9 @@ namespace Finance_HD.Controllers.NganHang
         {
             var listBankAccountType = (from loaitaikhoan in _dbContext.FiaLoaiTaiKhoanNganHang
                                        join nganhang in _dbContext.FiaNganHang
-                                       on loaitaikhoan.MaNganHang equals nganhang.Ma
-                                       where !(loaitaikhoan.Deleted ?? false) // Kiểm tra điều kiện Deleted từ FiaLoaiTaiKhoanNganHang
+                                       on loaitaikhoan.MaNganHang equals nganhang.Ma into loaitaikhoanGroup
+                                       from nganhang in loaitaikhoanGroup.DefaultIfEmpty()
+                                       where !(loaitaikhoan.Deleted ?? false) 
                                        select new
                                        {
                                            Ma = loaitaikhoan.Ma + "",
@@ -112,10 +113,7 @@ namespace Finance_HD.Controllers.NganHang
         public JsonResult Edit(FiaLoaiTaiKhoanNganHang model)
         {
             var listBankAccountType = _dbContext.FiaLoaiTaiKhoanNganHang.FirstOrDefault(x => x.Ma == model.Ma);
-            if (listBankAccountType == null)
-            {
-                return Json(new { success = false, message = "Tiền tệ này không tồn tại!" });
-            }
+           
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -132,16 +130,13 @@ namespace Finance_HD.Controllers.NganHang
             _dbContext.FiaLoaiTaiKhoanNganHang.Update(listBankAccountType);
             _dbContext.SaveChanges();
 
-            return Json(new { success = true, message = "Cập nhật tiền tệ thành công!" });
+            return Json(new { success = true, message = "Cập nhật thành công!" });
         }
         [HttpDelete]
         public IActionResult Delete(string Id)
         {
             var listBankAccountType = _dbContext.FiaLoaiTaiKhoanNganHang.FirstOrDefault(x => x.Ma == Id.GetGuid());
-            if (listBankAccountType == null)
-            {
-                return Json(new { success = false, message = "Tiền tệ không tồn tại!" });
-            }
+         
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -157,7 +152,7 @@ namespace Finance_HD.Controllers.NganHang
             _dbContext.FiaLoaiTaiKhoanNganHang.Update(listBankAccountType);  // Cập nhật vào CSDL
             _dbContext.SaveChanges();
 
-            return Json(new { success = true, message = "Xoá tiền tệ thành công!" });
+            return Json(new { success = true, message = "Xoá thành công!" });
         }
 
     }

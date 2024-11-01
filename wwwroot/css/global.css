@@ -92,6 +92,3 @@
     .action .btn:hover {
         opacity: 0.9; /* Giảm độ trong suốt khi hover */
     }
-label {
-    font-weight: bold;
-}
