@@ -1,0 +1,78 @@
+﻿@model Finance_HD.Models.FiaTaiKhoanAo
+
+@{
+    bool isEdit = Model.Ma != Finance_HD.Helpers.CommonGuids.defaultUID;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa " : "Thêm mới ";
+    string formAction = isEdit ? "Edit" : "Add";
+    string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
+}
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body">
+            <form id="Form">
+                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Code">Code<span style="color: red;">*</span> </label>
+                            <input type="text" class="form-control form-control-sm" id="Code" name="Code" required value="@Model.Code" placeholder="Nhập mã code" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Bank">Ngân hàng<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="Bank" name="Bank"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="BankAccount">Tài Khoản Ngân hàng<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="BankAccount" name="BankAccount"></select>
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Ten">Nhập tên<span style="color: red;">*</span> </label>
+                            <input type="text" class="form-control form-control-sm" id="Ten" name="Ten" required value="@Model.Ten" placeholder="Nhập tên" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Status">Trạng thái<span style="color: red;">*</span></label>
+                            <select class="form-control form-control-sm" id="Status" name="Status">
+                                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container" style="text-align:center">
+                    <button type="button" class="btn btn-danger btn-custom" onclick="window.location.href='/Bank'">Huỷ</button>
+                    <button type="button" id="btnSave" class="btn btn-primary btn-custom">@ViewData["Title"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/extendFE/common/main.js"></script>
+    <script defer src="/extendFE/nganhang/taikhoandinhdanh/form.js"></script>
+    <script>
+        // Pass the isEdit variable to JavaScript
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
+        var defaultUID = '@defaultUID';
+        var maNganHang = '@Model.MaNganHang';
+        var maTaiKhoanNganHang = '@Model.MaTaiKhoanLienKet';
+    </script>
+  
+}
+

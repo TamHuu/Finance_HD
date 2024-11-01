@@ -1,7 +1,88 @@
-﻿
+﻿@model IEnumerable<Finance_HD.Models.FiaNganHang>
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "MBBank";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-products-center justify-content-between">
+        <h2 class="m-0 font-weight-bold text-primary">@ViewData["Title"]</h2>
+       
+    </div>
+    <div class="card-body">
+        <table id="Table" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th hidden>Mã</th>
+                    <th>STT</th>
+                    <th>Mã giao dịch </th>
+                    <th>Ngày giao dịch</th>
+                    <th>STK Truy vấn</th>
+                    <th>STK đối ứng</th>
+                    <th>Tên tài khoản đối ứng</th>
+                    <th>Loại tiền</th>
+                    <th>Số tiền</th>
+                    <th>Nội dung</th>
+                  
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
 
+
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/nganhang/mbbank/mbbank.js"></script>
+    <script src="/extendFE/common/main.js"></script>
+    <style>
+
+        .table thead th {
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .table tbody td {
+            color: #333;
+        }
+
+        #TableChiTietBangKe tfoot {
+            background-color: #007bff;
+            font-weight: bold;
+            color: white;
+        }
+
+            #TableChiTietBangKe tfoot th {
+                border-top: 2px solid #dee2e6;
+                padding: 10px;
+            }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-right: 20px; /* Khoảng cách giữa các form-group */
+        }
+
+            .form-group label {
+                margin-right: 10px; /* Khoảng cách giữa label và input */
+            }
+
+        .custom-datetime {
+            width: 200px; /* Điều chỉnh kích thước ô input */
+        }
+
+        .label-top-padding {
+            padding-top: 8px
+        }
+    </style>
+}
