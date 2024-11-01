@@ -217,6 +217,28 @@ function BoPhanNop(Ma) {
         }
     );
 }
+function selectBoPhanNop(data) {
+    var InitialSelectBoPhanNop = $("#BoPhanNop");
+    InitialSelectBoPhanNop.empty();
+
+    if (data.length === 0) {
+        const option = $('<option>', {
+            value: '',
+            text: "Không có bộ phận nộp",
+            selected: true
+        });
+        InitialSelectBoPhanNop.append(option);
+    } else {
+        data.forEach(function (department) {
+            const option = $('<option>', {
+                value: department.maPhongBan,
+                text: department.tenPhongBan,
+                selected: isEdit ? department.maPhongBan === MaBoPhanNop : department.maPhongBan == MaPhongBanDangNhap,
+            });
+            InitialSelectBoPhanNop.append(option);
+        });
+    }
+}
 function DonViNhan() {
     callAPI('GET', '/Branch/getListBranch', null,
         function (response) {
@@ -277,28 +299,7 @@ $("#DonViNop").on('change', function () {
     console.log("mã đơn vị nộp change", maDonViNopChange);
     BoPhanNop(maDonViNopChange);
 });
-function selectBoPhanNop(data) {
-    var InitialSelectBoPhanNop = $("#BoPhanNop");
-    InitialSelectBoPhanNop.empty();
 
-    if (data.length === 0) {
-        const option = $('<option>', {
-            value: '',
-            text: "Không có bộ phận nộp",
-            selected: true
-        });
-        InitialSelectBoPhanNop.append(option);
-    } else {
-        data.forEach(function (department) {
-            const option = $('<option>', {
-                value: department.maPhongBan,
-                text: department.tenPhongBan,
-                selected: isEdit ? department.maPhongBan === MaBoPhanNop : department.maPhongBan == MaPhongBanDangNhap,
-            });
-            InitialSelectBoPhanNop.append(option);
-        });
-    }
-}
 
 $("#DonViNhan").on('change', function () {
     var maDonViNhanChange = $(this).val();

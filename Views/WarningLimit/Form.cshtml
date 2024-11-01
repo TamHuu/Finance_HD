@@ -5,57 +5,61 @@
     ViewData["Title"] = isEdit ? "Chỉnh sửa" : "Thêm mới";
     string formAction = isEdit ? "Edit" : "Add";
     string defaultUID = Finance_HD.Helpers.CommonGuids.defaultUID.ToString();
-
-    var phongbans = ViewData["listPhongBan"] as List<Finance_HD.Models.TblPhongBan>;
 }
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">@ViewData["Title"]</h5>
-    </div>
-    <div class="card-body">
-        <form id="Form">
-            <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
-            <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" /> 
+<div class="col-12 col-md-6">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body">
+            <form id="Form">
+                <input type="hidden" id="Ma" name="Ma" value="@Model.Ma" />
+                <input type="hidden" id="DefaultUID" name="DefaultUID" value="@defaultUID" />
 
-            <div class="row">
+                <div class="row">
 
-                <div class="form-group">
-                    <label for="Department">Tên bộ phận:</label>
-                    <select class="form-control" id="Department" name="Department">
-                        @foreach (var cn in phongbans)
-                        {
-                            <!option value="@cn.Ma" @(Model.MaBoPhan == cn.Ma ? "selected" : "")>@cn.Ten</!option>
-                        }
-                    </select>
-                </div>
-                <div class="col-md-3">
                     <div class="form-group">
-                        <label for="HanMuc">Hạn mức</label>
-                        <input type="number" class="form-control form-control-sm" id="HanMuc" name="HanMuc" required value="@Model.HanMuc" />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="Status">Trạng thái</label>
-                        <select class="form-control form-control-sm" id="Status" name="Status">
-                            <!option value="true" @(Model.Status==true ? "selected" : "")>Hoạt động</!option>
-                            <!option value="false" @(!Model.Status==true ? "selected" : "")>Không hoạt động</!option>
+                        <label for="Department">Tên bộ phận:</label>
+                        <select class="form-control" id="Department" name="Department">
                         </select>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="HanMuc">Hạn mức</label>
+                            <input type="number" class="form-control form-control-sm" id="HanMuc" name="HanMuc" required value="@Model.HanMuc" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Status">Trạng thái</label>
+                            <select class="form-control form-control-sm" id="Status" name="Status">
+                                <!option value="true" @(Model.Status == true ? "selected" : "")>Hoạt động</!option>
+                                <!option value="false" @(!Model.Status == true ? "selected" : "")>Không hoạt động</!option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
-        </form>
+
+                <div class="action" style="text-align: center;">
+                    <a href="/WarningLimit" class="btn btn-danger btn-sm" style="margin-right: 10px;">Huỷ</a>
+                    <button type="button" id="btnSave" class="btn btn-primary btn-sm">@ViewData["Title"]</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/extendFE/common/main.js"></script>
     <script defer src="/extendFE/phanphoi/hanmuccanhbao/form.js"></script>
     <script>
         var defaultUID = '@defaultUID';
+        var MaBoPhan = '@Model.MaBoPhan'
+        var isEdit = @Html.Raw(Json.Serialize(isEdit));
     </script>
 }

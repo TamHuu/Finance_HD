@@ -1,4 +1,49 @@
 ﻿$(document).ready(function () {
+
+    sendFormData();
+    BoPhanNop();
+});
+function BoPhanNop() {
+    callAPI('GET', '/Department/getListDepartment', null,
+        function (response) {
+            if (response.success) {
+                var result = response.data;
+                selectBoPhanNop(result);
+            } else {
+                console.log("Lỗi khi lấy dữ liệu tiền tệ");
+            }
+        },
+        function (xhr, status, error) {
+            console.error('Lỗi khi lấy danh sách tiền tệ:', error);
+        }
+    );
+}
+function selectBoPhanNop(data) {
+    var InitialSelectBoPhanNop = $("#Department");
+    InitialSelectBoPhanNop.empty();
+
+    if (data.length === 0) {
+        const option = $('<option>', {
+            value: '',
+            text: "Không có bộ phận nộp",
+            selected: true
+        });
+        InitialSelectBoPhanNop.append(option);
+    } else {
+        data.forEach(function (department) {
+            const isSelected = isEdit && department.maPhongBan === MaBoPhan;
+
+            const option = $('<option>', {
+                value: department.maPhongBan,
+                text: department.tenPhongBan,
+                selected: isSelected
+            });
+
+            InitialSelectBoPhanNop.append(option);
+        });
+    }
+}
+function sendFormData() {
     $('#btnSave').on('click', function (e) {
         e.preventDefault();
         var ma = $('#Ma').val();
@@ -44,6 +89,4 @@
             }
         });
     });
-
-
-});
+}
