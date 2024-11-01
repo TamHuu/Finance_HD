@@ -1,5 +1,6 @@
 ﻿using Finance_HD.Helpers;
 using Finance_HD.Models;
+using iText.Signatures.Validation.V1.Report;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance_HD.Controllers.BaoCao
@@ -115,16 +116,20 @@ namespace Finance_HD.Controllers.BaoCao
             {
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
-            var report = new TblDanhSachBaoCao
+            var report = _dbContext.TblDanhSachBaoCao.FirstOrDefault(x => x.Ma == Ma.GetGuid());
+            if (report == null)
             {
-                Status = Status,
-                MenuId = Menu.GetGuid(),
-                Code = Code,
-                Ten = Name,
-                UserModified = loggedInUser.Ma,
-                ModifiedDate = DateTime.Now,
+                return Json(new { success = false, message = "Người dùng cần cập nhật không tồn tại!" });
+            }
 
-            };
+            report.Status = Status;
+            report.MenuId = Menu.GetGuid();
+            report.Code = Code;
+            report.Ten = Name;
+            report.UserModified = loggedInUser.Ma;
+            report.ModifiedDate = DateTime.Now;
+
+
             _dbContext.TblDanhSachBaoCao.Update(report);
             _dbContext.SaveChanges();
 

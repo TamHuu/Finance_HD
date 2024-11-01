@@ -144,61 +144,66 @@ namespace Finance_HD.Controllers.QuanLyTaiKhoan
         }
         [HttpPost]
         public JsonResult Edit(
-    string Ma,
-    string Username,
-    string Msnv,
-    string MaDinhDanh,
-    string BranchId,
-    string MaPhongBan,
-    string Password,
-    string CCCD,
-    string FullName,
-    string DiaChi,
-    string Department,
-    int GioiTinh,
-    DateTime NgaySinh,
-    DateTime NgayVaoLam,
-    string SoDienThoai,
-    DateTime NgayKetThuc,
-    bool Status
+     string Ma,
+     string Username,
+     string Msnv,
+     string MaDinhDanh,
+     string BranchId,
+     string MaPhongBan,
+     string Password,
+     string CCCD,
+     string FullName,
+     string DiaChi,
+     string Department,
+     int GioiTinh,
+     DateTime? NgaySinh,
+     DateTime? NgayVaoLam,
+     string SoDienThoai,
+     DateTime? NgayKetThuc,
+     bool Status
  )
         {
-
-
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
-
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+
             if (loggedInUser == null)
             {
                 return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
             }
 
-            var user = new SysUser
+            // Kiểm tra nếu người dùng cần cập nhật có tồn tại
+            var user = _dbContext.SysUser.FirstOrDefault(x => x.Ma == Ma.GetGuid());
+            if (user == null)
             {
-                Username = Username,
-                Msnv = Msnv,
-                Password = Password,
-                MaDinhDanh = MaDinhDanh,
-                BranchId = BranchId.GetGuid(),
-                MaPhongBan = MaPhongBan.GetGuid(),
-                Cccd = CCCD,
-                Status = Status,
-                FullName = FullName,
-                DiaChi = DiaChi,
-                GioiTinh = GioiTinh,
-                NgaySinh = NgaySinh,
-                NgayVaoLam = NgayVaoLam,
-                SoDienThoai = SoDienThoai,
-                NgayKetThuc = NgayKetThuc,
-                UserModified = loggedInUser.Ma,
-                ModifiedDate = DateTime.Now,
+                return Json(new { success = false, message = "Người dùng cần cập nhật không tồn tại!" });
+            }
 
-            };
+            // Cập nhật các thuộc tính
+            user.Username = Username;
+            user.Msnv = Msnv;
+            user.Password = Password;
+            user.MaDinhDanh = MaDinhDanh;
+            user.BranchId = BranchId.GetGuid();
+            user.MaPhongBan = MaPhongBan.GetGuid();
+            user.Cccd = CCCD;
+            user.Status = Status;
+            user.FullName = FullName;
+            user.DiaChi = DiaChi;
+            user.GioiTinh = GioiTinh;
+            user.NgaySinh = NgaySinh;
+            user.NgayVaoLam = NgayVaoLam;
+            user.SoDienThoai = SoDienThoai;
+            user.NgayKetThuc = NgayKetThuc;
+            user.UserModified = loggedInUser.Ma;
+            user.ModifiedDate = DateTime.Now;
+
+            // Thực hiện cập nhật vào database
             _dbContext.SysUser.Update(user);
             _dbContext.SaveChanges();
 
             return Json(new { success = true, message = "Cập nhật người dùng thành công!" });
         }
+
         [HttpDelete]
         public IActionResult Delete(string Id)
         {

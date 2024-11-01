@@ -4,10 +4,9 @@ $(document).ready(function () {
     table = $('#Table').DataTable({
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: 'dt-left dt-head-center', targets: [1, 2,  4, 5, 6, 9], orderable: false },
+            { width: '200px', className: 'dt-left dt-head-center', targets: [1, 2,  4, 5, 6], orderable: false },
             { minWidth: '250px', width: '250px', className: 'dt-left dt-head-center', targets: [3], orderable: false },
-            { minWidth: '300px', width: '250px', className: 'dt-left dt-head-center', targets: [8], orderable: false },
-            { width: '150px', className: 'center', targets: [7,10], orderable: false },
+            { width: '150px', className: 'text-center', targets: [7,8], orderable: false },
         ],
 
         language: {
@@ -57,8 +56,6 @@ function drawDanhSach(data) {
         let hoten = item.fullName ?? "";
         let tendangnhap = item.userName ?? "";
         let phongban = item.tenPhongBan ?? "";
-        let chucdanh = item.chucdanh ?? "";
-        let chucvu = item.chucvu ?? "";
         let ldap = item.ldap == true ? "Đăng nhập" : "Đăng xuất";
         let tentrangthai = item.status;
         let donvi = item.tenChiNhanh ?? "";
@@ -68,12 +65,10 @@ function drawDanhSach(data) {
             `<td>${hoten}</td>`,
             `<td>${tendangnhap}</td>`,
             `<td>${phongban}</td>`,
-            `<td>${chucdanh}</td>`,
-            `<td>${chucvu}</td>`,
-            `<td>${ldap}</td>`,
-            `<td>${tentrangthai}</td>`,
             `<td>${donvi}</td>`,
             `<td>${sodienthoai}</td>`,
+            `<td>${ldap}</td>`,
+            `<td>${tentrangthai}</td>`,
         ];
         let tdChucNang = `
     <button class="btn btn-warning btn-sm" onclick="Edit(this);" title="Sửa">

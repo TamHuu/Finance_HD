@@ -7,8 +7,6 @@ $(document).ready(function () {
 function loadDanhSach() {
     $('#btnSave').on('click', function (e) {
         e.preventDefault();
-        var chucDanh = $('#ChucDanh').val();
-        var chucVu = $('#ChucVu').val();
         var ma = $('#Ma').val();
         var username = $('#Username').val();
         var msnv = $('#Msnv').val();
@@ -26,8 +24,6 @@ function loadDanhSach() {
         var MaPhongBan = $('#Department').val();
         var Password = $('#Password').val();
         var Status = $('#Status').val();
-        var ChucDanh = $("#ChucDanh").val();
-        var ChucVu = $("#ChucVu").val();
         
         var url = ma !== defaultUID ? '/User/Edit' : '/User/Add';
         var formdata = {
@@ -48,8 +44,6 @@ function loadDanhSach() {
             SoDienThoai: soDienThoai,
             NgayKetThuc: ngayKetThuc,
             Status: Status,
-            ChucDanh: ChucDanh,
-            ChucVu: ChucVu
         };
 
         console.log(formdata)
