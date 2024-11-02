@@ -280,7 +280,7 @@ function drawDanhSach(data) {
             `<td>${item.hinhThucChi}</td>`,
             `<td>${item.ghiChu || ""}</td>`,
             `<td>${item.tenTrangThai}</td>`,
-            `<td>${item.nguoiChi ?? ""}</td>`,
+            `<td>${item.tenNguoiChiTien}</td>`,
             `<td>${formatDate(item.ngayChi)}</td>`,
             `<td>${addCommas(item.soTien) ?? 0}</td>`,
             `

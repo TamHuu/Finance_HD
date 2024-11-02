@@ -51,40 +51,37 @@ namespace Finance_HD.Controllers.ChungTu
             DateTime dtpDenNgay = DenNgay.ToDateTime2(DateTime.Now)!.Value;
 
             var listExpenseRequest = (from denghichi in _dbContext.FiaDeNghiChi
-
                                       join chinhanhdenghi in _dbContext.SysBranch
-                                      on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
+                                          on denghichi.MaChiNhanhDeNghi equals chinhanhdenghi.Ma into chinhanhdenghiGroup
                                       from chinhanhdenghi in chinhanhdenghiGroup.DefaultIfEmpty()
-
                                       join bophandenghi in _dbContext.TblPhongBan
-                                      on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
+                                          on denghichi.MaPhongBanDeNghi equals bophandenghi.Ma into bophandenghiGroup
                                       from bophandenghi in bophandenghiGroup.DefaultIfEmpty()
-
                                       join chinhanhchi in _dbContext.SysBranch
-                                      on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
+                                          on denghichi.MaChiNhanhChi equals chinhanhchi.Ma into chinhanhchiGroup
                                       from chinhanhchi in chinhanhchiGroup.DefaultIfEmpty()
-
                                       join bophanchi in _dbContext.TblPhongBan
-                                      on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
+                                          on denghichi.MaPhongBanChi equals bophanchi.Ma into bophanchiGroup
                                       from bophanchi in bophanchiGroup.DefaultIfEmpty()
-
                                       join noidungthuchi in _dbContext.CatNoiDungThuChi
-                                      on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
+                                          on denghichi.MaNoiDung equals noidungthuchi.Ma into noidungthuchiGroup
                                       from noidungthuchi in noidungthuchiGroup.DefaultIfEmpty()
-
                                       join tien in _dbContext.FiaTienTe
-                                      on denghichi.MaTienTe equals tien.Ma into tienGroup
+                                          on denghichi.MaTienTe equals tien.Ma into tienGroup
                                       from tien in tienGroup.DefaultIfEmpty()
-
                                       join nguoilapphieu in _dbContext.SysUser
-                                      on denghichi.UserCreated equals nguoilapphieu.Ma into NguoilapphieuGroup
+                                          on denghichi.UserCreated equals nguoilapphieu.Ma into NguoilapphieuGroup
                                       from nguoilapphieu in NguoilapphieuGroup.DefaultIfEmpty()
-
+                                      join nguoiduyet in _dbContext.SysUser
+                                          on denghichi.NguoiDuyet equals nguoiduyet.Ma into NguoiduyetphieuGroup
+                                      from nguoiduyet in NguoiduyetphieuGroup.DefaultIfEmpty()
                                       where !(denghichi.Deleted ?? false)
-                               &&
-                                    (ChiNhanhDeNghi == null || denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||
-                                     ChiNhanhDeNghi.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID)
-                                    && denghichi.NgayLap != null && denghichi.NgayLap.Value.Date >= dtpTuNgay.Date && denghichi.NgayLap.Value.Date <= dtpDenNgay.Date
+                                          && (string.IsNullOrEmpty(ChiNhanhDeNghi) ||
+                                              denghichi.MaChiNhanhDeNghi == ChiNhanhDeNghi.GetGuid() ||
+                                              ChiNhanhDeNghi.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID)
+                                          && denghichi.NgayLap.HasValue
+                                          && denghichi.NgayLap.Value.Date >= dtpTuNgay.Date
+                                          && denghichi.NgayLap.Value.Date <= dtpDenNgay.Date
                                       orderby denghichi.CreatedDate descending
                                       select new
                                       {
@@ -111,11 +108,13 @@ namespace Finance_HD.Controllers.ChungTu
                                           TenTrangThai = denghichi.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : denghichi.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : denghichi.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
                                           NguoiDuyet = nguoilapphieu.FullName + "",
                                           NgayDuyet = denghichi.NgayDuyet + "",
+                                          TenNguoiChiTien = nguoiduyet.FullName + "",
                                           NgayChi = denghichi.NgayYeuCauNhanTien + "",
                                       }).ToList();
 
             return Json(new { success = true, Data = listExpenseRequest });
         }
+
         [HttpPost]
         public IActionResult ExportToExcel(string TuNgay, string DenNgay, string ChiNhanhDeNghi, string fileType)
         {
