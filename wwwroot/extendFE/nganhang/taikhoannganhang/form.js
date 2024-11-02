@@ -161,7 +161,18 @@ function loadLoaiTaiKhoanNganHang() {
         function (response) {
             if (response.success) {
                 var result = response.data;
-                selectLoaiTaiKhoanNganHang(result);
+
+                // Tạo một Set để lưu trữ tên không trùng
+                var uniqueNames = new Set();
+                var filteredResult = result.filter(item => {
+                    if (!uniqueNames.has(item.ten)) {
+                        uniqueNames.add(item.ten); // Thêm tên vào Set nếu chưa tồn tại
+                        return true; // Giữ lại phần tử
+                    }
+                    return false; // Loại bỏ phần tử nếu tên đã tồn tại
+                });
+
+                selectLoaiTaiKhoanNganHang(filteredResult);
             } else {
                 console.log("Lỗi khi lấy dữ liệu ");
             }
