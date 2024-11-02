@@ -85,7 +85,7 @@
                             </div>
                             <div class="form-group col-12 col-md-6">
                                 <label for="SoTien">Số tiền <span style="color: red;">*</span></label>
-                                <input class="form-control form-control-sm" type="number" id="SoTien" name="SoTien" placeholder="Nhập số tiền" value="@Model.SoTien" />
+                                <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" value="@(Model.SoTien != null && Model.SoTien != 0 ? Model.SoTien : 0)" id="SoTien" name="SoTien" oninput="formatCurrencyInput(this)" />
                             </div>
                             <div class="form-group col-12 col-md-6">
                                 <label for="HinhThuc">Hình thức <span style="color: red;">*</span></label>

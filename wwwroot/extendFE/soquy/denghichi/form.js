@@ -181,3 +181,7 @@ function loadBan(selectedBranch, DepartmentSelectId, selectedDepartment = '') {
         }
     });
 }
+$("#SoTien").on('input', function () {
+    var soTien = $("#SoTien").val();
+    formatCurrencyInput(soTien)
+})

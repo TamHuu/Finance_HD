@@ -5,8 +5,9 @@ $(document).ready(function () {
         columnDefs: [
             { className: "d-none", targets: 0, orderable: false },
             { width:"220px", className: 'dt-left dt-head-center', targets: [1, 2], orderable: false },
-            { className: 'dt-left dt-head-center', targets: [ 3, 4, 5, 6,], orderable: false },
-            { className: 'dt-left dt-head-center', targets: [7, 8, 9], orderable: false },
+            { className: 'dt-left dt-head-center', targets: [3, 4, 5,], orderable: false },
+            { width: "80px", className: 'dt-left dt-head-center', targets: [ 6], orderable: false },
+            { width: "220px", className: 'dt-left dt-head-center', targets: [7, 8, 9], orderable: false },
             { minWidth: "150px", width: '150px', className: 'text-center', targets: [10, 11], orderable: false },
         ],
         scrollY:true,

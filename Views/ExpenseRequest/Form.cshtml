@@ -83,8 +83,8 @@
                     <!-- Dòng 4: Số Tiền, Hình Thức -->
                     <div class="form-group col-md-2">
                         <label for="SoTien">Số Tiền<span style="color: red;">*</span></label>
-                        <input type="number" class="form-control form-control-sm" id="SoTien" name="SoTien" required
-                               value="@(Model.SoTien != null && Model.SoTien != 0 ? Model.SoTien : 0)" />
+                        <input type="text" placeholder="Nhập số tiền" data-type="currency" class="form-control form-control-sm" value="@(Model.SoTien != null && Model.SoTien != 0 ? Model.SoTien : 0)" id="SoTien" name="SoTien" oninput="formatCurrencyInput(this)" />
+                      
                     </div>
 
                     <div class="form-group col-md-2">
@@ -118,6 +118,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="/extendFE/soquy/denghichi/form.js"></script>
+    <script defer src="/extendFE/common/main.js"></script>
     <script>
         var defaultUID = '@defaultUID';
         // Pass the isEdit variable to JavaScript

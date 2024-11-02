@@ -528,6 +528,10 @@ function collectFormData() {
 
     };
 }
+$("#SoTien").on('input', function () {
+    var soTien = $("#SoTien").val();
+    formatCurrencyInput(soTien)
+})
 
 
 
