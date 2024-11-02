@@ -2,8 +2,8 @@
 $(document).ready(function () {
     ConfigTable();
     getDataPhieuThu();
-   DonVi();
-updateDenNgay()
+    DonVi();
+    updateDenNgay()
 });
 
 function ConfigTable() {
@@ -31,8 +31,8 @@ function ConfigTable() {
     TableDanhSachPhieuChiNoiBo = $('#TableDanhSachPhieuChiNoiBo').DataTable({
         columnDefs: [
             { className: "hide_column", "targets": [0] },
-            { className: "txt-left", "targets": [1, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14] },
-            { className: "txt-right", "targets": [10, 11] },
+            { orderable: false, className: "txt-left", "targets": [1, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14] },
+            { orderable: false, className: "txt-right", "targets": [10, 11] },
         ],
         searching: true,
         ordering: true,
@@ -42,10 +42,11 @@ function ConfigTable() {
 
     TableDanhSachPhieuThu = $('#TableDanhSachPhieuThu').DataTable({
         columnDefs: [
-            { className: "d-none", targets: 0, orderable: false },
-            { width: '200px', className: "txt-left dt-head-center", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13] },
-            { width: '150px', className: "txt-center dt-head-center", "targets": [11] },
-            { width: '150px', className: "txt-center dt-head-center", "targets": [14, 15] },
+            { orderable: false, className: "d-none", targets: 0, orderable: false },
+            { orderable: false, width: '200px', className: "txt-left dt-head-center", "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13] },
+            { orderable: false, width: '150px', className: "txt-center dt-head-center", "targets": [11] },
+            { orderable: false, width: '150px', className: "txt-center dt-head-center", "targets": [14, 15] },
+
         ],
         scrollX: true,
         searching: true,
@@ -134,25 +135,40 @@ function drawDanhSach(data) {
     TableDanhSachPhieuThu.clear().draw();
     console.table(data)
     data.forEach(function (item) {
+        const ma = item.ma || "";
+        const soPhieu = item.soPhieu || "";
+        const ngayLapPhieu = item.ngayLapPhieu ? formatDate(item.ngayLapPhieu) : "";
+        const tenNguoiLapPhieu = item.tenNguoiLapPhieu || "";
+        const tenChiNhanhThu = item.tenChiNhanhThu || "";
+        const tenPhongBanThu = item.tenPhongBanThu || "";
+        const tenChiNhanhChi = item.tenChiNhanhChi || "";
+        const tenPhongBanChi = item.tenPhongBanChi || "";
+        const tenNoiDungThuChi = item.tenNoiDungThuChi || "";
+        const tenTienTe = item.tenTienTe || "";
+        const tyGia = item.tyGia || "";
+        const soTien = item.soTien ? addCommas(item.soTien) : "";
+        const hinhThuc = item.hinhThuc || "";
+        const ghiChu = item.ghiChu || "";
+        const trangThai = item.trangThai || "";
         let rowContent = [
-            `<td>${item.ma}</td>`,
-            `<td>${item.soPhieu}</td>`,
-            `<td>${formatDate(item.ngayLapPhieu)}</td>`,
-            `<td>${item.tenNguoiLapPhieu}</td>`,
-            `<td>${item.tenChiNhanhThu}</td>`,
-            `<td>${item.tenPhongBanThu}</td>`,
-            `<td>${item.tenChiNhanhChi}</td>`,
-            `<td>${item.tenPhongBanChi}</td>`,
-            `<td>${item.tenNoiDungThuChi}</td>`,
-            `<td>${item.tenTienTe}</td>`,
-            `<td>${item.tyGia}</td>`,
-            `<td>${addCommas(item.soTien)}</td>`,
-            `<td>${item.hinhThuc}</td>`,
-            `<td>${item.ghiChu || ""}</td>`,
-            `<td>${item.trangThai}</td>`,
+            `<td>${ma}</td>`,
+            `<td>${soPhieu}</td>`,
+            `<td>${ngayLapPhieu}</td>`,
+            `<td>${tenNguoiLapPhieu}</td>`,
+            `<td>${tenChiNhanhThu}</td>`,
+            `<td>${tenPhongBanThu}</td>`,
+            `<td>${tenChiNhanhChi}</td>`,
+            `<td>${tenPhongBanChi}</td>`,
+            `<td>${tenNoiDungThuChi}</td>`,
+            `<td>${tenTienTe}</td>`,
+            `<td>${tyGia}</td>`,
+            `<td>${soTien}</td>`,
+            `<td>${hinhThuc}</td>`,
+            `<td>${ghiChu}</td>`,
+            `<td>${trangThai}</td>`,
             `
     <td>
-        ${item.trangThai === "Lập phiếu"
+        ${item.trangThai === "Tạm nộp"
                 ? `<button class="btn btn-success btn-sm btnApprove" data-id="${item.ma}" title="Duyệt">
                     <i class="fas fa-check"></i>
                 </button>`
@@ -173,6 +189,181 @@ function drawDanhSach(data) {
 
 
         TableDanhSachPhieuThu.row.add(rowContent).draw();
+    });
+}
+function Edit(row) {
+    var firstCellValue = $(row).parents('tr').find('td:eq(0)').text().trim();
+    window.open('/Receipt/Edit?ma=' + firstCellValue, '_blank');
+}
+$('#TableDanhSachPhieuThu').on('click', '.btnDelete', function (e) {
+    e.preventDefault();
+    var Id = $(this).data('id');
+    handleDelete(Id);
+});
+$('#TableDanhSachPhieuThu').on('click', '.btnApprove', function (e) {
+    e.preventDefault();
+    var Id = $(this).data('id');
+    handleApprove(Id);
+});
+$('#TableDanhSachPhieuThu').on('click', '.btnRemoveApprove', function (e) {
+    e.preventDefault();
+    var Id = $(this).data('id');
+    handleRemoveApprove(Id);
+});
+function handleDelete(Id) {
+    console.log("id", Id);
+    if (!Id || Id === "0") {
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Không có danh mục để xoá.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận xoá',
+        text: 'Bạn có chắc chắn muốn xoá danh mục này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có, xoá nó!',
+        cancelButtonText: 'Không, huỷ!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Receipt/Delete',
+                type: 'DELETE',
+                data: { Id: Id },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Đã xoá!',
+                            text: response.message,
+                            icon: 'success'
+                        }).then(() => {
+                            getDataPhieuThu(); // Tải lại danh sách sau khi xóa thành công
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Thất bại!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Đã xảy ra lỗi!',
+                        text: 'Vui lòng thử lại.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+}
+function handleApprove(Id) {
+    console.log("id", Id);
+    if (!Id || Id === "0") {
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Không có danh mục để duyệt.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận Duyệt phiếu',
+        text: 'Bạn có chắc chắn muốn duyệt phiếu này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có, Duyệt!',
+        cancelButtonText: 'Không, Huỷ!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Receipt/DuyetPhieuThu',
+                type: 'POST',
+                data: { Id: Id },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Đã xoá!',
+                            text: response.message,
+                            icon: 'success'
+                        }).then(() => {
+                            getDataPhieuThu();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Thất bại!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Đã xảy ra lỗi!',
+                        text: 'Vui lòng thử lại.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+}
+function handleRemoveApprove(Id) {
+    console.log("id", Id);
+    if (!Id || Id === "0") {
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Không có danh mục để duyệt.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận bỏ duyệt phiếu',
+        text: 'Bạn có chắc chắn muốn bỏ duyệt phiếu này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có!',
+        cancelButtonText: 'Không, Huỷ!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Receipt/BoDuyetDuyetPhieuThu',
+                type: 'POST',
+                data: { Id: Id },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Đã bỏ duyệt!',
+                            text: response.message,
+                            icon: 'success'
+                        }).then(() => {
+                            getDataPhieuThu();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Thất bại!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Đã xảy ra lỗi!',
+                        text: 'Vui lòng thử lại.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
     });
 }
 

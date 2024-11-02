@@ -20,7 +20,9 @@ namespace Finance_HD.Common
         LapPhieu = 1,
         DaDuyet = 2,
         DaThu = 3,
-        DaChi = 4
+        DaChi = 4,
+        TamNop=5,
+
     }
 
     public enum PhongBan

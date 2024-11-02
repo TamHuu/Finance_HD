@@ -1,6 +1,7 @@
 ﻿using Finance_HD.Common;
 using Finance_HD.Helpers;
 using Finance_HD.Models;
+using Humanizer.Localisation;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks.Dataflow;
 
@@ -79,9 +80,9 @@ namespace Finance_HD.Controllers.ChungTu
          (string.IsNullOrEmpty(DonViThu) ||
           phieuthu.MaChiNhanhThu == DonViThu.GetGuid() ||
           DonViThu.GetGuid() == Finance_HD.Helpers.CommonGuids.defaultUID)
-         // &&
-         //(!dtpTuNgay.HasValue || phieuthu.NgayLapPhieu >= dtpTuNgay.Value) &&
-         //(!dtpDenNgay.HasValue || phieuthu.NgayLapPhieu <= dtpDenNgay.Value)
+                               // &&
+                               //(!dtpTuNgay.HasValue || phieuthu.NgayLapPhieu >= dtpTuNgay.Value) &&
+                               //(!dtpDenNgay.HasValue || phieuthu.NgayLapPhieu <= dtpDenNgay.Value)
                                select new
                                {
                                    Ma = phieuthu.Ma.ToString(),
@@ -116,7 +117,12 @@ namespace Finance_HD.Controllers.ChungTu
                                    TenNguoiLapPhieu = nguoilapphieu.FullName,
                                    TenNguoiNhanTien = nguoinhantien.FullName,
                                    CreatedDate = phieuthu.CreatedDate,
-                                   TrangThai = phieuthu.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" : phieuthu.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" : phieuthu.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" : phieuthu.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" : "",
+                                   TrangThai = phieuthu.TrangThai == (int)TrangThaiChungTu.LapPhieu ? "Lập phiếu" :
+            phieuthu.TrangThai == (int)TrangThaiChungTu.DaDuyet ? "Đã duyệt đề nghị" :
+            phieuthu.TrangThai == (int)TrangThaiChungTu.DaThu ? "Đã thu" :
+            phieuthu.TrangThai == (int)TrangThaiChungTu.DaChi ? "Đã chi" :
+            phieuthu.TrangThai == (int)TrangThaiChungTu.TamNop ? "Tạm nộp" : "",
+
                                    HinhThuc = phieuthu.MaHinhThuc == (int)HinhThucThuChi.TienMat ? "Tiền mặt" : phieuthu.MaHinhThuc == (int)HinhThucThuChi.TaiKhoanCaNhan ? "Tài khoản cá nhân" : phieuthu.MaHinhThuc == (int)HinhThucThuChi.NganHang ? "Ngân hàng" : "",
                                })
                                .OrderByDescending(receipt => receipt.CreatedDate)
@@ -168,14 +174,15 @@ namespace Finance_HD.Controllers.ChungTu
     string KhachHangNop,
     string Ma,
     string MaDongTien,
-    string SoChungTu,
     string SoPhieuChi,
     string SoTien,
     string TienTe,
     string TyGia,
     string HinhThuc,
     string MaPhieuChi,
-    string GhiChu)
+    string GhiChu,
+    string SoHoSoKemTheo
+            )
         {
 
 
@@ -188,11 +195,7 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 return Json(new { success = false, message = "Chi nhánh không tồn tại!" });
             }
-            //var existingListReceipt = _dbContext.FiaPhieuThuChi.FirstOrDefault(x => x.SoTaiKhoan == SoTaiKhoan);
-            //if (existingListReceipt != null)
-            //{
-            //    return Json(new { success = false, message = "Số tài khoản ngân hàng đã tồn tại!" });
-            //}
+
             string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
             var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
@@ -205,25 +208,25 @@ namespace Finance_HD.Controllers.ChungTu
             {
                 MaLoaiThuChi = Guid.Parse("AB3FF94A-905D-47C3-89B4-E8F5099CDC9D"),
                 MaChiNhanhThu = DonViThu.GetGuid(),
-                MaPhongBanThu = BoPhanThu.GetGuid(),
-                MaNoiDungThuChi = MaDongTien.GetGuid(),
-                MaBangKeNopTien = BangKe.GetGuid(),
-                SoHoSoKemTheo = SoChungTu.ToInt(),
-                NgayLapPhieu = NgayLap,
-                NguoiLapPhieu = loggedInUser.Ma,
-                TrangThai = (int)TrangThaiChungTu.LapPhieu,
-                MaPhongBanChi = BoPhanChi.GetGuid(),
                 MaChiNhanhChi = DonViChi.GetGuid(),
+                MaPhongBanChi = BoPhanChi.GetGuid(),
+                MaPhongBanThu = BoPhanThu.GetGuid(),
+                NgayLapPhieu = NgayLap,
+                NguoiGiaoDich = NguoiThuTien.GetGuid(),
+                NguoiLapPhieu = NhanVienNop.GetGuid(),
+                TenNguoiGiaoDich = KhachHangNop,
+                MaBangKeNopTien = BangKe.GetGuid(),
                 MaTienTe = TienTe.GetGuid(),
                 TyGia = TyGia.ToInt(),
+                SoPhieu = string.Format("PT/{0}/{1:yyyyMMdd}/{2:000}", cn.Code, DateTime.Today, nextSequentialNumber),
                 SoTien = SoTien.ToInt(),
                 MaHinhThuc = HinhThuc.ToInt(),
+                MaChungTuKeToan = SoHoSoKemTheo,
+                MaNoiDungThuChi = MaDongTien.GetGuid(),
                 GhiChu = GhiChu,
+                TrangThai = (int)TrangThaiChungTu.TamNop,
+            
                 MaPhieuChi = MaPhieuChi.GetGuid(),
-                SoPhieu = string.Format("PT/{0}/{1:yyyyMMdd}/{2:000}", cn.Code, DateTime.Today, nextSequentialNumber),
-                TenNguoiNhanTien = loggedInUser.FullName,
-                NguoiNhanTien = loggedInUser.Ma,
-                NguoiGiaoDich = KhachHangNop.GetGuid(),
 
             };
 
@@ -245,31 +248,63 @@ namespace Finance_HD.Controllers.ChungTu
             return View("Form", listReceipt);
         }
         [HttpPost]
-        //public JsonResult Edit(FiaPhieuThuChi model)
-        //{
-        //    var listReceipt = _dbContext.FiaPhieuThuChi.FirstOrDefault(x => x.Ma == model.Ma);
-        //    if (listReceipt == null)
-        //    {
-        //        return Json(new { success = false, message = "Tiền tệ này không tồn tại!" });
-        //    }
-        //    string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+        public JsonResult Edit(string Ma,
+    string BangKe,
+    string BoPhanChi,
+    string BoPhanThu,
+    string DonViChi,
+    string DonViThu,
+    DateTime NgayLap,
+    string NguoiThuTien,
+    string NhanVienNop,
+    string KhachHangNop,
+    string MaDongTien,
+    string SoChungTu,
+    string SoPhieuChi,
+    string SoTien,
+    string TienTe,
+    string TyGia,
+    string HinhThuc,
+    string MaPhieuChi,
+    string GhiChu
+)
+        {
+            var listReceipt = _dbContext.FiaPhieuThuChi.FirstOrDefault(x => x.Ma == Ma.GetGuid());
+          
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
-        //    var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
-        //    if (loggedInUser == null)
-        //    {
-        //        return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
-        //    }
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser == null)
+            {
+                return Json(new { success = false, message = "Không thể lấy thông tin người dùng hiện tại!" });
+            }
 
-        //    listReceipt.Ten = model.Ten;
-        //    listReceipt.Code = model.Code;
-        //    listReceipt.Status = model.Status;
-        //    listReceipt.UserModified = loggedInUser.Ma;
-        //    listReceipt.ModifiedDate = model.ModifiedDate ?? DateTime.Now;
-        //    _dbContext.FiaPhieuThuChi.Update(listReceipt);
-        //    _dbContext.SaveChanges();
+            listReceipt.MaLoaiThuChi = Guid.Parse("AB3FF94A-905D-47C3-89B4-E8F5099CDC9D");
+            listReceipt.MaChiNhanhThu = DonViThu.GetGuid();
+            listReceipt.MaPhongBanThu = BoPhanThu.GetGuid();
+            listReceipt.MaNoiDungThuChi = MaDongTien.GetGuid();
+            listReceipt.MaBangKeNopTien = BangKe.GetGuid();
+            listReceipt.SoHoSoKemTheo = SoChungTu.ToInt();
+            listReceipt.NgayLapPhieu = NgayLap;
+            listReceipt.NguoiLapPhieu = loggedInUser.Ma;
+            listReceipt.TrangThai = (int)TrangThaiChungTu.TamNop;
+            listReceipt.MaPhongBanChi = BoPhanChi.GetGuid();
+            listReceipt.MaChiNhanhChi = DonViChi.GetGuid();
+            listReceipt.MaTienTe = TienTe.GetGuid();
+            listReceipt.TyGia = TyGia.ToInt();
+            listReceipt.SoTien = SoTien.ToInt();
+            listReceipt.MaHinhThuc = HinhThuc.ToInt();
+            listReceipt.GhiChu = GhiChu;
+            listReceipt.MaPhieuChi = MaPhieuChi.GetGuid();
+            listReceipt.SoPhieu = SoPhieuChi;
+            listReceipt.TenNguoiNhanTien = loggedInUser.FullName;
+            listReceipt.NguoiNhanTien = loggedInUser.Ma;
+            listReceipt.NguoiGiaoDich = KhachHangNop.GetGuid();
+            _dbContext.FiaPhieuThuChi.Update(listReceipt);
+            _dbContext.SaveChanges();
 
-        //    return Json(new { success = true, message = "Cập nhật tiền tệ thành công!" });
-        //}
+            return Json(new { success = true, message = "Cập nhật thành công!" });
+        }
         [HttpDelete]
         public IActionResult Delete(string Id)
         {
@@ -295,6 +330,55 @@ namespace Finance_HD.Controllers.ChungTu
 
             return Json(new { success = true, message = "Xoá tiền tệ thành công!" });
         }
+        [HttpPost]
+        public JsonResult DuyetPhieuThu(string Id)
+        {
+            var item = _dbContext.FiaPhieuThuChi.FirstOrDefault(x => x.Ma == Id.GetGuid());
+            if (item == null)
+            {
+                return Json(new { success = false, message = "Phiếu này không tồn tại" });
+            }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
 
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+            if (loggedInUser.Ma == item.MaChiNhanhThu)
+            {
+                return Json(new { success = false, message = "Không được duyệt phiếu từ chi nhánh khác" });
+            }
+          
+            item.TrangThai = (int)TrangThaiChungTu.DaThu;
+            item.NguoiDuyet = loggedInUser.Ma;
+            item.NgayDuyet = DateTime.Now;
+            item.UserModified = loggedInUser.Ma;
+            _dbContext.Update(item);
+            _dbContext.SaveChanges();
+            return Json(new { success = true, message = "Duyệt phiếu thành công" });
+        }
+
+        [HttpPost]
+        public JsonResult BoDuyetDuyetPhieuThu(string Id)
+        {
+            var item = _dbContext.FiaPhieuThuChi.FirstOrDefault(x => x.Ma == Id.GetGuid());
+            if (item == null)
+            {
+                return Json(new { success = false, message = "Phiếu này không tồn tại" });
+            }
+            string loggedInUserName = UserHelper.GetLoggedInUserGuid(Request);
+
+            var loggedInUser = _dbContext.SysUser.FirstOrDefault(x => x.Username == loggedInUserName);
+
+            if (loggedInUser.Ma == item.MaChiNhanhThu)
+            {
+                return Json(new { success = false, message = "Không được bỏ duyệt phiếu từ chi nhánh khác" });
+            }
+          
+            item.TrangThai = (int)TrangThaiChungTu.TamNop;
+            item.NguoiDuyet = loggedInUser.Ma;
+            item.NgayDuyet = DateTime.Now;
+            item.UserModified = loggedInUser.Ma;
+            _dbContext.Update(item);
+            _dbContext.SaveChanges();
+            return Json(new { success = true, message = "Bỏ duyệt phiếu thành công" });
+        }
     }
 }

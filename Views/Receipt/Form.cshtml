@@ -20,7 +20,7 @@
 
                         <div class="row">
                             <div class="form-group col-12 col-md-6">
-                                <label for="DonViThu">Đơn vị thu <span style="color: red;">*</span></label>
+                                <label for="">Đơn vị thu <span style="color: red;">*</span></label>
                                 <select class="form-control form-control-sm" id="DonViThu" name="DonViThu">
                                 </select>
                             </div>
@@ -165,10 +165,18 @@
 </<link href="/css/global.css" rel="stylesheet" />
     <script>
         var defaultUID = '@defaultUID';
-        // Pass the isEdit variable to JavaScript
         var isEdit = @Html.Raw(Json.Serialize(isEdit));
-        var maChiNhanhChi = '@Model.MaChiNhanhChi';
-        var maPhongBanChi = '@Model.MaPhongBanChi'
+        var MaChiNhanhThu = '@Model.MaChiNhanhThu';
+        var MaPhongBanThu = '@Model.MaPhongBanThu';
+        var MaChiNhanhChi = '@Model.MaChiNhanhChi';
+        var MaPhongBanChi = '@Model.MaPhongBanChi';
+        var MaNoiDungThuChi = '@Model.MaNoiDungThuChi'
+        var MaNguoiThuTien = '@Model.NguoiNhanTien';
+        var MaTienTe = '@Model.MaTienTe';
+        var MaBangKe = '@Model.MaBangKeNopTien';
+        var MaNhanVienNopTien = "@Model.NguoiGiaoDich";
+        var KhachHangNopTien ='@Model.TenNguoiGiaoDich'
+        console.log("MaNhanVienNopTien", MaNhanVienNopTien)
     </script>
     <style>
         .table thead th {
